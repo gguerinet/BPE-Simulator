@@ -7135,13 +7135,12 @@ if (!window.React || !window.ReactDOM) {
                 !e.golive &&
                 ((e.lundiFat = dd),
                 (() => {
-                  let av = e.weBureau || 0;
-                  ((e.weBureau = e.weMaisonOk ? 0 : Math.min(4, av + 1)), (e.weMaisonOk = !1), (e.dirty = !0));
-                  e.weBureau > av
-                    ? ((e.energy = Math.min(e.energy, eMx(e))),
-                      Te(`Fatigue accumul\xE9e ce week-end, \xE9nergie max ${eMx(e)} %.`))
-                    : av > 0 && e.weBureau === 0 && Te(`Fatigue accumul\xE9e ce week-end, \xE9nergie max ${eMx(e)} %.`);
-                })()),
+                let av = e.weBureau || 0;
+                    ((e.weBureau = e.weMaisonOk ? 0 : Math.min(4, av + 1)), (e.weMaisonOk = !1), (e.dirty = !0));
+                    if (e.weBureau > av) {
+                      e.energy = Math.min(e.energy, eMx(e));
+                    }
+                  })(),
               Mr(dd).getDay() === 1 &&
                 e.dirLundi !== dd &&
                 !e.golive &&
