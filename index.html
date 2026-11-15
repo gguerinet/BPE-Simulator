@@ -10967,6 +10967,8 @@ if (!window.React || !window.ReactDOM) {
       let cVw = typeof window < "u" ? window.innerWidth : 1024,
         cVh = typeof window < "u" ? window.innerHeight : 768,
         cPay = cVw > cVh * 1.2,
+        cLarg = cPay ? "80%" : "100%",
+        cMarge = 8,
         cTitre = Math.round(Math.max(24, Math.min(cVw * 0.055, cVh * (cPay ? 0.065 : 0.09), 88))),
         cIdx = Math.max(0, Ca.findIndex((f) => f.id === u)),
         cAller = (dl) => {
@@ -11077,7 +11079,7 @@ if (!window.React || !window.ReactDOM) {
               },
               a.default.createElement(
                 "div",
-                { className: "relative mx-auto flex px-2 pt-3 sm:pt-3", style: { width: cPay ? "80%" : "100%", justifyContent: "space-between", alignItems: "flex-end", gap: 10, paddingBottom: "2%" } },
+                { className: "relative mx-auto flex pt-3 sm:pt-3", style: { width: cLarg, paddingLeft: cMarge, paddingRight: cMarge, justifyContent: "space-between", alignItems: "flex-end", gap: 10, paddingBottom: "2%" } },
                 a.default.createElement("div", { "data-nosnd": "1", style: { alignSelf: "center" } }, a.default.createElement(mt, { bg: "#FACC15", fg: W, onClick: () => cAller(-1), title: "H\xE9ros pr\xE9c\xE9dent (\u2190)", className: "px-3 py-0.5 text-2xl sm:px-4" }, "\u2039")),
                 [-1, 0, 1].map((dl) => {
                   let f = Ca[(((cIdx + dl) % Ca.length) + Ca.length) % Ca.length],
@@ -11136,9 +11138,10 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "div",
               {
-                className: "w-full border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-center text-white sm:border-4 sm:px-3 sm:py-2",
+                className: "mx-auto border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-center text-white sm:border-4 sm:px-3 sm:py-2",
                 ref: cFiche,
-                style: { borderColor: W, boxShadow: `5px 5px 0 ${W}` },
+                // Même largeur que la rangée du carrousel, bord à bord avec les flèches jaunes
+                style: { borderColor: W, boxShadow: `5px 5px 0 ${W}`, width: `calc(${cLarg} - ${2 * cMarge}px)` },
               },
               a.default.createElement(
                 "div",
