@@ -10731,6 +10731,7 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Bouton « Paramètres » (engrenage) de l'écran d'accueil : réglages du son
+    var sonAvantCoupe = null;
     function ParamBtn({ taille: t = 36 }) {
       let [ouvert, setOuvert] = (0, a.useState)(!1),
         [vols, setVols] = (0, a.useState)(() => ({ ...vt.volumes })),
@@ -10738,6 +10739,20 @@ if (!window.React || !window.ReactDOM) {
         regler = (e) => {
           (vt.demarrer(), vt.setVolumes(e), setVols({ ...vt.volumes }));
         };
+      // Touche M sur l'écran d'accueil : tout couper ou tout rétablir (comme en jeu)
+      (0, a.useEffect)(() => {
+        let k = (e) => {
+          if ((e.key || "").toLowerCase() !== "m" || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+          let cible = e.target;
+          if (cible && (cible.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(cible.tagName))) return;
+          e.preventDefault();
+          let v = vt.volumes;
+          v.musique + v.effets > 0
+            ? ((sonAvantCoupe = { ...v }), regler({ musique: 0, effets: 0 }))
+            : regler(sonAvantCoupe || { musique: 0.7, effets: 0.8 });
+        };
+        return (window.addEventListener("keydown", k), () => window.removeEventListener("keydown", k));
+      }, []);
       (0, a.useEffect)(() => {
         if (!ouvert) return;
         let k = (e) => {
@@ -10803,7 +10818,7 @@ if (!window.React || !window.ReactDOM) {
                 { className: "text-center text-3xl font-bold", style: { fontFamily: Lr } },
                 "Param\xE8tres",
               ),
-              h(SonCurseurs, { vols, onSet: regler }),
+              h(SonCurseurs, { vols, onSet: regler, toucheM: !0 }),
               h(
                 "div",
                 { className: "mt-3 flex flex-col" },
@@ -11121,13 +11136,13 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "div",
               {
-                className: "w-full border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-white sm:border-4 sm:px-3 sm:py-2",
+                className: "w-full border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-center text-white sm:border-4 sm:px-3 sm:py-2",
                 ref: cFiche,
                 style: { borderColor: W, boxShadow: `5px 5px 0 ${W}` },
               },
               a.default.createElement(
                 "div",
-                { className: "flex flex-wrap items-center gap-x-2 gap-y-1" },
+                { className: "flex flex-wrap items-center justify-center gap-x-2 gap-y-1" },
                 a.default.createElement(
                   "span",
                   { className: "border-2 bg-[#FACC15] px-1.5 text-sm font-bold text-[#1B1B2F]", style: { borderColor: W } },
