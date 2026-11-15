@@ -7692,7 +7692,7 @@ if (!window.React || !window.ReactDOM) {
           if (g.kind === "atelier") {
             if (e === "A") {
               let X = Math.round(ai * Tt.atelierFacteur(t));
-              ((c.energy = Math.max(0, c.energy - X)), c.nAteliers++);
+              ((c.energy = Math.max(0, c.energy - X)), c.energy < 0.5 && (c.energy = 0), c.nAteliers++);
               let rt = ei * Tt.atelierFacteur(t);
               ((c.d.ateliers = (c.d.ateliers || 0) + rt),
                 Br(rt, "ateliers"),
@@ -7715,6 +7715,7 @@ if (!window.React || !window.ReactDOM) {
             if ((c.nTickets++, e === "A")) {
               let rt = Math.round(oi * Tt.ticketEFacteur(t));
               ((c.energy = Math.max(0, c.energy - rt)),
+              c.energy < 0.5 && (c.energy = 0),
                 qt(c, "tickets", re),
                 M && ((M.mood = "happy"), (M.react = { sym: "happy", until: j + 1200 })),
                 Mt("Ticket r\xE9solu", "ok", "", 3e3, { ligne: !0, fx: [{ t: "e", v: -rt }, { t: "q", v: re }] }),
@@ -7815,6 +7816,7 @@ if (!window.React || !window.ReactDOM) {
           else if (e === "C")
             (c.nArbitrages++,
               (c.energy = Math.max(0, c.energy - ie)),
+              c.energy < 0.5 && (c.energy = 0),
               M && ((M.mood = "smirk"), (M.react = { sym: "alert", until: j + 1400 })),
               c.arbitrages.push({ idx: g.idx, facteur: T, palier: g.palier }),
               J("arbitre"),
@@ -8087,7 +8089,8 @@ if (!window.React || !window.ReactDOM) {
             gt = g.inNight && rt >= Rt[0] && rt < Rt[1],
             xt = !g.inNight && er(g);
           (er(g) && (g.clicsWeekend = (g.clicsWeekend || 0) + 1),
-            (g.energy = Math.max(0, g.energy + (g.inNight ? Yn : Qn) * (gt ? d2 : 1) * (xt ? _2 : 1))));
+            (g.energy = Math.max(0, g.energy + (g.inNight ? Yn : Qn) * (gt ? d2 : 1) * (xt ? _2 : 1))),
+            g.energy < 0.5 && (g.energy = 0));
           if (er(g) && urgW(g)) {
             (g.urgMsg !== g.weUrgence &&
               ((g.urgMsg = g.weUrgence), Te(`Ce week-end, je bosse pour ${g.weUrgSoc || "le prestataire"}\u2026 rien pour Divalife.`)),
@@ -10908,18 +10911,49 @@ if (!window.React || !window.ReactDOM) {
         }, []),
         [k, L] = (0, a.useState)(4),
         [b, F] = (0, a.useState)(!0),
-        [cSc, setCSc] = (0, a.useState)(5);
+        [cSc, setCSc] = (0, a.useState)(4),
+        [cTick, setCTick] = (0, a.useState)(0),
+        cOut = (0, a.useRef)(null),
+        cIn = (0, a.useRef)(null),
+        cDots = (0, a.useRef)(null),
+        cFiche = (0, a.useRef)(null);
       (0, a.useEffect)(() => {
         let f = () => {
           let H = window.innerWidth,
             D = window.innerHeight;
           (L(H < 640 ? (D < 900 ? 2 : 3) : D < 760 ? 2 : D < 920 ? 3 : 4),
             F(H >= 640 && D >= 860),
-            setCSc(Math.min(H >= 1280 ? 7 : H >= 1024 ? 6 : H >= 640 ? 5 : 4, D < 640 ? 4 : D < 820 ? 5 : D < 980 ? 6 : 7)));
+            setCTick((x) => x + 1));
         };
         return (f(), window.addEventListener("resize", f), () => window.removeEventListener("resize", f));
       }, []);
-      let cIdx = Math.max(0, Ca.findIndex((f) => f.id === u)),
+      (0, a.useEffect)(() => {
+        let el = cIn.current;
+        if (!el || typeof ResizeObserver > "u") return;
+        let ro = new ResizeObserver(() => setCTick((x) => x + 1));
+        return (Array.from(el.children).forEach((x) => ro.observe(x)), () => ro.disconnect());
+      }, [o, psOuvert]);
+      (0, a.useLayoutEffect)(() => {
+        let out = cOut.current,
+          el = cIn.current;
+        if (!out || !el || !el.children.length) return;
+        let ks = Array.from(el.children),
+          pay = window.innerWidth > window.innerHeight * 1.2,
+          cible = pay && cFiche.current ? cFiche.current : ks[ks.length - 1],
+          used = cible.getBoundingClientRect().bottom - ks[0].getBoundingClientRect().top + (pay ? 16 : 28),
+          dispo = out.clientHeight,
+          pas = Aa + 2,
+          lg = Math.min(out.clientWidth, window.innerWidth),
+          rang = lg * (pay ? 0.8 : 1) - 24,
+          maxS = Math.max(3, Math.min(12, Math.floor((rang - 2 * 64 - 4 * 24) / ((Wa + 2) * (pay ? 2.2 : 1.9))))),
+          minS = Math.min(maxS, pay ? 3 : window.innerWidth >= 1024 ? 5 : 4);
+        cSc > maxS ? setCSc(maxS) : used > dispo && cSc > minS ? setCSc(cSc - 1) : used + pas <= dispo && cSc < maxS && setCSc(cSc + 1);
+      }, [cSc, cTick]);
+      let cVw = typeof window < "u" ? window.innerWidth : 1024,
+        cVh = typeof window < "u" ? window.innerHeight : 768,
+        cPay = cVw > cVh * 1.2,
+        cTitre = Math.round(Math.max(24, Math.min(cVw * 0.055, cVh * (cPay ? 0.065 : 0.09), 88))),
+        cIdx = Math.max(0, Ca.findIndex((f) => f.id === u)),
         cAller = (dl) => {
           let n2 = (((cIdx + dl) % Ca.length) + Ca.length) % Ca.length;
           (vt.menu(!0), vt.choisir(n2), p(Ca[n2].id));
@@ -10945,7 +10979,7 @@ if (!window.React || !window.ReactDOM) {
         cMedC = { platine: "#9FD8EA", or: "#FACC15", argent: "#CBD5E1", bronze: "#FDBA74" };
       return a.default.createElement(
         "div",
-        { className: "h-full w-full overflow-y-auto" },
+        { className: "h-full w-full overflow-y-auto", ref: cOut },
         o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: wi ? "Retour" : "Commencer" }),
         !o && psOuvert && a.default.createElement(PsModal, { initial: psv, onSave: psSave }),
         a.default.createElement(
@@ -10953,6 +10987,7 @@ if (!window.React || !window.ReactDOM) {
           {
             className:
               "flex min-h-full w-full flex-col items-center justify-center gap-2.5 px-3 py-3 sm:gap-3",
+            ref: cIn,
           },
           a.default.createElement(
             "div",
@@ -10985,17 +11020,17 @@ if (!window.React || !window.ReactDOM) {
               {
                 className:
                   "inline-flex items-center gap-3 border-4 bg-[#0E7490] px-3 py-1 text-white sm:px-5",
-                style: { borderColor: W, boxShadow: `5px 5px 0 ${W}` },
+                style: { borderColor: W, boxShadow: `5px 5px 0 ${W}`, paddingLeft: Math.round(cTitre * 0.4), paddingRight: Math.round(cTitre * 0.4) },
               },
               a.default.createElement(
                 "h1",
                 {
-                  className: "text-2xl font-bold leading-tight sm:text-5xl",
-                  style: { fontFamily: Lr, textWrap: "balance" },
+                  className: "font-bold leading-tight",
+                  style: { fontFamily: Lr, textWrap: "balance", fontSize: cTitre },
                 },
                 "BPE Simulator",
               ),
-              a.default.createElement(Xi, { h: 28 }),
+              a.default.createElement(Xi, { h: Math.max(22, Math.round(cTitre * 0.55)) }),
             ),
             a.default.createElement(
               "button",
@@ -11027,7 +11062,7 @@ if (!window.React || !window.ReactDOM) {
               },
               a.default.createElement(
                 "div",
-                { className: "relative flex justify-center px-2 pt-3 sm:pt-3", style: { alignItems: "flex-end", gap: "clamp(16px, 9vw, 160px)", paddingBottom: "2%" } },
+                { className: "relative mx-auto flex px-2 pt-3 sm:pt-3", style: { width: cPay ? "80%" : "100%", justifyContent: "space-between", alignItems: "flex-end", gap: 10, paddingBottom: "2%" } },
                 a.default.createElement("div", { "data-nosnd": "1", style: { alignSelf: "center" } }, a.default.createElement(mt, { bg: "#FACC15", fg: W, onClick: () => cAller(-1), title: "H\xE9ros pr\xE9c\xE9dent (\u2190)", className: "px-3 py-0.5 text-2xl sm:px-4" }, "\u2039")),
                 [-1, 0, 1].map((dl) => {
                   let f = Ca[(((cIdx + dl) % Ca.length) + Ca.length) % Ca.length],
@@ -11050,7 +11085,7 @@ if (!window.React || !window.ReactDOM) {
                       a.default.createElement(ta, {
                         look: f.look,
                         pose: { kind: "stand", mood: c0 ? "happy" : "neutral", arms: "down" },
-                        scale: c0 ? cSc : Math.max(2, cSc - 2),
+                        scale: c0 ? cSc : Math.max(2, Math.round(cSc * (cPay ? 0.6 : 0.45))),
                       }),
                     ),
                   );
@@ -11070,7 +11105,7 @@ if (!window.React || !window.ReactDOM) {
             ),
             a.default.createElement(
               "div",
-              { className: "flex gap-2", "data-nosnd": "1" },
+              { className: "flex gap-2", "data-nosnd": "1", ref: cDots },
               Ca.map((f, n2) =>
                 a.default.createElement("button", {
                   key: f.id,
@@ -11087,6 +11122,7 @@ if (!window.React || !window.ReactDOM) {
               "div",
               {
                 className: "w-full border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-white sm:border-4 sm:px-3 sm:py-2",
+                ref: cFiche,
                 style: { borderColor: W, boxShadow: `5px 5px 0 ${W}` },
               },
               a.default.createElement(
