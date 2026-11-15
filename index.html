@@ -10732,7 +10732,7 @@ if (!window.React || !window.ReactDOM) {
     }
     // Bouton « Paramètres » (engrenage) de l'écran d'accueil : réglages du son
     var sonAvantCoupe = null;
-    function ParamBtn({ taille: t = 36 }) {
+    function ParamBtn({ taille: t = 36, onRegles: oR }) {
       let [ouvert, setOuvert] = (0, a.useState)(!1),
         [vols, setVols] = (0, a.useState)(() => ({ ...vt.volumes })),
         h = a.default.createElement,
@@ -10821,7 +10821,19 @@ if (!window.React || !window.ReactDOM) {
               h(SonCurseurs, { vols, onSet: regler, toucheM: !0 }),
               h(
                 "div",
-                { className: "mt-3 flex flex-col" },
+                { className: "mt-3 flex flex-col gap-2.5" },
+                oR &&
+                  h(
+                    mt,
+                    {
+                      bg: "#BAE6FD",
+                      fg: W,
+                      onClick: () => (setOuvert(!1), oR()),
+                      className: "flex items-center justify-center gap-2 px-3 py-2 text-lg",
+                    },
+                    h(Ro, { size: 20, strokeWidth: 2.5 }),
+                    " R\xE8gles d\xE9taill\xE9es",
+                  ),
                 h(
                   mt,
                   {
@@ -11025,7 +11037,7 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "div",
               { className: "flex shrink-0 items-center gap-2" },
-              a.default.createElement(ParamBtn, { taille: 34 }),
+              a.default.createElement(ParamBtn, { taille: 34, onRegles: () => d(!0) }),
               a.default.createElement(FsBtn, { taille: 34 }),
             ),
           ),
@@ -11048,17 +11060,6 @@ if (!window.React || !window.ReactDOM) {
                 "BPE Simulator",
               ),
               a.default.createElement(Xi, { h: Math.max(22, Math.round(cTitre * 0.55)) }),
-            ),
-            a.default.createElement(
-              "button",
-              {
-                type: "button",
-                onClick: () => d(!0),
-                className:
-                  "mx-auto mt-1 block text-[15px] text-[#BAE6FD] underline underline-offset-2 sm:text-[17px]",
-                style: { fontFamily: Yr },
-              },
-              "Revoir les r\xE8gles",
             ),
           ),
           a.default.createElement(
