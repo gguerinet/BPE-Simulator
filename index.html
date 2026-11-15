@@ -2209,7 +2209,7 @@ if (!window.React || !window.ReactDOM) {
         M: { nom: "Gap moyen", jours: 1 / Be, qualite: 1, refus: -3 },
         L: { nom: "Gap complexe", jours: 2 / Be, qualite: 1, refus: -5 },
       },
-      regX = 2,
+      regX = 1,
       rfMax = 2,
       rfQ = (g, f) => Math.max(-rfMax, g.refus * (f || 1)),
       i2 = 0.4,
@@ -7164,10 +7164,10 @@ if (!window.React || !window.ReactDOM) {
             if (e.kind === "regression" && k === "A") {
               ((c.energy = Math.max(1, c.energy - Sg)), (c.nSignales = (c.nSignales || 0) + 1));
               // Algorithme bas\u00e9 sur la qualit\u00e9
-              let tauxSucces = (c.quality >= 90) ? 1 :
-                               (c.quality >= 80) ? 0.75 :
-                               (c.quality >= 70) ? 0.5 :
-                               (c.quality >= 60) ? 0.25 : 0;
+              // Plus la qualit\u00e9 est haute, plus le signalement a de chances d'\u00e9chouer
+              let tauxSucces = (c.quality >= 80) ? 0.25 :
+                               (c.quality >= 60) ? 0.5 :
+                               (c.quality >= 40) ? 0.75 : 1;
 
               if (Math.random() < tauxSucces) {
                 // Correction \u00e0 temps
