@@ -2184,7 +2184,7 @@ if (!window.React || !window.ReactDOM) {
       tmaR = 1,
       pe = 5,
       ke = 2,
-      je = 10,
+      je = 8,
       t2 = je / yi,
       r2 = 600,
       a2 = 50,
@@ -2756,9 +2756,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Ma\xEEtre Yoda",
           pitch: "Parle beaucoup, mais pas pour rien dire. Il trouve sa force dans les requ\xEAtes.",
           atout: "N\xE9gociateur",
-          atoutTxt: "Missions b.workchoc deux fois plus longues, au m\xEAme tarif, et la premi\xE8re est offerte",
+          atoutTxt: "Missions b.workchoc de 5 jours au lieu de 3, au m\xEAme tarif, et la premi\xE8re est offerte",
           conseil:
-            "Il n\xE9gocie des missions de 6 jours au lieu de 3, au m\xEAme tarif de 5 000 \u20AC, et obtient la premi\xE8re gratuitement : id\xE9al pour acc\xE9l\xE9rer le planning sans exploser le budget du Comex.",
+            "Il n\xE9gocie des missions de 5 jours au lieu de 3, au m\xEAme tarif de 5 000 \u20AC, et obtient la premi\xE8re gratuitement : id\xE9al pour acc\xE9l\xE9rer le planning sans exploser le budget du Comex.",
           look: {
             skin: "#F0C2A0",
             skinS: "#D49E7C",
@@ -2909,12 +2909,12 @@ if (!window.React || !window.ReactDOM) {
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         // François : la premi\u00e8re mission b.workchoc est offerte
         coutBW: (t, e) => (t.id === "francois" && !(e && e.boostCalls) ? 0 : In),
-        dureeBW: (t) => (t.id === "francois" ? 2 * Jr : Jr),
+        dureeBW: (t) => (t.id === "francois" ? 5 : Jr),
       },
       C2 = (t) => {
         let r = (i) => Math.max(0, Math.min(100, i));
         return {
-          qualite: r(((t.qualite - 30) / 60) * 100),
+          qualite: r(((t.qualite - 30) / 70) * 100),
           budget: r(100 - (Math.max(0, (t.cout || 0) - 5e3) / 25e3) * 100),
           delai: r(((170 - Math.max(90, t.total)) / 80) * 100),
         };
@@ -6610,8 +6610,8 @@ if (!window.React || !window.ReactDOM) {
         {
           cible: "consultant",
           titre: "Le consultant b.workchoc",
-          texte: "Double ta vitesse pendant 3 jours travaill\xE9s (6 avec Fran\xE7ois), mais co\xFBte cher. Touche W.",
-          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s (6 avec Fran\xE7ois), mais co\xFBte cher.",
+          texte: "Double ta vitesse pendant 3 jours travaill\xE9s (5 avec Fran\xE7ois), mais co\xFBte cher. Touche W.",
+          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s (5 avec Fran\xE7ois), mais co\xFBte cher.",
         },
         {
           cible: "commandes",
@@ -7747,9 +7747,9 @@ if (!window.React || !window.ReactDOM) {
                 }),
                 dire(M, jt(["Merci, je savais qu'on pouvait compter sur vous !", "Vous me sauvez la mise. Pr\xE9voyez des croissants."])));
             } else if (e === "B")
-              (qt(c, "direction", -3),
+              (qt(c, "direction", -2),
                 M && ((M.mood = "angry"), (M.react = { sym: "brise", until: j + 1400, dur: 1400 })),
-                Mt("Urgence refus\xE9e", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: -3 }] }),
+                Mt("Urgence refus\xE9e", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: -2 }] }),
                 dire(M, jt(["Je m'en souviendrai au prochain COPIL.", "Tr\xE8s bien. Je note votre \xAB disponibilit\xE9 \xBB.", "Dommage, j'avais d\xE9j\xE0 annonc\xE9 votre nom."])));
             else return;
             da(M);
@@ -8067,7 +8067,7 @@ if (!window.React || !window.ReactDOM) {
         Ze = () => {
           let e = n.current,
             c = Ie();
-          // Week-end d'urgence : la nuit du samedi au dimanche récupère comme une nuit normale (jusqu'à +10 %)
+          // Week-end d'urgence : la nuit du samedi au dimanche récupère comme une nuit normale (jusqu'à +8 %)
           return er(e) && !(urgW(e) && e.inNight) ? nr((we * c) / or) : nr(c * t2);
         },
         urgW = (e) => {
@@ -8603,8 +8603,8 @@ if (!window.React || !window.ReactDOM) {
                     bg: "#FDA4AF",
                     titre: "Pas d'accord",
                     titreCourt: "Refuser",
-                    sub: "Qualit\xE9 \u22123",
-                    fx: [{ t: "q", v: -3 }],
+                    sub: "Qualit\xE9 \u22122",
+                    fx: [{ t: "q", v: -2 }],
                   },
                 ]
             : q.kind === "gonogo"
@@ -10137,7 +10137,7 @@ if (!window.React || !window.ReactDOM) {
         [
           "Ressources",
           [
-            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (${2 * Jr} avec Fran\xE7ois), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
+            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (5 avec Fran\xE7ois), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
           ],
         ],
         [
@@ -10157,7 +10157,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Direction projet",
-              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche (jusqu'\xE0 10 % d'\xE9nergie, comme une nuit normale), et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
+              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche (jusqu'\xE0 8 % d'\xE9nergie, comme une nuit normale), et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
             ],
             [
               "Ateliers PMO Divalife",
@@ -10183,7 +10183,7 @@ if (!window.React || !window.ReactDOM) {
           [
             "Pour d\xE9crocher les f\xE9licitations du Comex, le combo magique est simple : du vite fait, du bien fait, et un budget consultant plus que r\xE9duit !",
             "Attention aux faux pas, car un seul indicateur plomb\xE9 ruine tout ; oublie donc les paris de casse-cou et joue l'\xE9quilibre.",
-            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+90, nul \xE0 partir de J+170. Qualit\xE9 : parfaite d\xE8s 90 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
+            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+90, nul \xE0 partir de J+170. Qualit\xE9 : parfaite \xE0 100 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
             ["5 000 points", "m\xE9daille de bronze et une bise du patron."],
             ["7 000 points", "m\xE9daille d'argent et 15 secondes de gloire dans l'intranet."],
             ["8 000 points", "m\xE9daille d'or et ton visage grav\xE9 sur les murs de l'usine jusqu'\xE0 la fin des temps."],
@@ -11431,7 +11431,7 @@ if (!window.React || !window.ReactDOM) {
             i: 2,
             lo: 0,
             hi: 100,
-            max: 90,
+            max: 100,
             nul: 30,
             f: (v) => et(v) + " %",
           },
