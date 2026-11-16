@@ -6113,6 +6113,7 @@ if (!window.React || !window.ReactDOM) {
       "coffeeReadyDay",
       "regMois",
       "regMoisN",
+      "lastInter",
       "impMoisN",
       "journal",
       "curve",
@@ -7494,13 +7495,14 @@ if (!window.React || !window.ReactDOM) {
           )
             return;
           let c = _t(e);
-          if (c < e.nextVisite) return;
+          if (c < e.nextVisite || c < (e.lastInter ?? -1e9) + 2) return;
           let g = ma(e.puMax / 1e3);
           ((e.nextVisite = c + Nt(g.inter[0], g.inter[1])), on(c));
         },
         on = (e) => {
-          let c = n.current,
-            g = Math.floor(c.puMax / 1e3),
+          let c = n.current;
+          c.lastInter = e;
+          let g = Math.floor(c.puMax / 1e3),
             M = Math.random(),
             j = _n(g, c.quality),
             T = Math.floor(e / 12),
@@ -7683,6 +7685,8 @@ if (!window.React || !window.ReactDOM) {
         },
         da = (e) => {
           let c = n.current;
+          // Fin d'une interaction : la prochaine visite attend au moins 2 jours à partir de maintenant
+          c.lastInter = _t(c);
           ((c.calme = _t(c) + 1),
             e && (e.mood === "happy" ? vt.positif() : e.mood === "smirk" ? vt.tampon() : vt.negatif()),
             (c.dilemma = null),
