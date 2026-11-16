@@ -2160,7 +2160,9 @@ if (!window.React || !window.ReactDOM) {
       ],
       ma = (t) => ya.reduce((r, i) => (t >= i.p ? i : r), ya[0]),
       ji = 1,
-      Be = or * 0.017,
+      // Conversion « jours » -> % des imprévus et bonnes nouvelles : fixée (indépendante du nombre de clics par jour)
+      Be = 40 * 0.017,
+      impX = 1.4, // imprévus : impact doublé par rapport à la version à 28 clics/jour avant correction de Be
       Wi = 0.15,
       $n = (t) => Math.max(0.06, Math.min(0.22, Wi * (1 + (60 - t) / 40))),
       _n = (t, r = 60) => {
@@ -8167,7 +8169,7 @@ if (!window.React || !window.ReactDOM) {
             g.puMax >= 3e4 && g.pu < 1e5 && Math.random() < Zn * ma(g.puMax / 1e3).imprevus)
           ) {
             let [Et, Jt0] = pv(g, "imprevus", c2),
-              Jt = r05(Jt0) * Tt.imprevuFacteur(t);
+              Jt = r05(Jt0 * impX) * Tt.imprevuFacteur(t);
             ((g.d.imprevus += Jt),
               g.nImprevus++,
               Mt(Et, "imprevu", "", 0, {
