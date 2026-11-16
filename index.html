@@ -2808,9 +2808,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Virtuose de la qualit\xE9",
           pitch: "Conna\xEEt chaque test de conformit\xE9 et certificat d'analyse par c\u0153ur.",
           atout: "\u0152il de lynx",
-          atoutTxt: "Tickets et r\xE9gressions deux fois moins co\xFBteux en qualit\xE9, tickets moins fatigants",
+          atoutTxt: "Tickets et r\xE9gressions deux fois moins co\xFBteux en qualit\xE9, tickets deux fois moins fatigants",
           conseil:
-            "Un ticket et une r\xE9gression lui co\xFBtent deux fois moins en qualit\xE9, et traiter un ticket ne lui co\xFBte que 8 % d'\xE9nergie au lieu de 12 %.",
+            "Un ticket et une r\xE9gression lui co\xFBtent deux fois moins en qualit\xE9, et traiter un ticket ne lui co\xFBte que 5 % d'\xE9nergie au lieu de 10 %.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -2906,7 +2906,7 @@ if (!window.React || !window.ReactDOM) {
       Tt = {
         gapFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         incidentFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
-        ticketEFacteur: (t) => (t.id === "hugues" ? 2 / 3 : 1),
+        ticketEFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         // François : la premi\u00e8re mission b.workchoc est offerte
         coutBW: (t, e) => (t.id === "francois" && !(e && e.boostCalls) ? 0 : In),
