@@ -2167,6 +2167,7 @@ if (!window.React || !window.ReactDOM) {
         return { atelier: i.atelier, regression: o, ticket: Math.max(0, 1 - i.atelier - o) };
       },
       Yo = 9,
+      pPiege = 0.2,
       ti = 6,
       Zr = [1, 30],
       Xn = 2,
@@ -5907,8 +5908,13 @@ if (!window.React || !window.ReactDOM) {
       let r = (C) => vr.map((B, f) => (B[3] === C ? f : -1)).filter((B) => B >= 0),
         i = Er(r("reel")),
         o = Er(r("piege")),
-        n = Er([...i.slice(0, Yo), ...o.slice(0, ti)]),
-        d = Er([...i.slice(Yo), ...o.slice(ti)]),
+        // Chaque gap a pPiege (20 %) de chances d'être une fausse bonne idée ; quand les vrais besoins
+        // sont épuisés, les gaps suivants sont forcément des fausses bonnes idées (et inversement)
+        sq = Array.from({ length: Yo + ti + Qa + Xn }, () =>
+          (Math.random() < pPiege && o.length) || !i.length ? o.shift() : i.shift(),
+        ),
+        n = sq.slice(0, Yo + ti),
+        d = sq.slice(Yo + ti),
         u = d.slice(0, Qa),
         p = d.slice(Qa, Qa + Xn),
         h = (C, B) => Array.from({ length: B - C + 1 }, (f, H) => H + C),
