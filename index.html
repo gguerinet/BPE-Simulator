@@ -4978,7 +4978,7 @@ if (!window.React || !window.ReactDOM) {
           ref: i,
           width: 26,
           height: 32,
-          style: { width: 26 * r, height: 32 * r },
+          style: { width: 26 * r, height: 32 * r, imageRendering: "pixelated" },
         })
       );
     }
@@ -10512,7 +10512,7 @@ if (!window.React || !window.ReactDOM) {
         a.default.createElement(
           "div",
           {
-            className: "flex items-center justify-between gap-2 border-b-[3px] bg-[#0E7490] px-2 py-1 font-bold",
+            className: "relative flex items-center justify-center gap-2 border-b-[3px] bg-[#0E7490] px-2 py-1 font-bold",
             style: { borderColor: W },
           },
           a.default.createElement(
@@ -10521,11 +10521,12 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(Xa, { size: 16 }),
             " Classement en ligne",
           ),
-          a.default.createElement(
-            "span",
-            { className: "text-[12px] font-normal opacity-80", style: { fontFamily: Yr } },
-            e.etat === "local" ? "indisponible" : "partag\xE9 entre joueurs",
-          ),
+          e.etat === "local" &&
+            a.default.createElement(
+              "span",
+              { className: "absolute right-2 text-[12px] font-normal opacity-80", style: { fontFamily: Yr } },
+              "indisponible",
+            ),
         ),
         e.etat === "chargement" || e.etat === "lent"
           ? a.default.createElement(
@@ -10555,7 +10556,7 @@ if (!window.React || !window.ReactDOM) {
                       key: T.id,
                       className: "grid items-center gap-x-2 px-2 py-0.5 text-[13px] sm:text-sm",
                       style: {
-                        gridTemplateColumns: "1.8em minmax(0,1fr) auto auto",
+                        gridTemplateColumns: "1.8em minmax(0,1fr) 16px auto auto",
                         background:
                           T.moi || (e.moi && T.id === e.moi)
                             ? "rgba(250,204,21,.18)"
@@ -10575,6 +10576,12 @@ if (!window.React || !window.ReactDOM) {
                       { className: "min-w-0 truncate" },
                       a.default.createElement("b", null, T.pseudo),
                       T.hero && a.default.createElement("span", { className: "opacity-70" }, " \xB7 ", T.hero),
+                    ),
+                    // Médaille correspondant au score (vide sous le bronze)
+                    a.default.createElement(
+                      "span",
+                      { className: "flex items-center justify-center", title: Si(T.score) ? Si(T.score).nom : "" },
+                      Si(T.score) && a.default.createElement(D2, { kind: Si(T.score).id, scale: 0.5 }),
                     ),
                     a.default.createElement(
                       "span",
