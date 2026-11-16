@@ -2201,13 +2201,13 @@ if (!window.React || !window.ReactDOM) {
       bi = 50,
       Sg = 6,
       Fi = {
-        S: { nom: "Petit gap", jours: 0.5 / Be, qualite: 1, refus: -2 },
-        M: { nom: "Gap moyen", jours: 1 / Be, qualite: 1, refus: -3 },
-        L: { nom: "Gap complexe", jours: 2 / Be, qualite: 1, refus: -5 },
+        // Accepter : qualité +1 / +2 / +3 et avancement -1 / -2 / -3 % selon la taille ; refuser un vrai besoin : -2
+        S: { nom: "Petit gap", jours: 1 / Be, qualite: 1, refus: -2 },
+        M: { nom: "Gap moyen", jours: 2 / Be, qualite: 2, refus: -2 },
+        L: { nom: "Gap complexe", jours: 3 / Be, qualite: 3, refus: -2 },
       },
       regX = 1,
-      rfMax = 2,
-      rfQ = (g, f) => Math.max(-rfMax, g.refus * (f || 1)),
+      rfQ = (g) => g.refus,
       n2 = 2,
       ie = 10,
       Rt = [85, 100],
@@ -10132,7 +10132,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre ; attention cependant aux faux besoins. Le refuser, c'est risquer une perte de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus de jours.",
+              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus de jours.",
             ],
             [
               "Tickets",
