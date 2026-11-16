@@ -2150,9 +2150,10 @@ if (!window.React || !window.ReactDOM) {
     var Zn = 3e-3,
       Un = 0.5,
       ya = [
-        { p: 0, inter: [2.0, 2.5], ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
-        { p: 10, inter: [2.0, 2.5], ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
-        { p: 30, inter: [2.0, 2.5], ticket: 0.45, atelier: 0.45, regression: 0.1, imprevus: 0.7, regMax: 1 },
+        // gap : probabilité qu'une visite soit un gap (tiré dans la pioche, 20 % de fausses bonnes idées)
+        { p: 0, inter: [1.5, 2.0], gap: 0.8, ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
+        { p: 10, inter: [1.5, 2.0], gap: 0.8, ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
+        { p: 30, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0.1, imprevus: 0.7, regMax: 1 },
         { p: 60, inter: [2.0, 2.5], ticket: 0.6, atelier: 0.15, regression: 0.25, imprevus: 1.5, regMax: 2 },
         { p: 85, inter: [2.0, 2.5], ticket: 0.55, atelier: 0.05, regression: 0.4, imprevus: 1.5, regMax: 2 },
         { p: 95, inter: [2.0, 2.5], ticket: 0.8, atelier: 0, regression: 0.2, imprevus: 1, regMax: 1 },
@@ -2167,12 +2168,7 @@ if (!window.React || !window.ReactDOM) {
           o = Math.min(0.6, (i.regression * $n(r)) / Wi);
         return { atelier: i.atelier, regression: o, ticket: Math.max(0, 1 - i.atelier - o) };
       },
-      Yo = 9,
       pPiege = 0.2,
-      ti = 6,
-      Zr = [1, 30],
-      Qa = 3,
-      Ya = [32, 58],
       ai = 15,
       ei = 1 / Be,
       te = -2,
@@ -5948,29 +5944,11 @@ if (!window.React || !window.ReactDOM) {
       let r = (C) => vr.map((B, f) => (B[3] === C ? f : -1)).filter((B) => B >= 0),
         i = Er(r("reel")),
         o = Er(r("piege")),
-        // Chaque gap a pPiege (20 %) de chances d'être une fausse bonne idée ; quand les vrais besoins
-        // sont épuisés, les gaps suivants sont forcément des fausses bonnes idées (et inversement)
-        sq = Array.from({ length: Yo + ti + Qa }, () =>
+        // Pioche des gaps : chaque gap a pPiege (20 %) de chances d'être une fausse bonne idée ; quand les
+        // vrais besoins sont épuisés, les suivants sont forcément des fausses bonnes idées (et inversement)
+        gapDeck = Array.from({ length: i.length + o.length }, () =>
           (Math.random() < pPiege && o.length) || !i.length ? o.shift() : i.shift(),
-        ),
-        n = sq.slice(0, Yo + ti),
-        d = sq.slice(Yo + ti),
-        u = d.slice(0, Qa),
-        s = (Zr[1] - Zr[0]) / Math.max(1, n.length - 1),
-        k = n
-          .map((C, B) =>
-            Math.min(Zr[1], Math.max(Zr[0], Math.round(Zr[0] + B * s + (Math.random() - 0.5) * s * 0.6))),
-          )
-          .map((C, B, f) => (B && C <= f[B - 1] ? f[B - 1] + 1 : C)),
-        b = (Ya[1] - Ya[0]) / Math.max(1, u.length - 1),
-        F = u.map((C, B) => Math.round(Ya[0] + B * b + (Math.random() - 0.5) * b * 0.5)),
-        w = [
-          ...k.map((C, B) => ({ palier: C, idx: n[B], facteur: 1 })),
-          ...F.map((C, B) => ({ palier: C, idx: u[B], facteur: 1 })),
-        ];
-      w.sort((C, B) => C.palier - B.palier).forEach((C, B, f) => {
-        B && C.palier <= f[B - 1].palier && (C.palier = f[B - 1].palier + 1);
-      });
+        );
       return {
         hero: t,
         clicks: 0,
@@ -5980,7 +5958,8 @@ if (!window.React || !window.ReactDOM) {
         energy: 100,
         quality: bi,
         d: { imprevus: 0, burnout: 0, gaps: 0, ateliers: 0, gonogo: 0 },
-        gapPlan: w,
+        gapPlan: [],
+        gapDeck,
         arbitrages: [],
         nPieges: 0,
         piegesEvites: 0,
@@ -6102,6 +6081,7 @@ if (!window.React || !window.ReactDOM) {
       "quality",
       "d",
       "gapPlan",
+      "gapDeck",
       "arbitrages",
       "nPieges",
       "piegesEvites",
@@ -7491,7 +7471,7 @@ if (!window.React || !window.ReactDOM) {
             e.golive ||
             e.pu >= 1e5 ||
             Ce(e) ||
-            e.queue.some((M) => M.type === "ticket" || M.type === "atelier") ||
+            e.queue.some((M) => M.type === "ticket" || M.type === "atelier" || M.type === "gap") ||
             Ui(e)
           )
             return;
@@ -7505,16 +7485,27 @@ if (!window.React || !window.ReactDOM) {
             g = Math.floor(c.puMax / 1e3),
             M = Math.random(),
             j = _n(g, c.quality),
-            T = Math.floor(e / 12);
-          (c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0)),
+            T = Math.floor(e / 12),
+            gp = ma(g).gap || 0;
+          c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0));
+          if (gp && M < gp) {
+            // Visite « gap » : prochain gap de la pioche (ticket si la pioche est vide)
+            c.gapDeck && c.gapDeck.length
+              ? c.queue.push({ type: "gap", idx: c.gapDeck.shift(), facteur: 1, palier: g })
+              : c.queue.push({ type: "ticket", palier: g });
+            c.dirty = !0;
+          } else {
+            // Sinon, tirage habituel atelier / ticket / régression sur le reste de la probabilité
+            gp && (M = (M - gp) / (1 - gp));
             M < j.atelier
               ? c.queue.push({ type: "atelier", palier: g })
               : M < j.atelier + j.ticket || c.regMoisN >= ma(g).regMax
                 ? c.queue.push({ type: "ticket", palier: g })
-                : (c.regMoisN++, an()),
-            g >= 50 &&
-              (c.bnMois !== T && ((c.bnMois = T), (c.bnMoisN = 0)),
-              (c.bnMoisN || 0) < Math.ceil(ma(g).regMax / 2) && Math.random() < ma(g).regression / 2 && ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv())));
+                : (c.regMoisN++, an());
+          }
+          g >= 50 &&
+            (c.bnMois !== T && ((c.bnMois = T), (c.bnMoisN = 0)),
+            (c.bnMoisN || 0) < Math.ceil(ma(g).regMax / 2) && Math.random() < ma(g).regression / 2 && ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv()));
         },
         nn = (e) => {
           let c = n.current;
