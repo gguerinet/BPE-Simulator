@@ -2170,9 +2170,9 @@ if (!window.React || !window.ReactDOM) {
       pPiege = 0.2,
       ti = 6,
       Zr = [1, 30],
-      Xn = 2,
+      Xn = 0, // plus de gaps de dernière minute (18 gaps par partie : 15 + 3)
       ri = [60, 85],
-      Qa = 4,
+      Qa = 3,
       Ya = [32, 58],
       Ai = 1.5,
       Gn = 0.7,
@@ -10195,7 +10195,7 @@ if (!window.React || !window.ReactDOM) {
           [
             "Chaque phase a son ambiance\u2026 et ses visiteurs pr\xE9f\xE9r\xE9s.",
             [`${Sr[0][0]} % \xB7 ${Sr[0][1]}`, "la promenade de sant\xE9. Quelques tickets, les premiers gaps, des r\xE9unions o\xF9 tout le monde est d'accord, et l'illusion que le planning tiendra."],
-            [`${Sr[1][0]} % \xB7 ${Sr[1][1]}`, "la foire aux gaps. Les demandes arrivent en rafale, chacune \xAB vraiment indispensable \xBB, et quelques retardataires tomberont encore plus tard, jusqu'\xE0 la derni\xE8re minute. Accepter co\xFBte des jours, refuser co\xFBte de la qualit\xE9 : choisis tes combats."],
+            [`${Sr[1][0]} % \xB7 ${Sr[1][1]}`, "la foire aux gaps. Les demandes arrivent en rafale, chacune \xAB vraiment indispensable \xBB, et quelques retardataires tomberont encore plus tard. Accepter co\xFBte des jours, refuser co\xFBte de la qualit\xE9 : choisis tes combats."],
             [`${Sr[2][0]} % \xB7 ${Sr[2][1]}`, "le marathon des ateliers. La PMO Divalife a d\xE9couvert les invitations Outlook. Chaque atelier suivi te vide un peu plus, chaque atelier s\xE9ch\xE9 se paie en qualit\xE9."],
             [`${Sr[3][0]} % \xB7 ${Sr[3][1]}`, "la reprise des donn\xE9es. Ce qui marchait hier ne marche plus aujourd'hui : les r\xE9gressions se multiplient et les impr\xE9vus aussi. Heureusement, quelques bonnes nouvelles commencent \xE0 pointer le bout de leur nez."],
             [`${Sr[4][0]} % \xB7 ${Sr[4][1]}`, "le sprint des braves. La nuit, chaque clic avance une fois et demie plus vite, mais l'\xE9nergie fond deux fois plus vite. Caf\xE9, sueur et SQL."],
