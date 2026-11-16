@@ -2153,6 +2153,8 @@ if (!window.React || !window.ReactDOM) {
         { p: 0, inter: [2.0, 2.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
         { p: 10, inter: [2.0, 2.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
         { p: 30, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0.1, regMax: 1 },
+        // evt : probabilité d'un imprévu et d'une bonne nouvelle ; regFixe : régression tirée directement
+        { p: 50, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0, evt: 0.1, regFixe: 0.1, regMax: 1 },
         { p: 60, inter: [2.0, 2.5], ticket: 0.6, atelier: 0.15, regression: 0.25, regMax: 2 },
         { p: 85, inter: [2.0, 2.5], ticket: 0.55, atelier: 0.05, regression: 0.4, regMax: 2 },
         { p: 95, inter: [2.0, 2.5], ticket: 0.8, atelier: 0, regression: 0.2, regMax: 1 },
@@ -7504,7 +7506,8 @@ if (!window.React || !window.ReactDOM) {
             T = Math.floor(e / 12),
             gp = ma(g).gap || 0;
           c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0), (c.impMoisN = 0), (c.bnMoisN = 0));
-          let pi = g >= 50 ? Math.min(0.2, ma(g).regression) : 0, // imprévu et bonne nouvelle : 20 % maximum par visite
+          let pi = g >= 50 ? Math.min(0.2, ma(g).evt ?? ma(g).regression) : 0, // imprévu et bonne nouvelle : 20 % maximum par visite
+            rd = ma(g).regFixe || 0,
             cap = ma(g).regMax;
           if (gp && M < gp) {
             // Visite « gap » : prochain gap de la pioche (ticket si la pioche est vide)
@@ -7518,6 +7521,9 @@ if (!window.React || !window.ReactDOM) {
           } else if (M < gp + 2 * pi && (c.bnMoisN || 0) < cap) {
             // Bonne nouvelle (dès 50 %), même taux et même plafond
             ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv());
+          } else if (M < gp + 2 * pi + rd && c.regMoisN < cap) {
+            // Régression tirée directement (50-60 %), même plafond que d'habitude
+            (c.regMoisN++, an());
           } else {
             // Sinon, tirage habituel atelier / ticket / régression
             let R = Math.random();
