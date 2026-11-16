@@ -8038,7 +8038,8 @@ if (!window.React || !window.ReactDOM) {
         Ze = () => {
           let e = n.current,
             c = Ie();
-          return er(e) ? nr((we * c) / or) : nr(c * t2);
+          // Week-end d'urgence : la nuit du samedi au dimanche récupère comme une nuit normale (jusqu'à +10 %)
+          return er(e) && !(urgW(e) && e.inNight) ? nr((we * c) / or) : nr(c * t2);
         },
         urgW = (e) => {
           if (e.weUrgence == null) return !1;
@@ -10143,7 +10144,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Direction projet",
-              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche, et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
+              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche (jusqu'\xE0 10 % d'\xE9nergie, comme une nuit normale), et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
             ],
             [
               "Ateliers PMO Divalife",
