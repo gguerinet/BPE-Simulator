@@ -7188,6 +7188,8 @@ if (!window.React || !window.ReactDOM) {
               x([]),
               (c.attenteOK = !1),
               (c.dirty = !0));
+            // Fin d'une interaction (imprévu, régression, bonne nouvelle) : 2 jours avant la prochaine visite
+            (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && (c.lastInter = _t(c));
             if (e.kind === "regression" && k === "A") {
               ((c.energy = Math.max(1, c.energy - Sg)), (c.nSignales = (c.nSignales || 0) + 1));
               // Algorithme bas\u00e9 sur la qualit\u00e9
