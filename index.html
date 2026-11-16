@@ -9603,7 +9603,7 @@ if (!window.React || !window.ReactDOM) {
                   a.default.createElement(
                     "span",
                     { className: "whitespace-nowrap text-[11px] font-normal tabular-nums sm:text-sm", style: { lineHeight: 1.1 } },
-                    `+${et(Math.min(Ze(), eMx(Z) - Z.energy), 0)}\u00A0%`,
+                    `+${et(Math.max(0, Math.min(Ze(), eMx(Z) - Z.energy - (Z.cafeAttente || 0))), 0)}\u00A0%`, // café en cours déduit
                 ),
               ),
               a.default.createElement(
