@@ -6148,6 +6148,7 @@ if (!window.React || !window.ReactDOM) {
       "joursGagnes",
       "nSignales",
       "nRepares",
+      "nCorriges",
       "weekendsMaison",
       "prochaineReunion",
       "nReunionAcceptes",
@@ -6640,7 +6641,7 @@ if (!window.React || !window.ReactDOM) {
           intro:
             "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
           ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Signaler \xE0 l'IT co\xFBte de l'\xE9nergie ; plus la qualit\xE9 est basse, plus il risque d'\xEAtre trop tard (toujours \xE0 temps d\xE8s 90 %, jamais sous 60 %). Laisser faire, c'est perdre de la qualit\xE9 \xE0 coup s\xFBr."],
+            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, mais plus la qualit\xE9 est haute, plus l'IT risque d'\xEAtre trop tard. Corriger nous-m\xEAme est garanti, au prix d'avancement et d'\xE9nergie."],
             [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
             [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
           ],
@@ -10156,7 +10157,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus de jours.",
+              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus d'avancement.",
             ],
             [
               "Tickets",
@@ -10172,7 +10173,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Ateliers PMO Divalife",
-              "Les s\xE9cher, ce sont des utilisateurs moins bien form\xE9s qui ruinent le projet et font perdre en qualit\xE9. Les faire, c'est reculer de 1 % d'avancement (pr\xE8s d'une journ\xE9e) et y laisser de l'\xE9nergie. Choisis ton poison !",
+              "Les s\xE9cher, ce sont des utilisateurs moins bien form\xE9s qui ruinent le projet et font perdre en qualit\xE9. Les faire, c'est reculer de 1 % d'avancement (environ une demi-journ\xE9e) et y laisser de l'\xE9nergie. Choisis ton poison !",
             ],
           ],
         ],
@@ -10183,7 +10184,7 @@ if (!window.React || !window.ReactDOM) {
             [`${Sr[0][0]} % \xB7 ${Sr[0][1]}`, "la promenade de sant\xE9. Quelques tickets, les premiers gaps, des r\xE9unions o\xF9 tout le monde est d'accord, et l'illusion que le planning tiendra."],
             [`${Sr[1][0]} % \xB7 ${Sr[1][1]}`, "la foire aux gaps. Les demandes arrivent en rafale, chacune \xAB vraiment indispensable \xBB, et quelques retardataires tomberont encore plus tard. Accepter co\xFBte des jours, refuser co\xFBte de la qualit\xE9 : choisis tes combats."],
             [`${Sr[2][0]} % \xB7 ${Sr[2][1]}`, "le marathon des ateliers. La PMO Divalife a d\xE9couvert les invitations Outlook. Chaque atelier suivi te vide un peu plus, chaque atelier s\xE9ch\xE9 se paie en qualit\xE9."],
-            [`${Sr[3][0]} % \xB7 ${Sr[3][1]}`, "la reprise des donn\xE9es. Ce qui marchait hier ne marche plus aujourd'hui : les r\xE9gressions se multiplient et les impr\xE9vus aussi. Heureusement, quelques bonnes nouvelles commencent \xE0 pointer le bout de leur nez."],
+            [`${Sr[3][0]} % \xB7 ${Sr[3][1]}`, "la reprise des donn\xE9es. Ce qui marchait hier ne marche plus aujourd'hui : les r\xE9gressions se multiplient et les impr\xE9vus aussi. Heureusement, les bonnes nouvelles aussi deviennent plus fr\xE9quentes."],
             [`${Sr[4][0]} % \xB7 ${Sr[4][1]}`, "le sprint des braves. La nuit, chaque clic avance une fois et demie plus vite, mais l'\xE9nergie fond deux fois plus vite. Caf\xE9, sueur et SQL."],
             [`${Sr[5][0]} % \xB7 ${Sr[5][1]}`, "l'heure de v\xE9rit\xE9. Le comit\xE9 go/no-go te met face au choix : un GO h\xE9ro\xEFque au risque d'un d\xE9marrage chaotique qui ab\xEEme la qualit\xE9, ou un NO-GO prudent qui repousse la ligne d'arriv\xE9e mais sauve les meubles."],
             [`${Sr[6][0]} % \xB7 ${Sr[6][1]}`, "le Comex rend son verdict. Champagne\u2026 ou \xAB point de recadrage \xBB."],
