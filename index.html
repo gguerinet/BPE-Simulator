@@ -2137,16 +2137,17 @@ if (!window.React || !window.ReactDOM) {
       Qo = it(Ao),
       y1 = it(wo);
     var eMx = (t) => Math.max(20, 100 - 20 * ((t && t.weBureau) || 0));
-    var Ma = 0.0425,
-      or = 40,
-      Ha = 28,
-      yi = 12,
+    // Durée de partie : avancement par clic x1,5 et journée de 28 clics (au lieu de 40)
+    var Ma = 0.06375,
+      or = 28,
+      Ha = 20,
+      yi = 8,
       Bi = 5,
       On = 3,
-      Ka = 0.085,
+      Ka = 0.1275,
       Jr = 3,
       In = 5e3;
-    var Zn = 2e-3,
+    var Zn = 3e-3,
       Un = 0.5,
       ya = [
         { p: 0, inter: [2.0, 2.5], ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
@@ -2183,8 +2184,8 @@ if (!window.React || !window.ReactDOM) {
       ae = { qualite: -5 },
       ee = 2,
       gr = { jours: 2 / Be, qualite: 2 },
-      Qn = -0.17,
-      Yn = -0.34,
+      Qn = -0.17 * (40 / 28),
+      Yn = -0.34 * (40 / 28),
       tmaP = 0.5,
       tmaR = 1,
       pe = 5,
@@ -2919,7 +2920,7 @@ if (!window.React || !window.ReactDOM) {
         return {
           qualite: r(((t.qualite - 30) / 60) * 100),
           budget: r(100 - (Math.max(0, (t.cout || 0) - 5e3) / 25e3) * 100),
-          delai: r(((175 - Math.max(95, t.total)) / 80) * 100),
+          delai: r(((170 - Math.max(90, t.total)) / 80) * 100),
         };
       },
       w2 = (t) => {
@@ -10174,7 +10175,7 @@ if (!window.React || !window.ReactDOM) {
           [
             "Pour d\xE9crocher les f\xE9licitations du Comex, le combo magique est simple : du vite fait, du bien fait, et un budget consultant plus que r\xE9duit !",
             "Attention aux faux pas, car un seul indicateur plomb\xE9 ruine tout ; oublie donc les paris de casse-cou et joue l'\xE9quilibre.",
-            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+95, nul \xE0 partir de J+175. Qualit\xE9 : parfaite d\xE8s 90 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
+            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+90, nul \xE0 partir de J+170. Qualit\xE9 : parfaite d\xE8s 90 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
             ["5 000 points", "m\xE9daille de bronze et une bise du patron."],
             ["7 000 points", "m\xE9daille d'argent et 15 secondes de gloire dans l'intranet."],
             ["8 000 points", "m\xE9daille d'or et ton visage grav\xE9 sur les murs de l'usine jusqu'\xE0 la fin des temps."],
@@ -11442,8 +11443,8 @@ if (!window.React || !window.ReactDOM) {
             i: 1,
             lo: 0,
             hi: Math.max(185, ...cv.map((m) => m[1])) * 1.05,
-            max: 95,
-            nul: 175,
+            max: 90,
+            nul: 170,
             f: (v) => "J+" + Math.round(v),
           },
         ];
