@@ -2150,16 +2150,21 @@ if (!window.React || !window.ReactDOM) {
     var Un = 0.5,
       ya = [
         // gap : probabilité qu'une visite soit un gap (tiré dans la pioche, 20 % de fausses bonnes idées)
-        { p: 0, inter: [2.0, 2.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
-        { p: 10, inter: [2.0, 2.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
-        { p: 30, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0.1, regMax: 1 },
+        { p: 0, inter: [1.5, 2.0], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
+        { p: 10, inter: [1.5, 2.0], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
+        { p: 30, inter: [1.5, 2.0], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0.1, regMax: 1 },
         // evt : probabilité d'un imprévu et d'une bonne nouvelle ; regFixe : régression tirée directement
-        { p: 50, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0, evt: 0.1, regFixe: 0.1, regMax: 1 },
-        { p: 60, inter: [2.0, 2.5], ticket: 0.6, atelier: 0.15, regression: 0.25, regMax: 2 },
-        { p: 85, inter: [2.0, 2.5], ticket: 0.55, atelier: 0.05, regression: 0.4, regMax: 2 },
-        { p: 95, inter: [2.0, 2.5], ticket: 0.8, atelier: 0, regression: 0.2, regMax: 1 },
+        { p: 50, inter: [1.5, 2.0], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0, evt: 0.1, regFixe: 0.1, regMax: 1 },
+        { p: 60, inter: [1.5, 2.0], ticket: 0.6, atelier: 0.15, regression: 0.25, regMax: 2 },
+        { p: 85, inter: [1.5, 2.0], ticket: 0.55, atelier: 0.05, regression: 0.4, regMax: 2 },
+        { p: 95, inter: [1.5, 2.0], ticket: 0.8, atelier: 0, regression: 0.2, regMax: 1 },
       ],
       ma = (t) => ya.reduce((r, i) => (t >= i.p ? i : r), ya[0]),
+      // Prochaine visite comptée à partir de la fin de l'interaction ; si elle tombe la nuit ou le week-end, elle attend le matin suivant
+      nvFin = (c) => {
+        let i = ma(c.puMax / 1e3).inter;
+        c.nextVisite = Math.max(c.nextVisite || 0, _t(c) + Nt(i[0], i[1]));
+      },
       ji = 1,
       // Conversion « jours » -> % des imprévus et bonnes nouvelles : fixée (indépendante du nombre de clics par jour)
       Be = 40 * 0.017,
@@ -6113,7 +6118,6 @@ if (!window.React || !window.ReactDOM) {
       "coffeeReadyDay",
       "regMois",
       "regMoisN",
-      "lastInter",
       "impMoisN",
       "journal",
       "curve",
@@ -7188,8 +7192,8 @@ if (!window.React || !window.ReactDOM) {
               x([]),
               (c.attenteOK = !1),
               (c.dirty = !0));
-            // Fin d'une interaction (imprévu, régression, bonne nouvelle) : 2 jours avant la prochaine visite
-            (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && (c.lastInter = _t(c));
+            // Fin d'une interaction (imprévu, régression, bonne nouvelle) : prochaine visite recomptée à partir de maintenant
+            (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
             if (e.kind === "regression" && k === "A") {
               ((c.energy = Math.max(1, c.energy - Sg)), (c.nSignales = (c.nSignales || 0) + 1));
               // Algorithme bas\u00e9 sur la qualit\u00e9
@@ -7497,14 +7501,13 @@ if (!window.React || !window.ReactDOM) {
           )
             return;
           let c = _t(e);
-          if (c < e.nextVisite || c < (e.lastInter ?? -1e9) + 2) return;
+          if (c < e.nextVisite) return;
           let g = ma(e.puMax / 1e3);
           ((e.nextVisite = c + Nt(g.inter[0], g.inter[1])), on(c));
         },
         on = (e) => {
-          let c = n.current;
-          c.lastInter = e;
-          let g = Math.floor(c.puMax / 1e3),
+          let c = n.current,
+            g = Math.floor(c.puMax / 1e3),
             M = Math.random(),
             j = _n(g, c.quality),
             T = Math.floor(e / 12),
@@ -7687,8 +7690,8 @@ if (!window.React || !window.ReactDOM) {
         },
         da = (e) => {
           let c = n.current;
-          // Fin d'une interaction : la prochaine visite attend au moins 2 jours à partir de maintenant
-          c.lastInter = _t(c);
+          // Fin d'une interaction : la prochaine visite est recomptée à partir de maintenant (1,5 à 2 jours)
+          nvFin(c);
           ((c.calme = _t(c) + 1),
             e && (e.mood === "happy" ? vt.positif() : e.mood === "smirk" ? vt.tampon() : vt.negatif()),
             (c.dilemma = null),
