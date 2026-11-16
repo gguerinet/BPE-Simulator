@@ -5003,6 +5003,7 @@ if (!window.React || !window.ReactDOM) {
       className: d = "",
       title: u,
       tuto: tu,
+      style: sx,
     }) {
       let tq = (0, a.useRef)({ id: null, ignore: 0 });
       return a.default.createElement(
@@ -5031,7 +5032,7 @@ if (!window.React || !window.ReactDOM) {
           className:
             "jde-btn border-[3px] font-semibold leading-tight disabled:cursor-not-allowed disabled:opacity-50 " +
             d,
-          style: { background: i, color: o, borderColor: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr },
+          style: { background: i, color: o, borderColor: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr, ...sx },
         },
         n,
       );
@@ -10943,7 +10944,8 @@ if (!window.React || !window.ReactDOM) {
         cOut = (0, a.useRef)(null),
         cIn = (0, a.useRef)(null),
         cDots = (0, a.useRef)(null),
-        cFiche = (0, a.useRef)(null);
+        cFiche = (0, a.useRef)(null),
+        cBtns = (0, a.useRef)(null);
       (0, a.useEffect)(() => {
         let f = () => {
           let H = window.innerWidth,
@@ -10966,20 +10968,25 @@ if (!window.React || !window.ReactDOM) {
         if (!out || !el || !el.children.length) return;
         let ks = Array.from(el.children),
           pay = window.innerWidth > window.innerHeight * 1.2,
-          cible = pay && cFiche.current ? cFiche.current : ks[ks.length - 1],
-          used = cible.getBoundingClientRect().bottom - ks[0].getBoundingClientRect().top + (pay ? 16 : 28),
+          // Les boutons Reprendre / Nouvelle partie doivent tenir dans l'écran sans défiler
+          cible = cBtns.current || ks[ks.length - 1],
+          used = cible.getBoundingClientRect().bottom - ks[0].getBoundingClientRect().top + 20,
           dispo = out.clientHeight,
           pas = Aa + 2,
           lg = Math.min(out.clientWidth, window.innerWidth),
           rang = lg * (pay ? 0.8 : 1) - 24,
           maxS = Math.max(3, Math.min(12, Math.floor((rang - 2 * 64 - 4 * 24) / ((Wa + 2) * (pay ? 2.2 : 1.9))))),
-          minS = Math.min(maxS, pay ? 3 : window.innerWidth >= 1024 ? 5 : 4);
+          minS = Math.min(maxS, 2);
         cSc > maxS ? setCSc(maxS) : used > dispo && cSc > minS ? setCSc(cSc - 1) : used + pas <= dispo && cSc < maxS && setCSc(cSc + 1);
       }, [cSc, cTick]);
       let cVw = typeof window < "u" ? window.innerWidth : 1024,
         cVh = typeof window < "u" ? window.innerHeight : 768,
         cPay = cVw > cVh * 1.2,
         cLarg = cPay ? "80%" : "100%",
+        // Hauteur commune des boutons Reprendre / Nouvelle partie
+        cBtnH = cVw >= 640 && cVh >= 500 ? 60 : 48,
+        // Écran très bas (téléphone en paysage) : la fiche du héros est masquée pour garder les boutons visibles
+        cBas = cVh < 480,
         cMarge = 8,
         cTitre = Math.round(Math.max(24, Math.min(cVw * 0.055, cVh * (cPay ? 0.065 : 0.09), 88))),
         cIdx = Math.max(0, Ca.findIndex((f) => f.id === u)),
@@ -11117,13 +11124,13 @@ if (!window.React || !window.ReactDOM) {
               a.default.createElement(
                 "div",
                 { className: "min-w-0 text-center", "aria-live": "polite" },
-                a.default.createElement("div", { className: "truncate text-2xl font-bold text-white sm:text-4xl", style: { fontFamily: Lr, lineHeight: 1.25 } }, B.nom),
-                a.default.createElement("div", { className: "text-sm font-semibold text-[#7DD3FC] sm:text-lg" }, B.role),
+                a.default.createElement("div", { className: "truncate text-2xl font-bold text-white sm:text-4xl", style: { fontFamily: Lr, lineHeight: 1.25, fontSize: cBas ? 22 : undefined } }, B.nom),
+                a.default.createElement("div", { className: "text-sm font-semibold text-[#7DD3FC] sm:text-lg", style: { display: cBas ? "none" : undefined } }, B.role),
               ),
             ),
             a.default.createElement(
               "div",
-              { className: "flex gap-2", "data-nosnd": "1", ref: cDots },
+              { className: "flex gap-2", "data-nosnd": "1", ref: cDots, style: { display: cVh < 600 ? "none" : undefined } },
               Ca.map((f, n2) =>
                 a.default.createElement("button", {
                   key: f.id,
@@ -11142,7 +11149,7 @@ if (!window.React || !window.ReactDOM) {
                 className: "mx-auto border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-center text-white sm:border-4 sm:px-3 sm:py-2",
                 ref: cFiche,
                 // Même largeur que la rangée du carrousel, bord à bord avec les flèches jaunes
-                style: { borderColor: W, boxShadow: `5px 5px 0 ${W}`, width: `calc(${cLarg} - ${2 * cMarge}px)` },
+                style: { borderColor: W, boxShadow: `5px 5px 0 ${W}`, width: `calc(${cLarg} - ${2 * cMarge}px)`, display: cBas ? "none" : undefined },
               },
               a.default.createElement(
                 "div",
@@ -11180,7 +11187,7 @@ if (!window.React || !window.ReactDOM) {
             { className: "flex flex-col items-center gap-2" },
             a.default.createElement(
               "div",
-              { className: "flex flex-wrap items-center justify-center gap-2.5 sm:gap-3" },
+              { className: "flex w-full items-center justify-center gap-2.5 sm:gap-3", ref: cBtns },
               w &&
                 a.default.createElement(
                   mt,
@@ -11188,9 +11195,10 @@ if (!window.React || !window.ReactDOM) {
                     bg: "#22C55E",
                     fg: W,
                     onClick: () => t(w.id, r),
-                    className: "flex items-center gap-2 px-3 py-1.5 text-base sm:px-4 sm:py-2 sm:text-xl",
+                    className: "flex shrink-0 items-center gap-2 px-2.5 text-sm sm:px-4 sm:text-xl",
+                    style: { height: cBtnH, whiteSpace: "nowrap" },
                   },
-                  a.default.createElement(_a, { size: 20, strokeWidth: 3 }),
+                  cVw >= 400 && a.default.createElement(_a, { size: 20, strokeWidth: 3 }),
                   a.default.createElement(
                     "span",
                     { className: "flex flex-col items-start leading-tight" },
@@ -11210,9 +11218,10 @@ if (!window.React || !window.ReactDOM) {
                 {
                   bg: "#F97316",
                   onClick: () => t(B.id, null),
-                  className: "flex items-center gap-2 px-3 py-2 text-base sm:px-5 sm:text-2xl",
+                  className: "flex shrink-0 items-center gap-2 px-2.5 text-sm sm:px-5 sm:text-2xl",
+                  style: { height: cBtnH, whiteSpace: "nowrap" },
                 },
-                a.default.createElement(ka, { size: 22, strokeWidth: 3 }),
+                cVw >= 400 && a.default.createElement(ka, { size: 22, strokeWidth: 3 }),
                 " ",
                 w ? "Nouvelle partie" : "Commencer le projet",
               ),
