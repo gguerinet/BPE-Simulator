@@ -7504,7 +7504,7 @@ if (!window.React || !window.ReactDOM) {
             T = Math.floor(e / 12),
             gp = ma(g).gap || 0;
           c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0), (c.impMoisN = 0), (c.bnMoisN = 0));
-          let pi = g >= 50 ? ma(g).regression : 0,
+          let pi = g >= 50 ? Math.min(0.2, ma(g).regression) : 0, // imprévu et bonne nouvelle : 20 % maximum par visite
             cap = ma(g).regMax;
           if (gp && M < gp) {
             // Visite « gap » : prochain gap de la pioche (ticket si la pioche est vide)
