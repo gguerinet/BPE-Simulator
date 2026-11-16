@@ -2203,6 +2203,9 @@ if (!window.React || !window.ReactDOM) {
         L: { nom: "Gap complexe", jours: 3 / Be, qualite: 3, refus: -2 },
       },
       regX = 1,
+      // Régression corrigée par nos soins : avancement perdu (%) et énergie selon la taille
+      corrA = { 1: 1, 2: 2, 3: 2 },
+      corrE = { 1: 6, 2: 8, 3: 12 },
       rfQ = (g) => g.refus,
       n2 = 2,
       ie = 10,
@@ -7152,6 +7155,7 @@ if (!window.React || !window.ReactDOM) {
             fx: j.fx,
             effet: !!j.effet,
             choix: j.choix || null,
+            corr: j.corr || null,
             num: j.num,
             ligne: !!j.ligne,
           }),
@@ -7188,14 +7192,13 @@ if (!window.React || !window.ReactDOM) {
             (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
             if (e.kind === "regression" && k === "A") {
               ((c.energy = Math.max(1, c.energy - Sg)), (c.nSignales = (c.nSignales || 0) + 1));
-              // Algorithme bas\u00e9 sur la qualit\u00e9
-              // Plus la qualit\u00e9 est haute, plus le signalement a de chances d'\u00e9chouer
+              // Plus la qualité est haute, plus le signalement a de chances d'échouer
               let tauxSucces = (c.quality >= 80) ? 0.25 :
                                (c.quality >= 60) ? 0.5 :
                                (c.quality >= 40) ? 0.75 : 1;
 
               if (Math.random() < tauxSucces) {
-                // Correction \u00e0 temps
+                // Correction à temps
                 M = null;
                 c.nRepares = (c.nRepares || 0) + 1;
                 Mt("Corrig\xE9e \xE0 temps", "ok", "", 3e3, {
@@ -7209,12 +7212,18 @@ if (!window.React || !window.ReactDOM) {
                   fx: [{ t: "e", v: -Sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
                 });
               }
-            } else
-              e.kind === "regression" &&
-                k === "B" &&
-                M &&
-                M.v &&
-                Mt("R\xE9gression ignor\xE9e", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(M.v) }] });
+            } else if (e.kind === "regression" && k === "B") {
+              // Corrigée par nos soins : aucune perte de qualité, mais de l'avancement et de l'énergie
+              let co = e.corr || { a: 2, e: 8 };
+              ((M = null),
+                (c.energy = Math.max(1, c.energy - co.e)),
+                (c.nCorriges = (c.nCorriges || 0) + 1),
+                Br(co.a / Be, "regressions"),
+                Mt("Corrig\xE9e par nos soins", "ok", "", 3e3, {
+                  ligne: !0,
+                  fx: [{ t: "a", v: -co.a }, { t: "e", v: -co.e }],
+                }));
+            }
             (M && Ee(M), d(), bt(yr, 150));
           }
         },
@@ -7339,15 +7348,18 @@ if (!window.React || !window.ReactDOM) {
         an = () => {
           let e = n.current,
             [c, g] = pv(e, "regressions", p2),
-            M = Math.max(0.5, Math.round(g * regX * Tt.incidentFacteur(t) * 2) / 2);
+            M = Math.max(0.5, Math.round(g * regX * Tt.incidentFacteur(t) * 2) / 2),
+            ca = corrA[g] || 2,
+            ce = corrE[g] || 8;
           (e.nRegressions++,
             Mt(c, "regression", "", 0, {
               ok: !0,
               fx: [{ t: "q", v: -M }],
               effet: { kind: "qualite", src: "regressions", v: -M },
+              corr: { a: ca, e: ce },
               choix: [
                 { id: "A", label: "Signaler \xE0 l'IT", bg: "#0E7490", fx: [{ t: "e", v: -Sg }] },
-                { id: "B", label: "Laisser faire", bg: "#9F1239", fx: [{ t: "q", v: -M }] },
+                { id: "B", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }, { t: "e", v: -ce }] },
               ],
             }));
         },
@@ -10152,7 +10164,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Les r\xE9gressions peuvent massacrer la qualit\xE9 si elles ne sont pas signal\xE9es et corrig\xE9es rapidement. Les signaler \xE0 l'IT co\xFBte toujours un peu d'\xE9nergie, et la r\xE9ussite d\xE9pend de la qualit\xE9 du projet : plus elle est haute, plus l'IT prend son temps. Correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous. Trop tard, la correction ne sert \xE0 rien et la qualit\xE9 baisse quand m\xEAme. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAme, correction garantie au prix de 1 ou 2 % d'avancement et de 6 \xE0 12 % d'\xE9nergie selon sa taille. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
@@ -11741,6 +11753,7 @@ if (!window.React || !window.ReactDOM) {
                         ["imprevus", "Impr\xE9vus", -(mv.imprevus || 0)],
                         ["gaps", "Gaps", -(mv.gaps || 0)],
                         ["ateliers", "Ateliers PMO Divalife", -(mv.ateliers || 0)],
+                        ["regressions", "R\xE9gressions corrig\xE9es", -(mv.regressions || 0)],
                         ["gonogo", "NO-GO", -(mv.gonogo || 0)],
                         ["autres", "Autres", -(mv.autres || 0)],
                       ],
