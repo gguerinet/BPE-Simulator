@@ -4834,6 +4834,8 @@ if (!window.React || !window.ReactDOM) {
   .jde-golive{font-size:34px!important;padding:0 14px!important;}
   .jde-pause{max-height:calc(100dvh - 12px)!important;overflow-y:auto!important;}
 }
+/* Rapport Comex : 3 colonnes dès 1024 px, le graphique des indicateurs reste dans sa colonne de droite */
+@media (width >= 64rem){.jde-rapport{grid-template-columns:1.15fr 1fr 1fr}}
 @media (hover: none) and (pointer: coarse){.jde-kbd{display:none!important}}
 .jde-root p,.jde-root span,.jde-root div,.jde-root button{text-wrap:pretty;}
 .jde-pop,.jde-pop *{text-wrap:balance;}
@@ -11697,7 +11699,7 @@ if (!window.React || !window.ReactDOM) {
             "div",
             {
               className:
-                "grid min-h-0 flex-1 gap-2 overflow-y-auto p-2 sm:gap-3 sm:p-3 md:grid-cols-2 xl:grid-cols-[1.15fr_1fr_1fr]",
+                "jde-rapport grid min-h-0 flex-1 gap-2 overflow-y-auto p-2 sm:gap-3 sm:p-3 md:grid-cols-2 xl:grid-cols-[1.15fr_1fr_1fr]",
             },
             a.default.createElement(
               "div",
@@ -12038,7 +12040,7 @@ if (!window.React || !window.ReactDOM) {
             ),
             a.default.createElement(
               "div",
-              { className: "flex min-w-0 flex-col gap-2 sm:gap-3 md:col-span-2 xl:col-span-1" },
+              { className: "flex min-w-0 flex-col gap-2 sm:gap-3" },
               a.default.createElement(
                 "section",
                 { className: "border-[3px] bg-white", style: { borderColor: W } },
