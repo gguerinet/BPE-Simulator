@@ -2147,16 +2147,15 @@ if (!window.React || !window.ReactDOM) {
       Ka = 0.1275,
       Jr = 3,
       In = 5e3;
-    var Zn = 3e-3,
-      Un = 0.5,
+    var Un = 0.5,
       ya = [
         // gap : probabilité qu'une visite soit un gap (tiré dans la pioche, 20 % de fausses bonnes idées)
-        { p: 0, inter: [1.0, 1.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
-        { p: 10, inter: [1.0, 1.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
-        { p: 30, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0.1, imprevus: 0.7, regMax: 1 },
-        { p: 60, inter: [2.0, 2.5], ticket: 0.6, atelier: 0.15, regression: 0.25, imprevus: 1.5, regMax: 2 },
-        { p: 85, inter: [2.0, 2.5], ticket: 0.55, atelier: 0.05, regression: 0.4, imprevus: 1.5, regMax: 2 },
-        { p: 95, inter: [2.0, 2.5], ticket: 0.8, atelier: 0, regression: 0.2, imprevus: 1, regMax: 1 },
+        { p: 0, inter: [2.0, 2.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
+        { p: 10, inter: [2.0, 2.5], gap: 0.8, ticket: 1, atelier: 0, regression: 0, regMax: 1 },
+        { p: 30, inter: [2.0, 2.5], gap: 0.2, ticket: 0.45, atelier: 0.45, regression: 0.1, regMax: 1 },
+        { p: 60, inter: [2.0, 2.5], ticket: 0.6, atelier: 0.15, regression: 0.25, regMax: 2 },
+        { p: 85, inter: [2.0, 2.5], ticket: 0.55, atelier: 0.05, regression: 0.4, regMax: 2 },
+        { p: 95, inter: [2.0, 2.5], ticket: 0.8, atelier: 0, regression: 0.2, regMax: 1 },
       ],
       ma = (t) => ya.reduce((r, i) => (t >= i.p ? i : r), ya[0]),
       ji = 1,
@@ -6112,6 +6111,7 @@ if (!window.React || !window.ReactDOM) {
       "coffeeReadyDay",
       "regMois",
       "regMoisN",
+      "impMoisN",
       "journal",
       "curve",
       "curveLast",
@@ -7350,6 +7350,19 @@ if (!window.React || !window.ReactDOM) {
               ],
             }));
         },
+        imp = () => {
+          let g = n.current,
+            [Et, Jt0] = pv(g, "imprevus", c2),
+            Jt = r05(Jt0 * impX) * Tt.imprevuFacteur(t);
+          ((g.d.imprevus += Jt),
+            g.nImprevus++,
+            Mt(Et, "imprevu", "", 0, {
+              ok: !0,
+              fx: [{ t: "a", v: -Jt }],
+              effet: { kind: "recul", j: Jt },
+              choix: [{ id: "OK", label: "OK" }],
+            }));
+        },
         bnv = () => {
           let e = n.current,
             [c, g, M] = pv(e, "bonnes", BonNouv);
@@ -7490,25 +7503,30 @@ if (!window.React || !window.ReactDOM) {
             j = _n(g, c.quality),
             T = Math.floor(e / 12),
             gp = ma(g).gap || 0;
-          c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0));
+          c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0), (c.impMoisN = 0), (c.bnMoisN = 0));
+          let pi = g >= 50 ? ma(g).regression : 0,
+            cap = ma(g).regMax;
           if (gp && M < gp) {
             // Visite « gap » : prochain gap de la pioche (ticket si la pioche est vide)
             c.gapDeck && c.gapDeck.length
               ? c.queue.push({ type: "gap", idx: c.gapDeck.shift(), facteur: 1, palier: g })
               : c.queue.push({ type: "ticket", palier: g });
             c.dirty = !0;
+          } else if (M < gp + pi && (c.impMoisN || 0) < cap) {
+            // Imprévu (dès 50 %), au plus regMax par période de 12 jours, comme les régressions
+            ((c.impMoisN = (c.impMoisN || 0) + 1), imp());
+          } else if (M < gp + 2 * pi && (c.bnMoisN || 0) < cap) {
+            // Bonne nouvelle (dès 50 %), même taux et même plafond
+            ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv());
           } else {
-            // Sinon, tirage habituel atelier / ticket / régression sur le reste de la probabilité
-            gp && (M = (M - gp) / (1 - gp));
-            M < j.atelier
+            // Sinon, tirage habituel atelier / ticket / régression
+            let R = Math.random();
+            R < j.atelier
               ? c.queue.push({ type: "atelier", palier: g })
-              : M < j.atelier + j.ticket || c.regMoisN >= ma(g).regMax
+              : R < j.atelier + j.ticket || c.regMoisN >= ma(g).regMax
                 ? c.queue.push({ type: "ticket", palier: g })
                 : (c.regMoisN++, an());
           }
-          g >= 50 &&
-            (c.bnMois !== T && ((c.bnMois = T), (c.bnMoisN = 0)),
-            (c.bnMoisN || 0) < Math.ceil(ma(g).regMax / 2) && Math.random() < ma(g).regression / 2 && ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv()));
         },
         nn = (e) => {
           let c = n.current;
@@ -8165,21 +8183,7 @@ if (!window.React || !window.ReactDOM) {
               lr(ur, br, "+ b.w.", "#C4B5FD");
             } else Et || lr(U + 30, J, "+", "#C4B5FD");
           } else lr(U, J, "+", T2slow ? "#FCA5A5" : gt ? "#67E8F9" : "#FFFFFF");
-          if (
-            (--g.msgIn <= 0 && ((g.msgIn = 28 + Math.floor(Math.random() * 16)), Te(jt(l2))),
-            g.puMax >= 3e4 && g.pu < 1e5 && Math.random() < Zn * ma(g.puMax / 1e3).imprevus)
-          ) {
-            let [Et, Jt0] = pv(g, "imprevus", c2),
-              Jt = r05(Jt0 * impX) * Tt.imprevuFacteur(t);
-            ((g.d.imprevus += Jt),
-              g.nImprevus++,
-              Mt(Et, "imprevu", "", 0, {
-                ok: !0,
-                fx: [{ t: "a", v: -Jt }],
-                effet: { kind: "recul", j: Jt },
-                choix: [{ id: "OK", label: "OK" }],
-              }));
-          }
+          --g.msgIn <= 0 && ((g.msgIn = 28 + Math.floor(Math.random() * 16)), Te(jt(l2)));
           {
             let Et = Hi(g.puMax / 1e3);
             Et > g.phaseVue &&
