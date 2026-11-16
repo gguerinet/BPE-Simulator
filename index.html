@@ -7406,12 +7406,8 @@ if (!window.React || !window.ReactDOM) {
                   j.push({ kind: "recul", j: xt, src: "gaps" }));
                 ((M += X.qualite), j.push({ kind: "qualite", src: "gaps", v: X.qualite }));
               } else
-                (c.refused++,
-                  c.nReunionRefuses++,
-                  c.nPieges++,
-                  c.piegesEvites++,
-                  (M += X.qualite),
-                  j.push({ kind: "qualite", src: "gaps", v: X.qualite }));
+                // Fausse bonne idée refusée en réunion : pas de bonus de qualité (contrairement à un refus direct)
+                (c.refused++, c.nReunionRefuses++, c.nPieges++, c.piegesEvites++);
               return (
                 c.journal.push({
                   palier: J.palier,
@@ -10140,7 +10136,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre ; attention cependant aux faux besoins. Le refuser, c'est risquer une perte de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus de jours.",
+              "Valider un gap, c'est plus de boulot mais du travail propre ; attention cependant aux faux besoins. Le refuser, c'est risquer une perte de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus de jours.",
             ],
             [
               "Tickets",
