@@ -2149,8 +2149,8 @@ if (!window.React || !window.ReactDOM) {
     var Zn = 2e-3,
       Un = 0.5,
       ya = [
-        { p: 0, inter: [1.7, 2.2], ticket: 1, atelier: 0, regression: 0, imprevus: 0.5, regMax: 1 },
-        { p: 10, inter: [1.7, 2.2], ticket: 0.9, atelier: 0, regression: 0.1, imprevus: 1, regMax: 1 },
+        { p: 0, inter: [1.7, 2.2], ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
+        { p: 10, inter: [1.7, 2.2], ticket: 1, atelier: 0, regression: 0, imprevus: 0, regMax: 1 },
         { p: 30, inter: [1.0, 1.5], ticket: 0.45, atelier: 0.45, regression: 0.1, imprevus: 0.7, regMax: 1 },
         { p: 60, inter: [1.0, 1.5], ticket: 0.6, atelier: 0.15, regression: 0.25, imprevus: 1.5, regMax: 2 },
         { p: 85, inter: [1.2, 1.7], ticket: 0.55, atelier: 0.05, regression: 0.4, imprevus: 1.5, regMax: 2 },
@@ -2170,17 +2170,13 @@ if (!window.React || !window.ReactDOM) {
       pPiege = 0.2,
       ti = 6,
       Zr = [1, 30],
-      Xn = 0, // plus de gaps de dernière minute (18 gaps par partie : 15 + 3)
-      ri = [60, 85],
       Qa = 3,
       Ya = [32, 58],
-      Ai = 1.5,
-      Gn = 0.7,
       ai = 15,
       ei = 1 / Be,
       te = -2,
       oi = 12,
-      re = 1,
+      re = 0.5,
       Jn = 1 / 3,
       Rn = 95,
       Kn = 0.5,
@@ -2213,9 +2209,8 @@ if (!window.React || !window.ReactDOM) {
       regX = 1,
       rfMax = 2,
       rfQ = (g, f) => Math.max(-rfMax, g.refus * (f || 1)),
-      i2 = 0.4,
       n2 = 2,
-      ie = 8,
+      ie = 10,
       Rt = [85, 100],
       ne = 1.5,
       d2 = 2,
@@ -2924,7 +2919,7 @@ if (!window.React || !window.ReactDOM) {
         return {
           qualite: r(((t.qualite - 30) / 60) * 100),
           budget: r(100 - (Math.max(0, (t.cout || 0) - 5e3) / 25e3) * 100),
-          delai: r(((165 - Math.max(75, t.total)) / 90) * 100),
+          delai: r(((175 - Math.max(95, t.total)) / 80) * 100),
         };
       },
       w2 = (t) => {
@@ -3185,17 +3180,6 @@ if (!window.React || !window.ReactDOM) {
           let H = u(B, f, F, b);
           H && t.set(F, b, H, H[3] || 255);
         }
-    }
-    function W2(t, r, i, o, n, d) {
-      let [u, p, h, s] = d.map(l),
-        k = [];
-      for (let L = 0; L < o.length; L++) k.push(o[L]);
-      for (let [L, b, F] of k) t.ellipse(r + L, i + b, F + 1, (F + 1) * 0.8, s);
-      for (let [L, b, F] of k)
-        t.ellipse(r + L, i + b, F, F * 0.8, (w, C, B, f) => {
-          let H = ra(w + n, C);
-          return B + f < -0.7 ? h : B + f > 0.6 ? u : H > 0.86 ? h : H < 0.12 ? u : p;
-        });
     }
     var pt = 85,
       ar = { i0: 0.95, i1: 4.95, j0: 1.3, j1: 4.75 };
@@ -3581,9 +3565,7 @@ if (!window.React || !window.ReactDOM) {
               a * a + b * b <= 1 && px(i, j, h, c);
             }
         },
-        grill = (x, y) => ((x + y) % 2 ? l("#3C3C44") : l("#1A1A1E")),
         Bk = { top: "#3E3E46", right: "#26262C", left: "#16161A", out: "#0A0A0C" },
-        Gl = { top: "#6B3A16", right: "#5A2F12", left: "#3A1D0B", out: "#A8CAD2" },
         body = { top: "#FAF6E6", left: "#EEE9D3", right: "#D8D1B4", out: "#26261F" },
         tank = { top: "#8A9199", left: "#DDE6EA", right: "#B9C4CB", out: "#26261F" },
         I0 = 0.08,
@@ -5967,29 +5949,23 @@ if (!window.React || !window.ReactDOM) {
         o = Er(r("piege")),
         // Chaque gap a pPiege (20 %) de chances d'être une fausse bonne idée ; quand les vrais besoins
         // sont épuisés, les gaps suivants sont forcément des fausses bonnes idées (et inversement)
-        sq = Array.from({ length: Yo + ti + Qa + Xn }, () =>
+        sq = Array.from({ length: Yo + ti + Qa }, () =>
           (Math.random() < pPiege && o.length) || !i.length ? o.shift() : i.shift(),
         ),
         n = sq.slice(0, Yo + ti),
         d = sq.slice(Yo + ti),
         u = d.slice(0, Qa),
-        p = d.slice(Qa, Qa + Xn),
-        h = (C, B) => Array.from({ length: B - C + 1 }, (f, H) => H + C),
         s = (Zr[1] - Zr[0]) / Math.max(1, n.length - 1),
         k = n
           .map((C, B) =>
             Math.min(Zr[1], Math.max(Zr[0], Math.round(Zr[0] + B * s + (Math.random() - 0.5) * s * 0.6))),
           )
           .map((C, B, f) => (B && C <= f[B - 1] ? f[B - 1] + 1 : C)),
-        L = Er(h(ri[0], ri[1]))
-          .slice(0, p.length)
-          .sort((C, B) => C - B),
         b = (Ya[1] - Ya[0]) / Math.max(1, u.length - 1),
         F = u.map((C, B) => Math.round(Ya[0] + B * b + (Math.random() - 0.5) * b * 0.5)),
         w = [
           ...k.map((C, B) => ({ palier: C, idx: n[B], facteur: 1 })),
           ...F.map((C, B) => ({ palier: C, idx: u[B], facteur: 1 })),
-          ...L.map((C, B) => ({ palier: C, idx: p[B], facteur: Ai, derniereMinute: !0 })),
         ];
       w.sort((C, B) => C.palier - B.palier).forEach((C, B, f) => {
         B && C.palier <= f[B - 1].palier && (C.palier = f[B - 1].palier + 1);
@@ -6002,7 +5978,7 @@ if (!window.React || !window.ReactDOM) {
         pu: 0,
         energy: 100,
         quality: bi,
-        d: { imprevus: 0, burnout: 0, gaps: 0, tickets: 0, regressions: 0, ateliers: 0, bugs: 0, gonogo: 0 },
+        d: { imprevus: 0, burnout: 0, gaps: 0, ateliers: 0, gonogo: 0 },
         gapPlan: w,
         arbitrages: [],
         nPieges: 0,
@@ -7419,7 +7395,8 @@ if (!window.React || !window.ReactDOM) {
             T = c.arbitrages.map((J) => {
               let X = de(J.idx),
                 rt = di(J.idx),
-                gt = Math.random() < (rt ? 1 - Gn : i2);
+                // La réunion repère toujours les fausses bonnes idées : vrai besoin accepté, fausse bonne idée refusée
+                gt = !rt;
               if (gt) {
                 let xt = r05(X.jours * J.facteur * n2) * Tt.gapFacteur(t);
                 ((c.d.gaps += xt),
@@ -7427,9 +7404,14 @@ if (!window.React || !window.ReactDOM) {
                   c.nReunionAcceptes++,
                   (g += pr(xt)),
                   j.push({ kind: "recul", j: xt, src: "gaps" }));
-                let Vt = rt ? 0 : X.qualite;
-                ((M += Vt), Vt && j.push({ kind: "qualite", src: "gaps", v: Vt }), rt && c.nPieges++);
-              } else (c.refused++, c.nReunionRefuses++, rt && (c.nPieges++, c.piegesEvites++));
+                ((M += X.qualite), j.push({ kind: "qualite", src: "gaps", v: X.qualite }));
+              } else
+                (c.refused++,
+                  c.nReunionRefuses++,
+                  c.nPieges++,
+                  c.piegesEvites++,
+                  (M += X.qualite),
+                  j.push({ kind: "qualite", src: "gaps", v: X.qualite }));
               return (
                 c.journal.push({
                   palier: J.palier,
@@ -7502,7 +7484,7 @@ if (!window.React || !window.ReactDOM) {
                 e.pu < 1e5 &&
                 ((e.dirLundi = dd),
                 (e.dirty = !0),
-                e.puMax >= 3e4 &&
+                e.puMax >= 6e4 &&
                   e.weUrgence == null &&
                   !e.queue.some((M) => M.type === "direction") &&
                   Math.floor(dd / 7) % 3 === 0 &&
@@ -7530,12 +7512,12 @@ if (!window.React || !window.ReactDOM) {
           (c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0)),
             M < j.atelier
               ? c.queue.push({ type: "atelier", palier: g })
-              : M < j.atelier + j.ticket || g < 30 || c.regMoisN >= ma(g).regMax
+              : M < j.atelier + j.ticket || c.regMoisN >= ma(g).regMax
                 ? c.queue.push({ type: "ticket", palier: g })
                 : (c.regMoisN++, an()),
             g >= 50 &&
               (c.bnMois !== T && ((c.bnMois = T), (c.bnMoisN = 0)),
-              (c.bnMoisN || 0) < Math.ceil(ma(g).regMax / 2) && Math.random() < j.regression / 2 && ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv())));
+              (c.bnMoisN || 0) < Math.ceil(ma(g).regMax / 2) && Math.random() < ma(g).regression / 2 && ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv())));
         },
         nn = (e) => {
           let c = n.current;
@@ -7547,7 +7529,6 @@ if (!window.React || !window.ReactDOM) {
               idx: g.idx,
               facteur: g.facteur,
               palier: e,
-              derniereMinute: !!g.derniereMinute,
             });
         },
         dn = (e) => {
@@ -7659,7 +7640,6 @@ if (!window.React || !window.ReactDOM) {
               palier: e.palier,
               idx: e.idx,
               facteur: e.facteur,
-              derniereMinute: !!e.derniereMinute,
               service: U,
               societe: "Divalife",
               titre: J,
@@ -8074,11 +8054,13 @@ if (!window.React || !window.ReactDOM) {
           let c = wt(e);
           return (er(e) && Mi(c) === e.weUrgence) || (Mr(c).getDay() === 5 && e.inNight && c + 1 === e.weUrgence);
         },
+        // Pendant un week-end d'urgence, seule la nuit du samedi au dimanche permet de dormir
+        urgDodo = (e) => urgW(e) && !(e.inNight && Mr(wt(e)).getDay() === 6),
         weAtt = (e) => Mr(wt(e)).getDay() === 5 && e.inNight && e.pu < 1e5 && e.weekendPropose !== wt(e) + 1,
         Ue = () => {
           let e = n.current,
             c = !e.inNight && er(e);
-          if (e.paused || e.busy || e.golive || (!e.inNight && !c) || urgW(e) || weAtt(e)) return;
+          if (e.paused || e.busy || e.golive || (!e.inNight && !c) || urgDodo(e) || weAtt(e)) return;
           if (e.cafeAnim) {
             ((e.dodoApres = !0), (e.holding = !1), d());
             return;
@@ -9364,18 +9346,6 @@ if (!window.React || !window.ReactDOM) {
                           { className: "border-2 bg-white px-1.5 font-bold", style: { borderColor: W } },
                           sr.nom,
                         ),
-                      q.kind === "gap" &&
-                        q.derniereMinute &&
-                        Ar <= Ai &&
-                        a.default.createElement(
-                          "span",
-                          {
-                            className: "border-2 bg-[#F97316] px-1.5 font-bold text-white",
-                            style: { borderColor: W },
-                          },
-                          "DERNI\xC8RE MINUTE \xB7 \xD7",
-                          Kr(Ar),
-                        ),
                     ),
                     a.default.createElement(
                       "div",
@@ -9590,9 +9560,9 @@ if (!window.React || !window.ReactDOM) {
                 bg: "#5B5BD6",
                 tuto: "dormir",
                 onClick: Ue,
-                disabled: Ln || Z.golive || !(Z.inNight || Or) || urgW(Z) || weAtt(Z),
-                title: urgW(Z)
-                  ? `Week-end d'urgence pour ${Z.weUrgSoc || "le prestataire"} : pas de repos possible.`
+                disabled: Ln || Z.golive || !(Z.inNight || Or) || urgDodo(Z) || weAtt(Z),
+                title: urgDodo(Z)
+                  ? `Week-end d'urgence pour ${Z.weUrgSoc || "le prestataire"} : seule la nuit du samedi au dimanche permet de dormir.`
                   : Or
                   ? `Week-end : dormir jusqu'\xE0 demain (jusqu'\xE0 +${we}\u00A0% d'\xE9nergie pour une journ\xE9e enti\xE8re, nuit comprise). Touche D.`
                   : `La nuit (ou le week-end) : dormir jusqu'\xE0 demain (+${je}\u00A0% d'\xE9nergie au plus). Touche D.`,
@@ -9615,7 +9585,7 @@ if (!window.React || !window.ReactDOM) {
                 a.default.createElement(
                   "span",
                   { className: "whitespace-nowrap text-[11px] font-normal tabular-nums sm:text-sm" },
-                  urgW(Z)
+                  urgDodo(Z)
                     ? `Urgence ${Z.weUrgSoc || ""}`.trim()
                     : Z.dodoApres
                     ? "Apr\xE8s le caf\xE9\u2026"
@@ -9624,7 +9594,7 @@ if (!window.React || !window.ReactDOM) {
                       : "Possible la nuit",
                 ),
                 (Z.inNight || Or) &&
-                  !urgW(Z) &&
+                  !urgDodo(Z) &&
                   !Z.dodoApres &&
                   a.default.createElement(
                     "span",
@@ -10170,7 +10140,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre ; attention cependant aux faux besoins. Le refuser, c'est risquer une perte de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste, ce qui te co\xFBtera un peu d'\xE9nergie en r\xE9daction de cahier des charges.",
+              "Valider un gap, c'est plus de boulot mais du travail propre ; attention cependant aux faux besoins. Le refuser, c'est risquer une perte de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus de jours.",
             ],
             [
               "Tickets",
@@ -10178,11 +10148,11 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Les r\xE9gressions peuvent massacrer la qualit\xE9 si elles ne sont pas signal\xE9es et corrig\xE9es rapidement. Les signaler \xE0 l'IT co\xFBte toujours un peu d'\xE9nergie, et la r\xE9ussite d\xE9pend de la qualit\xE9 du projet : correction \xE0 temps garantie d\xE8s 90 %, 3 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 70 %, 1 fois sur 4 d\xE8s 60 %, jamais en dessous. Trop tard, la correction ne sert \xE0 rien et la qualit\xE9 baisse quand m\xEAme. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Les r\xE9gressions peuvent massacrer la qualit\xE9 si elles ne sont pas signal\xE9es et corrig\xE9es rapidement. Les signaler \xE0 l'IT co\xFBte toujours un peu d'\xE9nergie, et la r\xE9ussite d\xE9pend de la qualit\xE9 du projet : plus elle est haute, plus l'IT prend son temps. Correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous. Trop tard, la correction ne sert \xE0 rien et la qualit\xE9 baisse quand m\xEAme. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
-              "Certains lundis, \xE0 partir de 30 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est aucun repos possible ce week-end-l\xE0, et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
+              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche, et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
             ],
             [
               "Ateliers PMO Divalife",
@@ -10208,7 +10178,7 @@ if (!window.React || !window.ReactDOM) {
           [
             "Pour d\xE9crocher les f\xE9licitations du Comex, le combo magique est simple : du vite fait, du bien fait, et un budget consultant plus que r\xE9duit !",
             "Attention aux faux pas, car un seul indicateur plomb\xE9 ruine tout ; oublie donc les paris de casse-cou et joue l'\xE9quilibre.",
-            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+75, nul \xE0 partir de J+165. Qualit\xE9 : parfaite d\xE8s 90 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
+            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+95, nul \xE0 partir de J+175. Qualit\xE9 : parfaite d\xE8s 90 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
             ["5 000 points", "m\xE9daille de bronze et une bise du patron."],
             ["7 000 points", "m\xE9daille d'argent et 15 secondes de gloire dans l'intranet."],
             ["8 000 points", "m\xE9daille d'or et ton visage grav\xE9 sur les murs de l'usine jusqu'\xE0 la fin des temps."],
@@ -11475,9 +11445,9 @@ if (!window.React || !window.ReactDOM) {
             c: "#0284C7",
             i: 1,
             lo: 0,
-            hi: Math.max(175, ...cv.map((m) => m[1])) * 1.05,
-            max: 75,
-            nul: 165,
+            hi: Math.max(185, ...cv.map((m) => m[1])) * 1.05,
+            max: 95,
+            nul: 175,
             f: (v) => "J+" + Math.round(v),
           },
         ];
@@ -11640,7 +11610,7 @@ if (!window.React || !window.ReactDOM) {
                 ? (b = "JDE est d\xE9ploy\xE9 de justesse, le Comex h\xE9site encore\u2026")
                 : w >= 2500
                   ? (b = `Le Comex est d\xE9\xE7u : ${F} est convoqu\xE9 pour un \xAB point de recadrage \xBB.`)
-                  : (b = `Le projet JDE est abandonn\xE9. ${F} retourne sur Excel.`),
+                  : (b = `JDE tourne, mais le Comex range gentiment ${F} dans un placard.`),
         t.cout >= 3e4 && (b += " Et la facture b.workchoc a fait bondir le DAF."),
         t.gonogoChoix === "go-ko"
           ? (b += " Le d\xE9marrage chaotique fait encore jaser \xE0 la machine \xE0 caf\xE9.")
@@ -11649,43 +11619,6 @@ if (!window.React || !window.ReactDOM) {
             : t.gonogoChoix === "nogo" &&
               (b += " Le NO-GO prudent a \xE9vit\xE9 les sueurs froides du lundi matin."));
       let C = (m, V, x) => `${m} ${m > 1 ? x : V}`,
-        B = [
-          [
-            "Jours \xE9coul\xE9s",
-            t.total,
-            `${C(t.nightsSlept, "nuit dormie", "nuits dormies")}, ${t.nightsWorked} travaill\xE9es`,
-          ],
-          ["dont arr\xEAts maladie", t.burnout, C(t.nBurnout, "arr\xEAt", "arr\xEAts")],
-        ],
-        f = [
-          [
-            "Gaps accept\xE9s",
-            t.gaps || 0,
-            `${C(t.accepted, "accept\xE9", "accept\xE9s")}, ${C(t.nArbitrages || 0, "arbitr\xE9", "arbitr\xE9s")} en r\xE9union gaps (${C(t.nReunionAcceptes || 0, "accept\xE9", "accept\xE9s")}, ${C(t.nReunionRefuses || 0, "refus\xE9", "refus\xE9s")})`,
-          ],
-          [
-            "Tickets pass\xE9s \xE0 la TMA",
-            t.tickets || 0,
-            `${(t.nTickets || 0) - (t.nTicketsTMA || 0)} trait\xE9s, ${t.nTicketsTMA || 0} \xE0 la TMA, ${t.nTicketsRevenus || 0} rouverts`,
-          ],
-          ["Impr\xE9vus", t.imprevus || 0, C(t.nImprevus || 0, "impr\xE9vu", "impr\xE9vus")],
-          [
-            "Ateliers PMO Divalife",
-            t.ateliers || 0,
-            `${t.nAteliers || 0} suivis, ${t.nAteliersRefuses || 0} d\xE9clin\xE9s`,
-          ],
-          [
-            "Go/no-go",
-            t.gonogo || 0,
-            t.gonogoChoix === "nogo"
-              ? "NO-GO, mise en production s\xE9curis\xE9e"
-              : t.gonogoChoix === "go-ko"
-                ? "GO, d\xE9marrage chaotique"
-                : t.gonogoChoix === "go-ok"
-                  ? "GO, d\xE9marrage sans accroc"
-                  : "pas de comit\xE9",
-          ],
-        ],
         H = (m) =>
           m
             ? a.default.createElement("span", { className: "text-[#15803D]" }, "\u2713")
