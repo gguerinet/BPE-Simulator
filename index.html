@@ -7507,6 +7507,7 @@ if (!window.React || !window.ReactDOM) {
             gp = ma(g).gap || 0;
           c.regMois !== T && ((c.regMois = T), (c.regMoisN = 0), (c.impMoisN = 0), (c.bnMoisN = 0));
           let pi = g >= 50 ? Math.min(0.2, ma(g).evt ?? ma(g).regression) : 0, // imprévu et bonne nouvelle : 20 % maximum par visite
+            pb = Math.min(0.15, pi), // bonne nouvelle : 15 % maximum par visite
             rd = ma(g).regFixe || 0,
             cap = ma(g).regMax;
           if (gp && M < gp) {
@@ -7518,10 +7519,10 @@ if (!window.React || !window.ReactDOM) {
           } else if (M < gp + pi && (c.impMoisN || 0) < cap) {
             // Imprévu (dès 50 %), au plus regMax par période de 12 jours, comme les régressions
             ((c.impMoisN = (c.impMoisN || 0) + 1), imp());
-          } else if (M < gp + 2 * pi && (c.bnMoisN || 0) < cap) {
-            // Bonne nouvelle (dès 50 %), même taux et même plafond
+          } else if (M < gp + pi + pb && (c.bnMoisN || 0) < cap) {
+            // Bonne nouvelle (dès 50 %), même plafond
             ((c.bnMoisN = (c.bnMoisN || 0) + 1), bnv());
-          } else if (M < gp + 2 * pi + rd && c.regMoisN < cap) {
+          } else if (M < gp + pi + pb + rd && c.regMoisN < cap) {
             // Régression tirée directement (50-60 %), même plafond que d'habitude
             (c.regMoisN++, an());
           } else {
