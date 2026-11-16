@@ -2203,9 +2203,8 @@ if (!window.React || !window.ReactDOM) {
         L: { nom: "Gap complexe", jours: 3 / Be, qualite: 3, refus: -2 },
       },
       regX = 1,
-      // Régression corrigée par nos soins : avancement perdu (%) et énergie selon la taille
+      // Régression corrigée par nos soins : avancement perdu (%) selon la taille
       corrA = { 1: 1, 2: 2, 3: 2 },
-      corrE = { 1: 6, 2: 8, 3: 12 },
       rfQ = (g) => g.refus,
       n2 = 2,
       ie = 10,
@@ -6638,7 +6637,7 @@ if (!window.React || !window.ReactDOM) {
           intro:
             "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
           ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, mais plus la qualit\xE9 est haute, plus l'IT risque d'\xEAtre trop tard. Corriger nous-m\xEAme est garanti, au prix d'avancement et d'\xE9nergie."],
+            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, mais plus la qualit\xE9 est haute, plus l'IT risque d'\xEAtre trop tard. Corriger nous-m\xEAme est garanti, au prix d'un peu d'avancement."],
             [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
             [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
           ],
@@ -7211,25 +7210,15 @@ if (!window.React || !window.ReactDOM) {
                 });
               }
             } else if (e.kind === "regression" && k === "B") {
-              // Corrigée par nos soins : aucune perte de qualité, mais de l'avancement et de l'énergie
-              let co = e.corr || { a: 2, e: 8 };
+              // Corrigée par nos soins : aucune perte de qualité, seulement de l'avancement
+              let co = e.corr || { a: 2 };
               ((M = null),
-                (c.energy = Math.max(0, c.energy - co.e)),
                 (c.nCorriges = (c.nCorriges || 0) + 1),
                 Br(co.a / Be, "regressions"),
                 Mt("Corrig\xE9e par nos soins", "ok", "", 3e3, {
                   ligne: !0,
-                  fx: [{ t: "a", v: -co.a }, { t: "e", v: -co.e }],
-                }),
-                c.energy <= 0 &&
-                  ((c.busy = "sick"),
-                  La(c),
-                  (c.holding = !1),
-                  qr(
-                    "sick",
-                    () => Yt(!0),
-                    () => n.current.busy === "sick",
-                  )));
+                  fx: [{ t: "a", v: -co.a }],
+                }));
             }
             (M && Ee(M), d(), bt(yr, 150));
           }
@@ -7356,17 +7345,16 @@ if (!window.React || !window.ReactDOM) {
           let e = n.current,
             [c, g] = pv(e, "regressions", p2),
             M = Math.max(0.5, Math.round(g * regX * Tt.incidentFacteur(t) * 2) / 2),
-            ca = corrA[g] || 2,
-            ce = corrE[g] || 8;
+            ca = corrA[g] || 2;
           (e.nRegressions++,
             Mt(c, "regression", "", 0, {
               ok: !0,
               fx: [{ t: "q", v: -M }],
               effet: { kind: "qualite", src: "regressions", v: -M },
-              corr: { a: ca, e: ce },
+              corr: { a: ca },
               choix: [
                 { id: "A", label: "Signaler \xE0 l'IT", bg: "#0E7490", fx: [{ t: "e", v: -Sg }] },
-                { id: "B", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }, { t: "e", v: -ce }] },
+                { id: "B", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
               ],
             }));
         },
@@ -10162,7 +10150,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAme, correction garantie au prix de 1 ou 2 % d'avancement et de 6 \xE0 12 % d'\xE9nergie selon sa taille. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAme, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
