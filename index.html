@@ -8067,8 +8067,8 @@ if (!window.React || !window.ReactDOM) {
         Ze = () => {
           let e = n.current,
             c = Ie();
-          // Week-end d'urgence : la nuit du samedi au dimanche récupère comme une nuit normale (jusqu'à +8 %)
-          return er(e) && !(urgW(e) && e.inNight) ? nr((we * c) / or) : nr(c * t2);
+          // Le week-end, une journée de repos au bureau rend 15 % (nuit comprise) ; la nuit, on récupère comme en semaine (jusqu'à +8 %)
+          return er(e) && !e.inNight ? nr((we * c) / or) : nr(c * t2);
         },
         urgW = (e) => {
           if (e.weUrgence == null) return !1;
@@ -10129,7 +10129,7 @@ if (!window.React || !window.ReactDOM) {
           [
             `Chaque clic entame ta jauge d'\xE9nergie, et les heures sup te ruinent encore plus vite. En dessous de 20 % d'\xE9nergie, la frappe ralentit ; sous 10 %, c'est le naufrage : micro-sommeils intempestifs. \xC0 z\xE9ro, c'est le burn-out sec et ${Qr} jours d'arr\xEAt maladie d'office.`,
             `Pour \xE9ponger les d\xE9g\xE2ts, une nuit de sommeil peut te rendre ${je} % de forme, et un caf\xE9 t'injecte ${pe} % (${2 * pe} % pour Gabriel)… dans la limite stricte d'une tasse tous les ${Kr(ke)} jours !`,
-            `En fin de semaine, \xE0 toi d'arbitrer : fuir chez toi pour r\xE9cup\xE9rer ${Wf} % d'\xE9nergie au prix de 2 jours perdus, ou squatter les locaux pour travailler comme un for\xE7at (un jour de repos au bureau rend ${we} %, nuit comprise). Choisis ton camp : avoir une vie ou rendre ton PMO Divalife heureux !`,
+            `En fin de semaine, \xE0 toi d'arbitrer : fuir chez toi pour r\xE9cup\xE9rer ${Wf} % d'\xE9nergie au prix de 2 jours perdus, ou squatter les locaux pour travailler comme un for\xE7at (un jour de repos au bureau rend ${we} %, nuit comprise, et une nuit de sommeil ${je} %, comme en semaine). Choisis ton camp : avoir une vie ou rendre ton PMO Divalife heureux !`,
             "Attention \xE0 la fatigue qui s'accumule : chaque week-end pass\xE9 au bureau retire 20 points \xE0 ton \xE9nergie maximale, et \xE7a s'accumule tant que tu ne rentres pas. Un seul week-end \xE0 la maison efface tout.",
           ],
         ],
