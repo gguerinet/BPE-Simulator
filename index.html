@@ -2807,9 +2807,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Virtuose de la qualit\xE9",
           pitch: "Conna\xEEt chaque test de conformit\xE9 et certificat d'analyse par c\u0153ur.",
           atout: "\u0152il de lynx",
-          atoutTxt: "Tickets et r\xE9gressions deux fois moins co\xFBteux en qualit\xE9, tickets deux fois moins fatigants",
+          atoutTxt: "Tickets et r\xE9gressions lui demandent deux fois moins d'effort : \xE9nergie, avancement et qualit\xE9 perdus divis\xE9s par deux",
           conseil:
-            "Un ticket et une r\xE9gression lui co\xFBtent deux fois moins en qualit\xE9, et traiter un ticket ne lui co\xFBte que 5 % d'\xE9nergie au lieu de 10 %.",
+            "Tickets et r\xE9gressions lui co\xFBtent deux fois moins : \xE9nergie, avancement et qualit\xE9.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -7188,7 +7188,8 @@ if (!window.React || !window.ReactDOM) {
             // Fin d'une interaction (imprévu, régression, bonne nouvelle) : prochaine visite recomptée à partir de maintenant
             (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
             if (e.kind === "regression" && k === "A") {
-              ((c.energy = Math.max(1, c.energy - Sg)), (c.nSignales = (c.nSignales || 0) + 1));
+              let sg = (e.corr && e.corr.s) || Sg;
+              ((c.energy = Math.max(1, c.energy - sg)), (c.nSignales = (c.nSignales || 0) + 1));
               // Plus la qualité est haute, plus le signalement a de chances d'échouer
               let tauxSucces = (c.quality >= 80) ? 0.25 :
                                (c.quality >= 60) ? 0.5 :
@@ -7200,13 +7201,13 @@ if (!window.React || !window.ReactDOM) {
                 c.nRepares = (c.nRepares || 0) + 1;
                 Mt("Corrig\xE9e \xE0 temps", "ok", "", 3e3, {
                   ligne: !0,
-                  fx: [{ t: "e", v: -Sg }],
+                  fx: [{ t: "e", v: -sg }],
                 });
               } else {
                 // Trop tard...
                 Mt("Trop tard\u2026", "ko", "", 3e3, {
                   ligne: !0,
-                  fx: [{ t: "e", v: -Sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
+                  fx: [{ t: "e", v: -sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
                 });
               }
             } else if (e.kind === "regression" && k === "B") {
@@ -7345,15 +7346,17 @@ if (!window.React || !window.ReactDOM) {
           let e = n.current,
             [c, g] = pv(e, "regressions", p2),
             M = Math.max(0.5, Math.round(g * regX * Tt.incidentFacteur(t) * 2) / 2),
-            ca = corrA[g] || 2;
+            // Hugues : énergie, avancement et qualité divisés par deux
+            ca = (corrA[g] || 2) * Tt.incidentFacteur(t),
+            sg = Sg * Tt.incidentFacteur(t);
           (e.nRegressions++,
             Mt(c, "regression", "", 0, {
               ok: !0,
               fx: [{ t: "q", v: -M }],
               effet: { kind: "qualite", src: "regressions", v: -M },
-              corr: { a: ca },
+              corr: { a: ca, s: sg },
               choix: [
-                { id: "A", label: "Signaler \xE0 l'IT", bg: "#0E7490", fx: [{ t: "e", v: -Sg }] },
+                { id: "A", label: "Signaler \xE0 l'IT", bg: "#0E7490", fx: [{ t: "e", v: -sg }] },
                 { id: "B", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
               ],
             }));
@@ -10150,7 +10153,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAme, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAme, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
