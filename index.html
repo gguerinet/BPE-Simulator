@@ -11493,8 +11493,9 @@ if (!window.React || !window.ReactDOM) {
           "svg",
           {
             viewBox: "0 0 360 528",
-            className: "block w-full",
-            style: { fontFamily: Yr },
+            className: "mx-auto block w-full",
+            // Largeur plafonnée : sans limite, le graphique est agrandi d'autant que la colonne est large
+            style: { fontFamily: Yr, maxWidth: 420 },
             role: "img",
             "aria-label": `Score ${et(t.score)} points : notes d\xE9lai ${Math.round(r.delai)}, co\xFBt ${Math.round(r.budget)}, qualit\xE9 ${Math.round(r.qualite)} sur 100`,
           },
