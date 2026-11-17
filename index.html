@@ -7163,7 +7163,14 @@ if (!window.React || !window.ReactDOM) {
           (e.kind === "recul"
             ? Br(e.j, e.src || "imprevus")
             : e.kind === "avance"
-              ? (Br(-e.j, "bonnes"), (c.joursGagnes = (c.joursGagnes || 0) + e.j))
+              ? (Br(-e.j, "bonnes"),
+                (c.joursGagnes = (c.joursGagnes || 0) + e.j),
+                // Une bonne nouvelle peut franchir des paliers (comité go/no-go à 95 %) sans clic
+                (() => {
+                  for (; c.nextMilestone <= 99 && c.puMax >= c.nextMilestone * 1e3; ) (nn(c.nextMilestone), (c.nextMilestone += ji));
+                  for (; c.curveLast < Math.floor(c.puMax / 1e3); )
+                    (c.curveLast++, c.curve.push([c.curveLast, nr(_t(c)), nr(c.quality), c.bwSpent]));
+                })())
               : e.kind === "qualite" && (qt(c, e.src, e.v), Se(e.v)),
             (c.dirty = !0));
         },
@@ -8315,6 +8322,17 @@ if (!window.React || !window.ReactDOM) {
               (vt.etouffer(!!xt.paused), vt.tension(xt.pu >= 95e3 && !xt.golive));
               (K2(c, xt, gt, e),
                 xt.dodoApres && !xt.cafeAnim && !xt.paused && ((xt.dodoApres = !1), Ue()),
+                // Filet de sécurité : à 100 % d'avancement, le go-live (ou le comité go/no-go) se déclenche même sans clic
+                xt.pu >= 1e5 &&
+                  !xt.golive &&
+                  !xt.busy &&
+                  !xt.dilemma &&
+                  !xt.attenteOK &&
+                  !xt.paused &&
+                  !wr.current.length &&
+                  !rr.current &&
+                  !(xt.sortie && performance.now() < (xt.sortieMax || 0)) &&
+                  Xt(),
                 xt.maisonApres && !xt.cafeAnim && !xt.paused && ((xt.maisonApres = !1), Oe(!0)),
                 (() => {
                   let bs = document.querySelectorAll("[data-dit]");
