@@ -2757,9 +2757,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Ma\xEEtre Yoda",
           pitch: "Parle beaucoup, mais pas pour rien dire. Il trouve sa force dans les requ\xEAtes.",
           atout: "N\xE9gociateur",
-          atoutTxt: "Missions b.workchoc de 5 jours au lieu de 3, au m\xEAme tarif, et la premi\xE8re est offerte",
+          atoutTxt: "Premi\xE8re mission b.workchoc offerte",
           conseil:
-            "Il n\xE9gocie des missions de 5 jours au lieu de 3, au m\xEAme tarif de 5 000 \u20AC, et obtient la premi\xE8re gratuitement : id\xE9al pour acc\xE9l\xE9rer le planning sans exploser le budget du Comex.",
+            "Il obtient sa premi\xE8re mission b.workchoc gratuitement : de quoi acc\xE9l\xE9rer le planning sans toucher au budget du Comex.",
           look: {
             skin: "#F0C2A0",
             skinS: "#D49E7C",
@@ -2808,9 +2808,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Virtuose de la qualit\xE9",
           pitch: "Conna\xEEt chaque test de conformit\xE9 et certificat d'analyse par c\u0153ur.",
           atout: "\u0152il de lynx",
-          atoutTxt: "Tickets et r\xE9gressions lui demandent deux fois moins d'effort : \xE9nergie, avancement et qualit\xE9 perdus divis\xE9s par deux",
+          atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions",
           conseil:
-            "Tickets et r\xE9gressions lui co\xFBtent deux fois moins : \xE9nergie, avancement et qualit\xE9.",
+            "Tickets et r\xE9gressions lui co\xFBtent deux fois moins : \xE9nergie, avancement et qualit\xE9 perdus.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -2834,9 +2834,9 @@ if (!window.React || !window.ReactDOM) {
           role: "King de la consigne",
           pitch: "Aucune bouteille consign\xE9e ne lui \xE9chappe, et heureusement pour le m\xE9tier.",
           atout: "Antiwrike",
-          atoutTxt: "Les gaps et les impr\xE9vus demandent deux fois moins d'effort",
+          atoutTxt: "Deux fois moins impact\xE9 par les gaps et les impr\xE9vus",
           conseil:
-            "Un gap accept\xE9 ou un impr\xE9vu fait reculer l'avancement deux fois moins : accepte les vrais besoins sans faire exploser le d\xE9lai.",
+            "Gaps et impr\xE9vus lui co\xFBtent deux fois moins : avancement, qualit\xE9 et \xE9nergie perdus.",
           look: {
             skin: "#EBC49A",
             skinS: "#CDA27A",
@@ -2910,7 +2910,7 @@ if (!window.React || !window.ReactDOM) {
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         // François : la premi\u00e8re mission b.workchoc est offerte
         coutBW: (t, e) => (t.id === "francois" && !(e && e.boostCalls) ? 0 : In),
-        dureeBW: (t) => (t.id === "francois" ? 5 : Jr),
+        dureeBW: (t) => Jr,
       },
       C2 = (t) => {
         let r = (i) => Math.max(0, Math.min(100, i));
@@ -6722,8 +6722,8 @@ if (!window.React || !window.ReactDOM) {
         {
           cible: "consultant",
           titre: "Le consultant b.workchoc",
-          texte: "Double ta vitesse pendant 3 jours travaill\xE9s (5 avec Fran\xE7ois), mais co\xFBte cher. Touche W.",
-          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s (5 avec Fran\xE7ois), mais co\xFBte cher.",
+          texte: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (la premi\xE8re mission est offerte \xE0 Fran\xE7ois). Touche W.",
+          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (la premi\xE8re mission est offerte \xE0 Fran\xE7ois).",
         },
         {
           cible: "commandes",
@@ -7985,9 +7985,9 @@ if (!window.React || !window.ReactDOM) {
               (c.playerMood = "happy"),
               (c.playerMoodUntil = j + 1600),
               G
-                ? (qt(c, "gaps", -U.qualite),
+                ? (qt(c, "gaps", -U.qualite * Tt.gapFacteur(t)),
                   c.nPieges++,
-                  Mt("Fausse bonne id\xE9e", "ko", "", 3500, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: -U.qualite }] }),
+                  Mt("Fausse bonne id\xE9e", "ko", "", 3500, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: -U.qualite * Tt.gapFacteur(t) }] }),
                   dire(M, jt(["Parfait ! On s'en servira\u2026 s\xFBrement.", "G\xE9nial ! Euh\u2026 c'\xE9tait pour quoi d\xE9j\xE0 ?"])))
                 : (qt(c, "gaps", U.qualite),
                   Mt("Gap accept\xE9", "ok", "", 3e3, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: U.qualite }] }),
@@ -8002,19 +8002,19 @@ if (!window.React || !window.ReactDOM) {
                   qt(c, "gaps", U.qualite),
                   Mt("Bien vu, fausse bonne id\xE9e", "ok", "", 3500, { ligne: !0, fx: [{ t: "q", v: U.qualite }] }),
                   dire(M, jt(["Bon\u2026 vous avez sans doute raison.", "D'accord, d'accord. C'\xE9tait l'id\xE9e de mon chef."])))
-                : (qt(c, "gaps", rfQ(U)),
-                  Mt("Gap refus\xE9", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(rfQ(U)) }] }),
+                : (qt(c, "gaps", rfQ(U) * Tt.gapFacteur(t)),
+                  Mt("Gap refus\xE9", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(rfQ(U) * Tt.gapFacteur(t)) }] }),
                   dire(M, jt(["On fera un fichier Excel, alors\u2026", "Je vais devoir l'annoncer \xE0 mon \xE9quipe\u2026"]))));
           else if (e === "C")
             (c.nArbitrages++,
-              (c.energy = Math.max(0, c.energy - ie)),
+              (c.energy = Math.max(0, c.energy - ie * Tt.gapFacteur(t))),
               c.energy < 0.5 && (c.energy = 0),
               M && ((M.mood = "smirk"), (M.react = { sym: "alert", until: j + 1400 })),
               c.arbitrages.push({ idx: g.idx, palier: g.palier }),
               J("arbitre"),
               Mt("Gap en arbitrage", "bw", "", 3e3, {
                 ligne: !0,
-                fx: [{ t: "e", v: -ie }, { txt: `r\xE9union J+${c.prochaineReunion}`, couleur: "#0369A1" }],
+                fx: [{ t: "e", v: -ie * Tt.gapFacteur(t) }, { txt: `r\xE9union J+${c.prochaineReunion}`, couleur: "#0369A1" }],
               }),
               dire(M, jt(["D'accord, j'attends le verdict.", "Tenez-moi au courant de la d\xE9cision.", "Bon\u2026 je croise les doigts pour la r\xE9union."])),
               c.energy <= 0 && (La(c), (c.holding = !1), (c.burnoutPending = !0)));
@@ -8811,18 +8811,18 @@ if (!window.React || !window.ReactDOM) {
                       k: "B",
                       bg: "#FDA4AF",
                       titre: "Refuser",
-                      sub: `Qualit\xE9 \u2212${Kr(-rfQ(sr))}`,
-                      fx: [{ t: "q", v: rfQ(sr) }],
+                      sub: `Qualit\xE9 \u2212${Kr(-rfQ(sr) * Tt.gapFacteur(t))}`,
+                      fx: [{ t: "q", v: rfQ(sr) * Tt.gapFacteur(t) }],
                     },
                     {
                       k: "C",
                       bg: "#FDE68A",
                       titre: "\xC0 arbitrer",
                       titreCourt: "Arbitrer",
-                      sub: `D\xE9cision en r\xE9union gaps \xB7 dossier : \xE9nergie \u2212${ie} %`,
+                      sub: `D\xE9cision en r\xE9union gaps \xB7 dossier : \xE9nergie \u2212${ie * Tt.gapFacteur(t)} %`,
                       note: "D\xE9cision en r\xE9union gaps",
                       noteCourt: "R\xE9union gaps",
-                      fx: [{ t: "e", v: -ie }],
+                      fx: [{ t: "e", v: -ie * Tt.gapFacteur(t) }],
                     },
                   ]);
       return a.default.createElement(
@@ -10276,7 +10276,7 @@ if (!window.React || !window.ReactDOM) {
         [
           "Ressources",
           [
-            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (5 avec Fran\xE7ois), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
+            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (la premi\xE8re mission est offerte \xE0 Fran\xE7ois), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
           ],
         ],
         [
@@ -10284,7 +10284,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus d'avancement.",
+              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 (1 pour Samuel) si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus d'avancement.",
             ],
             [
               "Tickets",
