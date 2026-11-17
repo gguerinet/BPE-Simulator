@@ -5483,6 +5483,15 @@ if (!window.React || !window.ReactDOM) {
                 fl.frequency.setValueAtTime(f0, deb);
                 fl.frequency.exponentialRampToValueAtTime(f1, deb + dur);
                 return (x.connect(fl), fl.connect(g), g.connect(o), x.start(deb), x.stop(deb + dur + 0.05), g.gain);
+              },
+              // source jouant un son calculé échantillon par échantillon
+              buf = (dur, fn) => {
+                let n = Math.max(1, Math.floor(t.sampleRate * dur)),
+                  bb = t.createBuffer(1, n, t.sampleRate),
+                  d = bb.getChannelData(0);
+                for (let k = 0; k < n; k++) d[k] = fn(k, t.sampleRate);
+                let x = t.createBufferSource();
+                return ((x.buffer = bb), x);
               };
             if (id === "hugues") {
               // klaxon « tut-tuuut » : deux notes tenues, légèrement désaccordées, filtrées
@@ -5501,16 +5510,19 @@ if (!window.React || !window.ReactDOM) {
                 });
               });
             } else if (id === "samuel") {
-              // avion qui passe : souffle qui monte puis s'éloigne, avec un grondement grave
-              let g = bruit(V, 1.5, "bandpass", 300, 900, 1.2, 0);
-              (g.setValueAtTime(1e-4, V), g.exponentialRampToValueAtTime(0.5, V + 0.6), g.exponentialRampToValueAtTime(1e-4, V + 1.5));
-              let x = t.createOscillator(),
-                g2 = t.createGain();
-              ((x.type = "sawtooth"), x.frequency.setValueAtTime(95, V), x.frequency.linearRampToValueAtTime(70, V + 1.5));
-              let fl = t.createBiquadFilter();
-              ((fl.type = "lowpass"), (fl.frequency.value = 300));
-              (g2.gain.setValueAtTime(1e-4, V), g2.gain.exponentialRampToValueAtTime(0.05, V + 0.6), g2.gain.exponentialRampToValueAtTime(1e-4, V + 1.5));
-              (x.connect(fl), fl.connect(g2), g2.connect(o), x.start(V), x.stop(V + 1.6));
+              // roulettes de valise sur un trottoir : roulement sourd + « clac-clac » à chaque joint de dalle
+              let du = 1.3,
+                rl = bruit(V, du, "lowpass", 380, 260, 0.9, 0);
+              (rl.setValueAtTime(1e-4, V), rl.linearRampToValueAtTime(0.45, V + 0.12), rl.setValueAtTime(0.45, V + du - 0.3), rl.exponentialRampToValueAtTime(1e-4, V + du));
+              for (let k = 0; k * 0.17 < du - 0.15; k++)
+                [0, 0.035].forEach((dd, j) => {
+                  let a0 = V + 0.06 + k * 0.17 + dd,
+                    c = buf(0.03, (n, sr) => (Math.random() * 2 - 1) * Math.exp(-n / (sr * 0.004))),
+                    fl = t.createBiquadFilter(),
+                    g = t.createGain();
+                  ((fl.type = "bandpass"), (fl.frequency.value = j ? 900 : 1300), (fl.Q.value = 2.5), (g.gain.value = 0.85 * Math.min(1, (du - 0.15 - k * 0.17) / 0.35)));
+                  (c.connect(fl), fl.connect(g), g.connect(o), c.start(a0));
+                });
             } else if (id === "francois") {
               // coup de sifflet d'arbitre « tu-tuuut » avec le roulement de la bille
               [[0, 0.12], [0.18, 0.45]].forEach(([d0, du]) => {
@@ -5529,14 +5541,25 @@ if (!window.React || !window.ReactDOM) {
                 (b.setValueAtTime(1e-4, V + d0), b.linearRampToValueAtTime(0.06, V + d0 + 0.01), b.setValueAtTime(0.06, V + d0 + du - 0.03), b.exponentialRampToValueAtTime(1e-4, V + d0 + du));
               });
             } else if (id === "gabriel") {
-              // « crunch crunch » : deux bouchées faites de petits craquements
-              [0, 0.32].forEach((d0) => {
-                for (let k = 0; k < 9; k++) {
-                  let a0 = V + d0 + k * 0.018 + Math.random() * 0.012,
-                    b = bruit(a0, 0.04, "bandpass", 1400 + Math.random() * 2200, 900, 1.5, 0),
-                    am = 0.5 * (1 - k / 11);
-                  (b.setValueAtTime(1e-4, a0), b.linearRampToValueAtTime(am, a0 + 0.003), b.exponentialRampToValueAtTime(1e-4, a0 + 0.035));
-                }
+              // « crunch crunch » : à chaque bouchée, une salve dense de craquements secs et un petit coup de mâchoire
+              [0, 0.36].forEach((d0, j) => {
+                let du = 0.2,
+                  c = buf(du, (n, sr) => {
+                    let x = n / (sr * du),
+                      env = Math.pow(1 - x, 1.6) * (x < 0.02 ? x / 0.02 : 1);
+                    return Math.random() < 0.09 ? (Math.random() * 2 - 1) * env : (Math.random() * 2 - 1) * env * 0.12;
+                  }),
+                  fl = t.createBiquadFilter(),
+                  hp = t.createBiquadFilter(),
+                  g = t.createGain();
+                ((fl.type = "peaking"), (fl.frequency.value = j ? 2600 : 3100), (fl.gain.value = 8), (fl.Q.value = 0.9));
+                ((hp.type = "highpass"), (hp.frequency.value = 700), (g.gain.value = 0.3));
+                (c.connect(hp), hp.connect(fl), fl.connect(g), g.connect(o), c.start(V + d0));
+                let x = t.createOscillator(),
+                  g2 = t.createGain();
+                ((x.type = "sine"), x.frequency.setValueAtTime(170, V + d0), x.frequency.exponentialRampToValueAtTime(70, V + d0 + 0.08));
+                (g2.gain.setValueAtTime(0.08, V + d0), g2.gain.exponentialRampToValueAtTime(1e-4, V + d0 + 0.09));
+                (x.connect(g2), g2.connect(o), x.start(V + d0), x.stop(V + d0 + 0.12));
               });
             }
           },
