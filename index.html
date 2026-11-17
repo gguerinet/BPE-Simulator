@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>BPE Simulator</title>
 <meta name="description" content="Clicker pixel-art : menez l’ERP JDE de Divalife jusqu’au go-live.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6186,6 +6186,11 @@ if (!window.React || !window.ReactDOM) {
       G2 = (t) => Math.max(0, t.boostFin - _t(t)),
       ge = (t) => t.bwSpent;
     var _i = [
+      // Fatigue des week-ends au bureau : à sauvegarder, sinon un rechargement l'efface ou la compte deux fois
+      "weBureau",
+      "weMaisonOk",
+      "lundiFat",
+      "urgMsg",
       "effetsAttente",
       "reunionEffets",
       "clicks",
