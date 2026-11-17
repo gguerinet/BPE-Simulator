@@ -6749,7 +6749,7 @@ if (!window.React || !window.ReactDOM) {
           intro:
             "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
           ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, mais plus la qualit\xE9 est haute, plus l'IT risque d'\xEAtre trop tard. Corriger nous-m\xEAme est garanti, au prix d'un peu d'avancement."],
+            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Corriger nous-m\xEAmes est garanti, au prix d'un peu d'avancement. Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, mais plus la qualit\xE9 est haute, plus l'IT risque d'\xEAtre trop tard."],
             [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
             [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
           ],
@@ -7475,7 +7475,7 @@ if (!window.React || !window.ReactDOM) {
               effet: { kind: "qualite", src: "regressions", v: -M },
               corr: { a: ca, s: sg },
               choix: [
-                { id: "A", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
+                { id: "A", label: "Corriger nous-m\xEAmes", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
                 {
                   id: "B",
                   label: "Signaler \xE0 l'IT",
@@ -9983,8 +9983,8 @@ if (!window.React || !window.ReactDOM) {
               a.default.createElement(
                 "div",
                 {
-                  className: "flex items-center justify-center gap-2 text-3xl font-bold",
-                  style: { fontFamily: Lr },
+                  className: "flex items-center justify-center gap-2 text-2xl font-bold sm:text-3xl",
+                  style: { fontFamily: Lr, whiteSpace: "nowrap" },
                 },
                 a.default.createElement(xa, { size: 28, strokeWidth: 2.5 }),
                 " C'est le week-end !",
@@ -10292,7 +10292,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAme, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAmes, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
@@ -10698,12 +10698,6 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(Xa, { size: 16 }),
             " Classement en ligne",
           ),
-          e.etat === "local" &&
-            a.default.createElement(
-              "span",
-              { className: "absolute right-2 text-[12px] font-normal opacity-80", style: { fontFamily: Yr } },
-              "indisponible",
-            ),
         ),
         e.etat === "chargement" || e.etat === "lent"
           ? a.default.createElement(
@@ -11274,7 +11268,7 @@ if (!window.React || !window.ReactDOM) {
               },
               a.default.createElement(
                 "div",
-                { className: "relative mx-auto flex", style: { width: cLarg, paddingLeft: cMarge, paddingRight: cMarge, justifyContent: "space-between", alignItems: "flex-end", gap: 10, paddingTop: 4 } },
+                { className: "relative mx-auto flex", style: { width: cLarg, paddingLeft: cMarge, paddingRight: cMarge, justifyContent: "space-between", alignItems: "flex-end", gap: cVw < 360 ? 2 : 10, paddingTop: 4 } },
                 a.default.createElement("div", { "data-nosnd": "1", style: { alignSelf: "center" } }, a.default.createElement(mt, { bg: "#FACC15", fg: W, onClick: () => cAller(-1), title: "H\xE9ros pr\xE9c\xE9dent (\u2190)", className: "px-3 py-0.5 text-2xl sm:px-4" }, "\u2039")),
                 [-1, 0, 1].map((dl) => {
                   let f = Ca[(((cIdx + dl) % Ca.length) + Ca.length) % Ca.length],
@@ -11297,9 +11291,9 @@ if (!window.React || !window.ReactDOM) {
                       return an
                         ? a.default.createElement(
                           "div",
-                          // boîte commune à tous les héros (30 x 51 pixels) : l'écran ne saute pas d'un héros à l'autre ;
+                          // boîte commune à tous les héros (30 x 51 pixels, 24 de large sur les côtés) : l'écran ne saute pas d'un héros à l'autre ;
                           // l'avion de Samuel et le cœur de Gabriel peuvent dépasser au-dessus
-                          { style: { width: 30 * sc, height: 51 * sc, display: "flex", alignItems: "flex-end", justifyContent: "center" } },
+                          { style: { width: (c0 ? 30 : 24) * sc, height: 51 * sc, display: "flex", alignItems: "flex-end", justifyContent: "center" } },
                           a.default.createElement("div", {
                             className: c0 ? "jde-anim" : "",
                             "aria-hidden": "true",
