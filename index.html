@@ -2808,9 +2808,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Virtuose de la qualit\xE9",
           pitch: "Conna\xEEt chaque test de conformit\xE9 et certificat d'analyse par c\u0153ur.",
           atout: "\u0152il de lynx",
-          atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions",
+          atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions, et ses tickets trait\xE9s rapportent plus de qualit\xE9",
           conseil:
-            "Tickets et r\xE9gressions lui co\xFBtent deux fois moins : \xE9nergie, avancement et qualit\xE9 perdus.",
+            "Tickets et r\xE9gressions lui co\xFBtent deux fois moins : \xE9nergie, avancement et qualit\xE9 perdus. Et un ticket trait\xE9 lui rapporte +2 de qualit\xE9 au lieu de +1,5.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -2907,6 +2907,8 @@ if (!window.React || !window.ReactDOM) {
         gapFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         incidentFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
         ticketEFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
+        // Hugues : un ticket traité lui rapporte +2 de qualité (au lieu de +1,5)
+        ticketQ: (t) => (t.id === "hugues" ? 2 : re),
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         // François : la premi\u00e8re mission b.workchoc est offerte, et chaque mission dure un jour de plus
         coutBW: (t, e) => (t.id === "francois" && !(e && e.boostCalls) ? 0 : In),
@@ -7910,9 +7912,9 @@ if (!window.React || !window.ReactDOM) {
               let rt = Math.round(oi * Tt.ticketEFacteur(t));
               ((c.energy = Math.max(0, c.energy - rt)),
               c.energy < 0.5 && (c.energy = 0),
-                qt(c, "tickets", re),
+                qt(c, "tickets", Tt.ticketQ(t)),
                 M && ((M.mood = "happy"), (M.react = { sym: "happy", until: j + 1200 })),
-                Mt("Ticket r\xE9solu", "ok", "", 3e3, { ligne: !0, fx: [{ t: "e", v: -rt }, { t: "q", v: re }] }),
+                Mt("Ticket r\xE9solu", "ok", "", 3e3, { ligne: !0, fx: [{ t: "e", v: -rt }, { t: "q", v: Tt.ticketQ(t) }] }),
                 dire(M, jt(["Merci, \xE7a marche nickel !", "D\xE9j\xE0 ? La TMA m'aurait dit trois semaines.", "Je vous dois un caf\xE9. Au moins."])),
                 c.energy <= 0 && (La(c), (c.holding = !1), (c.burnoutPending = !0)));
             } else if (e === "B") {
@@ -8710,10 +8712,10 @@ if (!window.React || !window.ReactDOM) {
                   bg: "#86EFAC",
                   titre: "Traiter nous-m\xEAmes",
                   titreCourt: "Traiter",
-                  sub: `\xC9nergie \u2212${Re} % \xB7 qualit\xE9 +${Kr(re)}`,
+                  sub: `\xC9nergie \u2212${Re} % \xB7 qualit\xE9 +${Kr(Tt.ticketQ(t))}`,
                   fx: [
                     { t: "e", v: -Re },
-                    { t: "q", v: re },
+                    { t: "q", v: Tt.ticketQ(t) },
                   ],
                 },
                 {
@@ -10288,7 +10290,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tickets",
-              "Fais-le toi-m\xEAme (\u2212 d'\xE9nergie, +1,5 de qualit\xE9) ou refile le b\xE9b\xE9 \xE0 la TMA, au prix de \u22121 de qualit\xE9 (\u22120,5 pour Hugues). Le ticket a des chances de revenir vers toi, et le renvoyer co\xFBte \xE0 nouveau \u22121 (\u22120,5 pour Hugues).",
+              "Fais-le toi-m\xEAme (\u2212 d'\xE9nergie, +1,5 de qualit\xE9, +2 pour Hugues) ou refile le b\xE9b\xE9 \xE0 la TMA, au prix de \u22121 de qualit\xE9 (\u22120,5 pour Hugues). Le ticket a des chances de revenir vers toi, et le renvoyer co\xFBte \xE0 nouveau \u22121 (\u22120,5 pour Hugues).",
             ],
             [
               "Tuiles du quotidien",
