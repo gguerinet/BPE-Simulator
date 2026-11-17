@@ -5484,14 +5484,20 @@ if (!window.React || !window.ReactDOM) {
                 fl.frequency.exponentialRampToValueAtTime(f1, deb + dur);
                 return (x.connect(fl), fl.connect(g), g.connect(o), x.start(deb), x.stop(deb + dur + 0.05), g.gain);
               },
-              // source jouant un son calculé échantillon par échantillon
-              buf = (dur, fn) => {
-                let n = Math.max(1, Math.floor(t.sampleRate * dur)),
-                  bb = t.createBuffer(1, n, t.sampleRate),
-                  d = bb.getChannelData(0);
-                for (let k = 0; k < n; k++) d[k] = fn(k, t.sampleRate);
+              // source jouant un son entièrement calculé (fill remplit le tableau d'échantillons)
+              tab = (dur, fill) => {
+                let bb = t.createBuffer(1, Math.max(1, Math.floor(t.sampleRate * dur)), t.sampleRate);
+                fill(bb.getChannelData(0), t.sampleRate);
                 let x = t.createBufferSource();
                 return ((x.buffer = bb), x);
+              },
+              // petit choc : sinusoïde amortie (fréquence f, amortissement tau) ajoutée à partir de l'instant t0
+              grain = (d, sr, t0, A, f, tau) => {
+                let i0 = Math.floor(t0 * sr),
+                  m = Math.min(d.length, i0 + Math.floor(tau * sr * 6)),
+                  ph = Math.random() * 6.283,
+                  w = (6.283 * f) / sr;
+                for (let n = Math.max(0, i0); n < m; n++) d[n] += A * Math.exp(-(n - i0) / (tau * sr)) * Math.sin(ph + w * (n - i0));
               };
             if (id === "hugues") {
               // klaxon « tut-tuuut » : deux notes tenues, légèrement désaccordées, filtrées
@@ -5510,19 +5516,27 @@ if (!window.React || !window.ReactDOM) {
                 });
               });
             } else if (id === "samuel") {
-              // roulettes de valise sur un trottoir : roulement sourd + « clac-clac » à chaque joint de dalle
-              let du = 1.3,
-                rl = bruit(V, du, "lowpass", 380, 260, 0.9, 0);
-              (rl.setValueAtTime(1e-4, V), rl.linearRampToValueAtTime(0.45, V + 0.12), rl.setValueAtTime(0.45, V + du - 0.3), rl.exponentialRampToValueAtTime(1e-4, V + du));
-              for (let k = 0; k * 0.17 < du - 0.15; k++)
-                [0, 0.035].forEach((dd, j) => {
-                  let a0 = V + 0.06 + k * 0.17 + dd,
-                    c = buf(0.03, (n, sr) => (Math.random() * 2 - 1) * Math.exp(-n / (sr * 0.004))),
-                    fl = t.createBiquadFilter(),
-                    g = t.createGain();
-                  ((fl.type = "bandpass"), (fl.frequency.value = j ? 900 : 1300), (fl.Q.value = 2.5), (g.gain.value = 0.85 * Math.min(1, (du - 0.15 - k * 0.17) / 0.35)));
-                  (c.connect(fl), fl.connect(g), g.connect(o), c.start(a0));
-                });
+              // valise à roulettes sur un trottoir : grain du bitume sous les roues, léger tour de roue,
+              // grondement sourd, et un double « clac » à chaque joint de dalle suivi du cliquetis de la poignée
+              let du = 1.4,
+                w = tab(du, (d, sr) => {
+                  let tt = 0;
+                  for (; tt < du; ) ((tt += -Math.log(1 - Math.random()) / 1400), grain(d, sr, tt, 0.12 * Math.pow(Math.random(), 1.5), 400 + Math.random() * 2200, 3e-4 + Math.random() * 8e-4));
+                  let lp = 0, rug = 0;
+                  for (let i = 0; i < d.length; i++) {
+                    let x = i / sr;
+                    ((lp += 0.02 * (Math.random() * 2 - 1 - lp)), (rug += 0.002 * (Math.random() * 2 - 1 - rug)));
+                    d[i] = (d[i] * (1 + 4 * rug) * (1 + 0.35 * Math.max(0, Math.sin(6.283 * 9 * x))) + 1.2 * lp) * Math.min(1, x / 0.12) * Math.min(1, (du - x) / 0.3);
+                  }
+                  [0.28, 0.7, 1.1].forEach((j) => {
+                    (grain(d, sr, j, 0.5, 750, 0.008), grain(d, sr, j, 0.3, 1900, 0.004), grain(d, sr, j + 0.02, 0.4, 700, 0.008), grain(d, sr, j + 0.02, 0.25, 2100, 0.004));
+                    for (let k = 0; k < 5; k++) grain(d, sr, j + 0.03 + k * 0.012 + Math.random() * 0.006, 0.08, 3200 + Math.random() * 1500, 0.002);
+                  });
+                }),
+                lp = t.createBiquadFilter(),
+                g = t.createGain();
+              ((lp.type = "lowpass"), (lp.frequency.value = 2800), (lp.Q.value = 0.5), (g.gain.value = 0.38));
+              (w.connect(lp), lp.connect(g), g.connect(o), w.start(V));
             } else if (id === "francois") {
               // coup de sifflet d'arbitre « tu-tuuut » avec le roulement de la bille
               [[0, 0.12], [0.18, 0.45]].forEach(([d0, du]) => {
@@ -5541,26 +5555,24 @@ if (!window.React || !window.ReactDOM) {
                 (b.setValueAtTime(1e-4, V + d0), b.linearRampToValueAtTime(0.06, V + d0 + 0.01), b.setValueAtTime(0.06, V + d0 + du - 0.03), b.exponentialRampToValueAtTime(1e-4, V + d0 + du));
               });
             } else if (id === "gabriel") {
-              // « crunch crunch » : à chaque bouchée, une salve dense de craquements secs et un petit coup de mâchoire
-              [0, 0.36].forEach((d0, j) => {
-                let du = 0.2,
-                  c = buf(du, (n, sr) => {
-                    let x = n / (sr * du),
-                      env = Math.pow(1 - x, 1.6) * (x < 0.02 ? x / 0.02 : 1);
-                    return Math.random() < 0.09 ? (Math.random() * 2 - 1) * env : (Math.random() * 2 - 1) * env * 0.12;
+              // « crunch crunch » : à chaque bouchée, quelques grosses cassures du biscuit, le choc sourd de la mâchoire,
+              // puis une pluie de petites miettes qui craquent de moins en moins
+              let c = tab(0.75, (d, sr) =>
+                  [[0, 1], [0.34, 0.8]].forEach(([b0, fo]) => {
+                    for (let k = 0; k < 4; k++) grain(d, sr, b0 + Math.random() * 0.012, fo * (0.6 + 0.4 * Math.random()), 1500 + Math.random() * 2500, 0.003);
+                    let i0 = Math.floor(b0 * sr), lp = 0;
+                    for (let n = 0; n < sr * 0.08; n++) ((lp += 0.08 * (Math.random() * 2 - 1 - lp)), (d[i0 + n] += fo * 0.9 * lp * Math.exp(-n / (sr * 0.02))));
+                    for (let tt = b0 + 0.01; tt < b0 + 0.22; ) {
+                      let x = (tt - b0) / 0.22;
+                      tt += -Math.log(1 - Math.random()) / (700 * (1 - x) + 60);
+                      grain(d, sr, tt, fo * (1 - x) * Math.pow(Math.random(), 2) * 0.7, 1000 + Math.random() * 5000, 5e-4 + Math.random() * 0.0015);
+                    }
                   }),
-                  fl = t.createBiquadFilter(),
-                  hp = t.createBiquadFilter(),
-                  g = t.createGain();
-                ((fl.type = "peaking"), (fl.frequency.value = j ? 2600 : 3100), (fl.gain.value = 8), (fl.Q.value = 0.9));
-                ((hp.type = "highpass"), (hp.frequency.value = 700), (g.gain.value = 0.3));
-                (c.connect(hp), hp.connect(fl), fl.connect(g), g.connect(o), c.start(V + d0));
-                let x = t.createOscillator(),
-                  g2 = t.createGain();
-                ((x.type = "sine"), x.frequency.setValueAtTime(170, V + d0), x.frequency.exponentialRampToValueAtTime(70, V + d0 + 0.08));
-                (g2.gain.setValueAtTime(0.08, V + d0), g2.gain.exponentialRampToValueAtTime(1e-4, V + d0 + 0.09));
-                (x.connect(g2), g2.connect(o), x.start(V + d0), x.stop(V + d0 + 0.12));
-              });
+                ),
+                hp = t.createBiquadFilter(),
+                g = t.createGain();
+              ((hp.type = "highpass"), (hp.frequency.value = 120), (g.gain.value = 0.36));
+              (c.connect(hp), hp.connect(g), g.connect(o), c.start(V));
             }
           },
           pause(m) {
