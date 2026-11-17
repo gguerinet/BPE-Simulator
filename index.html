@@ -7194,7 +7194,7 @@ if (!window.React || !window.ReactDOM) {
               (c.dirty = !0));
             // Fin d'une interaction (imprévu, régression, bonne nouvelle) : prochaine visite recomptée à partir de maintenant
             (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
-            if (e.kind === "regression" && k === "A") {
+            if (e.kind === "regression" && k === "B") {
               let sg = (e.corr && e.corr.s) || Sg;
               ((c.energy = Math.max(1, c.energy - sg)), (c.nSignales = (c.nSignales || 0) + 1));
               // Plus la qualité est haute, plus le signalement a de chances d'échouer
@@ -7217,7 +7217,7 @@ if (!window.React || !window.ReactDOM) {
                   fx: [{ t: "e", v: -sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
                 });
               }
-            } else if (e.kind === "regression" && k === "B") {
+            } else if (e.kind === "regression" && k === "A") {
               // Corrigée par nos soins : aucune perte de qualité, seulement de l'avancement
               let co = e.corr || { a: 2 };
               ((M = null),
@@ -7363,8 +7363,17 @@ if (!window.React || !window.ReactDOM) {
               effet: { kind: "qualite", src: "regressions", v: -M },
               corr: { a: ca, s: sg },
               choix: [
-                { id: "A", label: "Signaler \xE0 l'IT", bg: "#0E7490", fx: [{ t: "e", v: -sg }] },
-                { id: "B", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
+                { id: "A", label: "Corriger nous-m\xEAme", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
+                {
+                  id: "B",
+                  label: "Signaler \xE0 l'IT",
+                  bg: "#0E7490",
+                  sub: "qualit\xE9 perdue si l'IT tarde",
+                  fx: [
+                    { t: "e", v: -sg },
+                    { t: "q", v: -M },
+                  ],
+                },
               ],
             }));
         },
