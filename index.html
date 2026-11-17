@@ -2205,9 +2205,9 @@ if (!window.React || !window.ReactDOM) {
       Sg = 6,
       Fi = {
         // Accepter : qualité +1 / +2 / +3 et avancement -1 / -2 / -3 % selon la taille ; refuser un vrai besoin : -2
-        S: { nom: "Petit gap", jours: 1 / Be, qualite: 1, refus: -2 },
-        M: { nom: "Gap moyen", jours: 2 / Be, qualite: 2, refus: -2 },
-        L: { nom: "Gap complexe", jours: 3 / Be, qualite: 3, refus: -2 },
+        S: { nom: "Petit besoin", jours: 1 / Be, qualite: 1, refus: -2 },
+        M: { nom: "Besoin moyen", jours: 2 / Be, qualite: 2, refus: -2 },
+        L: { nom: "Besoin complexe", jours: 3 / Be, qualite: 3, refus: -2 },
       },
       regX = 1,
       // Régression corrigée par nos soins : avancement perdu (%) selon la taille
@@ -2232,7 +2232,7 @@ if (!window.React || !window.ReactDOM) {
         "All\xF4 ?! Ton micro est coup\xE9\u2026",
         "On continue, sc\xE9nario 14 sur 37",
         "Jocelyne\u2026 faut tout refaire",
-        "Je vais mettre \xE0 jour le tableau des gaps",
+        "Je vais mettre \xE0 jour le tableau des besoins",
         "Une petite requ\xEAte, et c'est pli\xE9",
         "\xAB Comme indiqu\xE9 dans mes 8 pr\xE9c\xE9dents mails\u2026 \xBB",
         "Standard ou sp\xE9cifique ? Le d\xE9bat continue.",
@@ -2276,7 +2276,7 @@ if (!window.React || !window.ReactDOM) {
       ],
       BonNouv = [
         ["Un key-user s'implique jour et nuit", "a", 1.5],
-        ["L'IT a livr\xE9 un gap en avance", "a", 2],
+        ["L'IT a livr\xE9 un besoin en avance", "a", 2],
         ["Une licence IA a \xE9t\xE9 ouverte \xE0 BPE", "a", 2],
         ["Passage de connaissance r\xE9ussi de b.workchoc \xE0 l'IT", "q", 2],
         ["Le DM a r\xE9cup\xE9r\xE9 des requ\xEAtes de Fran\xE7ois", "q", 2],
@@ -2413,7 +2413,7 @@ if (!window.React || !window.ReactDOM) {
       ],
       We = "#2E328D",
       Zt = {
-        Divalife: { c: "#0284C7", txt: "#FFFFFF", role: "Client \xB7 gaps et PMO Divalife" },
+        Divalife: { c: "#0284C7", txt: "#FFFFFF", role: "Client \xB7 besoins et PMO Divalife" },
         Inventek: { c: "#EA580C", txt: "#FFFFFF", role: "Prestataire \xB7 tickets et r\xE9gressions" },
         Soderek: { c: "#16A34A", txt: "#FFFFFF", role: "Prestataire \xB7 tickets et r\xE9gressions" },
         SMD: { c: "#DC2626", txt: "#FFFFFF", role: "Prestataire \xB7 tickets et r\xE9gressions" },
@@ -2730,7 +2730,7 @@ if (!window.React || !window.ReactDOM) {
         [
           10,
           "Correction data statique",
-          "Les gaps arrivent en rafale",
+          "Les besoins arrivent en rafale",
         ],
         [
           30,
@@ -2840,9 +2840,9 @@ if (!window.React || !window.ReactDOM) {
           role: "King de la consigne",
           pitch: "Aucune bouteille consign\xE9e ne lui \xE9chappe, et heureusement pour le m\xE9tier.",
           atout: "Antiwrike",
-          atoutTxt: "Deux fois moins impact\xE9 par les gaps et les impr\xE9vus",
+          atoutTxt: "Deux fois moins impact\xE9 par les besoins et les impr\xE9vus",
           conseil:
-            "Gaps et impr\xE9vus lui co\xFBtent deux fois moins d'avancement, et un arbitrage deux fois moins d'\xE9nergie. La qualit\xE9 perdue reste enti\xE8re.",
+            "Besoins et impr\xE9vus lui co\xFBtent deux fois moins d'avancement, et un arbitrage deux fois moins d'\xE9nergie. La qualit\xE9 perdue reste enti\xE8re.",
           look: {
             skin: "#EBC49A",
             skinS: "#CDA27A",
@@ -6754,7 +6754,7 @@ if (!window.React || !window.ReactDOM) {
             "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons (ou les touches A, B, C) : les fl\xE8ches sous chaque choix montrent l'effet sur l'\xE9nergie, l'avancement et la qualit\xE9.",
           introTactile: "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons : les fl\xE8ches sous chaque choix montrent l'effet sur l'\xE9nergie, l'avancement et la qualit\xE9.",
           ex: [
-            [[["DIVALIFE", "#0284C7"], ["GAP", "#1F2937"]], "Un besoin m\xE9tier : accepter, refuser ou faire arbitrer en r\xE9union gaps."],
+            [[["DIVALIFE", "#0284C7"], ["BESOIN", "#1F2937"]], "Un besoin m\xE9tier : accepter, refuser ou faire arbitrer en r\xE9union gaps."],
             [[["INVENTEK", "#EA580C"], ["TICKET", "#2563EB"]], "Un ticket de prestataire : le traiter toi-m\xEAme ou le passer \xE0 la TMA."],
             [[["DIVALIFE", "#0284C7"], ["ATELIER PMO DIVALIFE", "#0F766E"]], "Une formation : la suivre ou la s\xE9cher."],
             [[["DIRECTION PROJET", "#1E3A8A"]], "Certains lundis : sacrifier le week-end suivant ou perdre de la qualit\xE9."],
@@ -6774,7 +6774,7 @@ if (!window.React || !window.ReactDOM) {
         {
           titre: "Les rendez-vous",
           ex: [
-            [[["R\xC9UNION GAPS", "#0284C7"]], "Toutes les 3 semaines, le lundi (J+21, J+42…), elle tranche les gaps mis en arbitrage."],
+            [[["R\xC9UNION GAPS", "#0284C7"]], "Toutes les 3 semaines, le lundi (J+21, J+42…), elle tranche les besoins mis en arbitrage."],
             [[["WEEK-END", "#B45309"]], "Le vendredi soir : rentrer chez toi pour r\xE9cup\xE9rer, ou rester travailler."],
             [[["ARR\xCAT MALADIE", "#DC2626"]], "\xC0 0 % d'\xE9nergie : 4 jours perdus. Dors et bois du caf\xE9 avant d'en arriver l\xE0."],
           ],
@@ -7997,7 +7997,7 @@ if (!window.React || !window.ReactDOM) {
                   Mt("Fausse bonne id\xE9e", "ko", "", 3500, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: -U.qualite }] }),
                   dire(M, jt(["Parfait ! On s'en servira\u2026 s\xFBrement.", "G\xE9nial ! Euh\u2026 c'\xE9tait pour quoi d\xE9j\xE0 ?"])))
                 : (qt(c, "gaps", U.qualite),
-                  Mt("Gap accept\xE9", "ok", "", 3e3, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: U.qualite }] }),
+                  Mt("Besoin accept\xE9", "ok", "", 3e3, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: U.qualite }] }),
                   dire(M, jt(["Merci, l'\xE9quipe sera ravie !", "Enfin quelqu'un qui nous comprend !", "G\xE9nial, je l'annonce \xE0 l'\xE9quipe tout de suite."]))));
           } else if (e === "B")
             (c.refused++,
@@ -8010,7 +8010,7 @@ if (!window.React || !window.ReactDOM) {
                   Mt("Bien vu, fausse bonne id\xE9e", "ok", "", 3500, { ligne: !0, fx: [{ t: "q", v: U.qualite }] }),
                   dire(M, jt(["Bon\u2026 vous avez sans doute raison.", "D'accord, d'accord. C'\xE9tait l'id\xE9e de mon chef."])))
                 : (qt(c, "gaps", rfQ(U)),
-                  Mt("Gap refus\xE9", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(rfQ(U)) }] }),
+                  Mt("Besoin refus\xE9", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(rfQ(U)) }] }),
                   dire(M, jt(["On fera un fichier Excel, alors\u2026", "Je vais devoir l'annoncer \xE0 mon \xE9quipe\u2026"]))));
           else if (e === "C")
             (c.nArbitrages++,
@@ -8019,7 +8019,7 @@ if (!window.React || !window.ReactDOM) {
               M && ((M.mood = "smirk"), (M.react = { sym: "alert", until: j + 1400 })),
               c.arbitrages.push({ idx: g.idx, palier: g.palier }),
               J("arbitre"),
-              Mt("Gap en arbitrage", "bw", "", 3e3, {
+              Mt("Besoin en arbitrage", "bw", "", 3e3, {
                 ligne: !0,
                 fx: [{ t: "e", v: -ie * Tt.gapFacteur(t) }, { txt: `r\xE9union J+${c.prochaineReunion}`, couleur: "#0369A1" }],
               }),
@@ -9486,7 +9486,7 @@ if (!window.React || !window.ReactDOM) {
                               ? "GO / NO-GO"
                               : q.kind === "direction"
                                 ? "DIRECTION PROJET"
-                                : "GAP",
+                                : "BESOIN",
                       ),
                       q.kind === "gap" &&
                         a.default.createElement(
@@ -10288,8 +10288,8 @@ if (!window.React || !window.ReactDOM) {
           "Interactions",
           [
             [
-              "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union tranche \xE0 ta place, elle a du flair\u2026 mais ses d\xE9cisions ont leur prix, et r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie. Tu d\xE9couvriras son verdict le jour J.",
+              "Besoins Divalife",
+              "Valider un besoin, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le besoin \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union tranche \xE0 ta place, elle a du flair\u2026 mais ses d\xE9cisions ont leur prix, et r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie. Tu d\xE9couvriras son verdict le jour J.",
             ],
             [
               "Tickets",
@@ -10313,8 +10313,8 @@ if (!window.React || !window.ReactDOM) {
           "Phases du projet et visites",
           [
             "Chaque phase a son ambiance\u2026 et ses visiteurs pr\xE9f\xE9r\xE9s.",
-            [`${Sr[0][0]} % \xB7 ${Sr[0][1]}`, "la promenade de sant\xE9. Quelques tickets, les premiers gaps, des r\xE9unions o\xF9 tout le monde est d'accord, et l'illusion que le planning tiendra."],
-            [`${Sr[1][0]} % \xB7 ${Sr[1][1]}`, "la foire aux gaps. Les demandes arrivent en rafale, chacune \xAB vraiment indispensable \xBB, et quelques retardataires tomberont encore plus tard. Accepter co\xFBte des jours, refuser co\xFBte de la qualit\xE9 : choisis tes combats."],
+            [`${Sr[0][0]} % \xB7 ${Sr[0][1]}`, "la promenade de sant\xE9. Quelques tickets, les premiers besoins, des r\xE9unions o\xF9 tout le monde est d'accord, et l'illusion que le planning tiendra."],
+            [`${Sr[1][0]} % \xB7 ${Sr[1][1]}`, "la foire aux besoins. Les demandes arrivent en rafale, chacune \xAB vraiment indispensable \xBB, et quelques retardataires tomberont encore plus tard. Accepter co\xFBte des jours, refuser co\xFBte de la qualit\xE9 : choisis tes combats."],
             [`${Sr[2][0]} % \xB7 ${Sr[2][1]}`, "le marathon des ateliers. La PMO Divalife a d\xE9couvert les invitations Outlook. Chaque atelier suivi te vide un peu plus, chaque atelier s\xE9ch\xE9 se paie en qualit\xE9."],
             [`${Sr[3][0]} % \xB7 ${Sr[3][1]}`, "la reprise des donn\xE9es. Ce qui marchait hier ne marche plus aujourd'hui : les r\xE9gressions se multiplient et les impr\xE9vus aussi. Heureusement, les bonnes nouvelles aussi deviennent plus fr\xE9quentes."],
             [`${Sr[4][0]} % \xB7 ${Sr[4][1]}`, "le sprint des braves. La nuit, chaque clic avance une fois et demie plus vite, mais l'\xE9nergie fond deux fois plus vite qu'une nuit normale, soit quatre fois plus vite qu'en journ\xE9e. Caf\xE9, sueur et SQL."],
@@ -11789,7 +11789,7 @@ if (!window.React || !window.ReactDOM) {
           `BPE Simulator \xB7 Divalife \xB7 ${t.hero.nom} (${t.hero.atout})`,
           `${i ? i.nom : "\xC9chec cuisant"} \xB7 Score Comex ${et(t.score)} pts`,
           `Go-live le ${wa(Math.floor(t.total))} \xB7 Co\xFBt ${Rr(t.cout)} \xB7 Qualit\xE9 ${Ba(t.qualite)} %`,
-          `Gaps : ${t.accepted} accept\xE9s, ${t.refused} refus\xE9s \xB7 fausses bonnes id\xE9es d\xE9jou\xE9es ${t.piegesEvites || 0}/${t.nPieges || 0} \xB7 ${C(t.nAteliers || 0, "atelier PMO Divalife suivi", "ateliers PMO Divalife suivis")}`,
+          `Besoins : ${t.accepted} accept\xE9s, ${t.refused} refus\xE9s \xB7 fausses bonnes id\xE9es d\xE9jou\xE9es ${t.piegesEvites || 0}/${t.nPieges || 0} \xB7 ${C(t.nAteliers || 0, "atelier PMO Divalife suivi", "ateliers PMO Divalife suivis")}`,
           `Tickets : ${(t.nTickets || 0) - (t.nTicketsTMA || 0)} trait\xE9s, ${t.nTicketsTMA || 0} \xE0 la TMA \xB7 r\xE9gressions : ${t.nRegressions || 0}`,
           `Nuits : ${t.nightsSlept} dormies, ${t.nightsWorked} travaill\xE9es \xB7 ${C(t.nBurnout, "arr\xEAt", "arr\xEAts")} maladie`,
           `b.workchoc \xD7${t.boostCalls}`,
@@ -11902,7 +11902,7 @@ if (!window.React || !window.ReactDOM) {
                         ["gainW", "Week-end", t.gainW || 0],
                         ["bonnes", "Bonnes nouvelles", -(mv.bonnes || 0)],
                         ["imprevus", "Impr\xE9vus", -(mv.imprevus || 0)],
-                        ["gaps", "Gaps", -(mv.gaps || 0)],
+                        ["gaps", "Besoins", -(mv.gaps || 0)],
                         ["ateliers", "Ateliers PMO Divalife", -(mv.ateliers || 0)],
                         ["regressions", "R\xE9gressions corrig\xE9es", -(mv.regressions || 0)],
                         ["gonogo", "NO-GO", -(mv.gonogo || 0)],
@@ -12044,7 +12044,7 @@ if (!window.React || !window.ReactDOM) {
                     [
                       ["tickets", "Tickets"],
                       ["ateliers", "Ateliers PMO Divalife"],
-                      ["gaps", "Gaps"],
+                      ["gaps", "Besoins"],
                       ["regressions", "R\xE9gressions"],
                       ["bonnes", "Bonnes nouvelles"],
                       ["direction", "Direction projet"],
