@@ -5516,27 +5516,25 @@ if (!window.React || !window.ReactDOM) {
                 });
               });
             } else if (id === "samuel") {
-              // valise à roulettes sur un trottoir : grain du bitume sous les roues, léger tour de roue,
-              // grondement sourd, et un double « clac » à chaque joint de dalle suivi du cliquetis de la poignée
-              let du = 1.4,
-                w = tab(du, (d, sr) => {
-                  let tt = 0;
-                  for (; tt < du; ) ((tt += -Math.log(1 - Math.random()) / 1400), grain(d, sr, tt, 0.12 * Math.pow(Math.random(), 1.5), 400 + Math.random() * 2200, 3e-4 + Math.random() * 8e-4));
-                  let lp = 0, rug = 0;
-                  for (let i = 0; i < d.length; i++) {
-                    let x = i / sr;
-                    ((lp += 0.02 * (Math.random() * 2 - 1 - lp)), (rug += 0.002 * (Math.random() * 2 - 1 - rug)));
-                    d[i] = (d[i] * (1 + 4 * rug) * (1 + 0.35 * Math.max(0, Math.sin(6.283 * 9 * x))) + 1.2 * lp) * Math.min(1, x / 0.12) * Math.min(1, (du - x) / 0.3);
-                  }
-                  [0.28, 0.7, 1.1].forEach((j) => {
-                    (grain(d, sr, j, 0.5, 750, 0.008), grain(d, sr, j, 0.3, 1900, 0.004), grain(d, sr, j + 0.02, 0.4, 700, 0.008), grain(d, sr, j + 0.02, 0.25, 2100, 0.004));
-                    for (let k = 0; k < 5; k++) grain(d, sr, j + 0.03 + k * 0.012 + Math.random() * 0.006, 0.08, 3200 + Math.random() * 1500, 0.002);
-                  });
+              // avion de ligne qui passe lentement au-dessus : souffle des réacteurs qui enfle puis s'éloigne,
+              // et sifflement de turbine qui baisse au passage (effet Doppler)
+              let du = 2.8,
+                pic = 1.25,
+                n = tab(du, (d) => {
+                  let lp = 0;
+                  for (let i = 0; i < d.length; i++) ((lp += 0.25 * (Math.random() * 2 - 1 - lp)), (d[i] = lp));
                 }),
-                lp = t.createBiquadFilter(),
-                g = t.createGain();
-              ((lp.type = "lowpass"), (lp.frequency.value = 2800), (lp.Q.value = 0.5), (g.gain.value = 0.38));
-              (w.connect(lp), lp.connect(g), g.connect(o), w.start(V));
+                bp = t.createBiquadFilter(),
+                g = t.createGain(),
+                tu = t.createOscillator(),
+                g2 = t.createGain();
+              ((bp.type = "bandpass"), (bp.Q.value = 0.8));
+              (bp.frequency.setValueAtTime(400, V), bp.frequency.exponentialRampToValueAtTime(1400, V + pic), bp.frequency.exponentialRampToValueAtTime(350, V + du));
+              (g.gain.setValueAtTime(1e-4, V), g.gain.exponentialRampToValueAtTime(0.55, V + pic), g.gain.exponentialRampToValueAtTime(1e-4, V + du));
+              (n.connect(bp), bp.connect(g), g.connect(o), n.start(V));
+              ((tu.type = "sine"), tu.frequency.setValueAtTime(2300, V), tu.frequency.setValueAtTime(2300, V + 1.05), tu.frequency.exponentialRampToValueAtTime(1600, V + 1.55));
+              (g2.gain.setValueAtTime(1e-4, V), g2.gain.exponentialRampToValueAtTime(0.55 * 0.05, V + pic), g2.gain.exponentialRampToValueAtTime(1e-4, V + du));
+              (tu.connect(g2), g2.connect(o), tu.start(V), tu.stop(V + du));
             } else if (id === "francois") {
               // coup de sifflet d'arbitre « tu-tuuut » avec le roulement de la bille
               [[0, 0.12], [0.18, 0.45]].forEach(([d0, du]) => {
