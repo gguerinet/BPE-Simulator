@@ -2175,6 +2175,12 @@ if (!window.React || !window.ReactDOM) {
       Jn = 1 / 3,
       Rn = 95,
       Kn = 0.5,
+      // Go/no-go : un GO réussi rapporte goPts au score, raté il en retire autant ; la chance de réussite
+      // dépend de la qualité au go-live (même échelle que la note : 30 % -> 10 %, 90 % -> 90 %).
+      // Un NO-GO rapporte nogoPts, au prix d'un peu d'avancement.
+      goPts = 200,
+      nogoPts = 100,
+      goChance = (q) => Math.max(0.1, Math.min(0.9, (q - 30) / 60)),
       ae = { qualite: -5 },
       ee = 2,
       gr = { jours: 2 / Be, qualite: 2 },
@@ -2924,7 +2930,9 @@ if (!window.React || !window.ReactDOM) {
       },
       w2 = (t) => {
         let r = C2(t);
-        return Math.round(1e4 * Math.cbrt((r.qualite / 100) * (r.budget / 100) * (r.delai / 100)));
+        let base = Math.round(1e4 * Math.cbrt((r.qualite / 100) * (r.budget / 100) * (r.delai / 100)));
+        // Bonus ou malus du Comex selon le go/no-go (le score reste entre 0 et 10 000, un score nul reste nul)
+        return base > 0 ? Math.max(0, Math.min(1e4, base + (t.bonusGo || 0))) : 0;
       },
       fr = "bpe-simulator-partie-v18",
       le = "bpe-simulator-records-v2",
@@ -7948,24 +7956,23 @@ if (!window.React || !window.ReactDOM) {
           }
           if (g.kind === "gonogo") {
             if (e === "A")
-              ((c.gonogo = Math.random() < Kn ? "go-ko" : "go-ok"),
+              ((c.gonogo = "go"),
                 M && ((M.mood = "happy"), (M.react = { sym: "happy", until: j + 1400 })),
                 (c.playerMood = "happy"),
                 (c.playerMoodUntil = j + 1600),
                 Mt("GO ! Bascule \xE0 la fin du projet", "ok", "", 3500, {
                   ligne: !0,
-                  fx: [{ txt: "d\xE9marrage incertain", couleur: "#B45309" }],
+                  fx: [{ txt: "verdict au go-live", couleur: "#B45309" }],
                 }),
                 dire(M, jt(["Croisons les doigts pour la PROD\u2026", "Audacieux. J'aime \xE7a. Enfin, je crois."])));
             else if (e === "B")
               ((c.gonogo = "nogo"),
                 (c.d.gonogo = (c.d.gonogo || 0) + gr.jours),
                 Br(gr.jours, "gonogo"),
-                qt(c, "gonogo", gr.qualite),
                 M && ((M.mood = "angry"), (M.react = { sym: "brise", until: j + 1400, dur: 1400 })),
                 Mt("NO-GO : bascule repouss\xE9e", "ko", "", 3500, {
                   ligne: !0,
-                  fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: gr.qualite }],
+                  fx: [{ t: "a", v: -c.dRecul }],
                 }),
                 dire(M, jt(["Recette compl\xE9mentaire, alors.", "Sage d\xE9cision. Le Comex fera la t\xEAte, mais sage.", "Bon, je d\xE9commande le champagne."])));
             else return;
@@ -8034,28 +8041,28 @@ if (!window.React || !window.ReactDOM) {
             (e.golive = !0),
             (e.nightTarget = 0),
             (e.inNight = !1),
+            e.gonogo === "go" && (e.gonogo = Math.random() < goChance(e.quality) ? "go-ok" : "go-ko"),
+            (e.bonusGo = e.gonogo === "go-ok" ? goPts : e.gonogo === "go-ko" ? -goPts : e.gonogo === "nogo" ? nogoPts : 0),
             (e.goliveInfo =
               e.gonogo === "go-ko"
-                ? (qt(e, "gonogo", ae.qualite),
-                  {
+                ? {
                     titre: "D\xE9marrage chaotique",
-                    texte: "JDE est en production, mais les premiers jours sont agit\xE9s : le GO \xE9tait une mauvaise id\xE9e.",
-                    q: ae.qualite,
-                  })
+                    texte: "JDE est en production, mais les premiers jours sont agit\xE9s : le GO \xE9tait une mauvaise id\xE9e. Le Comex s'en souviendra.",
+                    pts: -goPts,
+                  }
                 : e.gonogo === "go-ok"
-                  ? (qt(e, "gonogo", ee),
-                    {
+                  ? {
                       titre: "D\xE9marrage r\xE9ussi",
-                      texte: "JDE est en production sans accroc : le GO \xE9tait une bonne id\xE9e.",
-                      q: ee,
-                    })
+                      texte: "JDE est en production sans accroc : le GO \xE9tait une bonne id\xE9e. Le Comex applaudit.",
+                      pts: goPts,
+                    }
                   : e.gonogo === "nogo"
                     ? {
                         titre: "D\xE9marrage ma\xEEtris\xE9",
-                        texte: "JDE est en production apr\xE8s la recette compl\xE9mentaire : le NO GO \xE9tait prudent.",
-                        q: 0,
+                        texte: "JDE est en production apr\xE8s la recette compl\xE9mentaire : le Comex salue ta prudence.",
+                        pts: nogoPts,
                       }
-                    : { titre: "JDE en production", texte: "La bascule est faite, Divalife tourne sur JDE.", q: 0 }),
+                    : { titre: "JDE en production", texte: "La bascule est faite, Divalife tourne sur JDE.", pts: 0 }),
             Tr(fr, null));
           let c = ["#F97316", "#FACC15", "#22D3EE", "#F472B6", "#4ADE80", "#FFFFFF", "#2563EB"].map(l);
           for (let g = 0; g < 140; g++) {
@@ -8088,6 +8095,7 @@ if (!window.React || !window.ReactDOM) {
                 clicsWeekend: e.clicsWeekend || 0,
                 joursRepos: e.joursRepos || 0,
                 gonogoChoix: e.gonogo,
+                bonusGo: e.bonusGo || 0,
                 nTicketsRevenus: e.nTicketsRevenus,
                 nTickets: e.nTickets,
                 nTicketsTMA: e.nTicketsTMA,
@@ -8760,24 +8768,18 @@ if (!window.React || !window.ReactDOM) {
                     bg: "#86EFAC",
                     titre: "GO : on bascule",
                     titreCourt: "GO",
-                    sub: `L'avancement ne bouge pas \xB7 risque de d\xE9marrage chaotique (qualit\xE9 ${li(ae.qualite)}), sinon qualit\xE9 +${ee}`,
+                    sub: "L'avancement ne bouge pas, mais le d\xE9marrage peut mal se passer : mieux vaut une bonne qualit\xE9",
                     note: "C'est risqu\xE9, mais sur un malentendu \xE7a peut passer",
-                    fx: [
-                      { t: "q", v: ae.qualite },
-                      { t: "q", v: ee },
-                    ],
+                    fx: [],
                   },
                   {
                     k: "B",
                     bg: "#FDE68A",
                     titre: "NO-GO : on s\xE9curise",
                     titreCourt: "NO-GO",
-                    sub: `Recette compl\xE9mentaire : \u2212${kr(pr(gr.jours))} d'avancement \xB7 qualit\xE9 +${gr.qualite}, sans risque`,
+                    sub: `Recette compl\xE9mentaire : \u2212${kr(pr(gr.jours))} d'avancement, sans risque`,
                     note: "Recette compl\xE9mentaire, sans risque",
-                    fx: [
-                      { t: "a", v: -gr.jours },
-                      { t: "q", v: gr.qualite },
-                    ],
+                    fx: [{ t: "a", v: -gr.jours }],
                   },
                 ]
               : q.kind === "atelier"
@@ -9642,7 +9644,7 @@ if (!window.React || !window.ReactDOM) {
                     ),
                   ),
                 Z.goliveInfo &&
-                  Z.goliveInfo.q !== 0 &&
+                  !!Z.goliveInfo.pts &&
                   a.default.createElement(
                     "div",
                     {
@@ -9651,11 +9653,10 @@ if (!window.React || !window.ReactDOM) {
                         borderColor: W,
                         boxShadow: `4px 4px 0 ${W}`,
                         animationDelay: ".5s",
-                        color: Z.goliveInfo.q > 0 ? "#16A34A" : "#DC2626",
+                        color: Z.goliveInfo.pts > 0 ? "#16A34A" : "#DC2626",
                       },
-                      "aria-label": `Qualit\xE9 ${Z.goliveInfo.q > 0 ? "+" : "\u2212"}${Math.abs(Z.goliveInfo.q)}\u00A0%`,
                     },
-                    a.default.createElement(ChipV, { x: { t: "q", v: Z.goliveInfo.q } }),
+                    `Score Comex ${Z.goliveInfo.pts > 0 ? "+" : "\u2212"}${Math.abs(Z.goliveInfo.pts)} pts`,
                   ),
               ),
           ),
@@ -10324,7 +10325,7 @@ if (!window.React || !window.ReactDOM) {
             [`${Sr[2][0]} % \xB7 ${Sr[2][1]}`, "le marathon des ateliers. La PMO Divalife a d\xE9couvert les invitations Outlook. Chaque atelier suivi te vide un peu plus, chaque atelier s\xE9ch\xE9 se paie en qualit\xE9."],
             [`${Sr[3][0]} % \xB7 ${Sr[3][1]}`, "la reprise des donn\xE9es. Ce qui marchait hier ne marche plus aujourd'hui : les r\xE9gressions se multiplient et les impr\xE9vus aussi. Heureusement, les bonnes nouvelles aussi deviennent plus fr\xE9quentes."],
             [`${Sr[4][0]} % \xB7 ${Sr[4][1]}`, "le sprint des braves. La nuit, chaque clic avance une fois et demie plus vite, mais l'\xE9nergie fond deux fois plus vite qu'une nuit normale, soit quatre fois plus vite qu'en journ\xE9e. Caf\xE9, sueur et SQL."],
-            [`${Sr[5][0]} % \xB7 ${Sr[5][1]}`, "l'heure de v\xE9rit\xE9. Le comit\xE9 go/no-go te met face au choix : un GO h\xE9ro\xEFque au risque d'un d\xE9marrage chaotique qui ab\xEEme la qualit\xE9, ou un NO-GO prudent qui repousse la ligne d'arriv\xE9e mais sauve les meubles."],
+            [`${Sr[5][0]} % \xB7 ${Sr[5][1]}`, "l'heure de v\xE9rit\xE9. Le comit\xE9 go/no-go te met face au choix : un GO h\xE9ro\xEFque qui peut te valoir les f\xE9licitations du Comex\u2026 ou ses foudres si le d\xE9marrage tourne mal (mieux vaut une bonne qualit\xE9), ou un NO-GO prudent qui repousse la ligne d'arriv\xE9e mais que le Comex appr\xE9ciera. Le verdict tombe au go-live, directement sur ton score."],
             [`${Sr[6][0]} % \xB7 ${Sr[6][1]}`, "le Comex rend son verdict. Champagne\u2026 ou \xAB point de recadrage \xBB."],
           ],
         ],
@@ -12193,6 +12194,17 @@ if (!window.React || !window.ReactDOM) {
                     className: "text-[15px] leading-tight text-[#BAE6FD] sm:text-[17px]",
                     style: { fontFamily: Yr },
                   },
+                  !!t.bonusGo &&
+                    t.score > 0 &&
+                    a.default.createElement(
+                      "div",
+                      { className: "font-bold", style: { color: t.bonusGo > 0 ? "#4ADE80" : "#F87171" } },
+                      ft(
+                        `Dont ${t.bonusGo > 0 ? "+" : "\u2212"}${Math.abs(t.bonusGo)} pts pour ${
+                          t.gonogoChoix === "nogo" ? "un NO-GO prudent" : t.gonogoChoix === "go-ok" ? "un GO r\xE9ussi" : "un GO rat\xE9"
+                        }`,
+                      ),
+                    ),
                   a.default.createElement(RangLigne, { t }),
                   (() => {
                     let m = [...fe].reverse().find((V) => t.score < V.score);
