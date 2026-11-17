@@ -2649,62 +2649,12 @@ if (!window.React || !window.ReactDOM) {
           "piege",
           "S",
         ],
-        // Vrais besoins ajoutés (en fin de liste pour ne pas décaler les index des parties sauvegardées)
-        [
-          "ADV",
-          "Il faut g\xE9rer les reliquats automatiquement quand une ligne n'est pas livr\xE9e en totalit\xE9.",
-          "Le client a re\xE7u 8 bouteilles sur 10. Les 2 autres existent dans un Post-it, nulle part ailleurs.",
-          "reel",
-          "M",
-        ],
-        [
-          "Logistique",
-          "Il faut suivre les emballages consign\xE9s (bouteilles, conteneurs) chez chaque client.",
-          "On a 4 000 bouteilles dans la nature. Je sais qu'elles existent, je ne sais pas o\xF9.",
-          "reel",
-          "L",
-        ],
-        [
-          "Transport",
-          "Il faut \xE9diter automatiquement le document ADR pour les mati\xE8res dangereuses.",
-          "Le chauffeur attend sur le quai pendant que je recopie les num\xE9ros ONU \xE0 la main.",
-          "reel",
-          "M",
-        ],
-        [
-          "Commerce",
-          "Il faut appliquer automatiquement les conditions tarifaires n\xE9goci\xE9es par client.",
-          "Chaque commande, je v\xE9rifie le contrat papier pour retrouver la remise du client.",
-          "reel",
-          "M",
-        ],
-        [
-          "ADV",
-          "Il faut pouvoir dupliquer une commande pr\xE9c\xE9dente du client.",
-          "Le client commande la m\xEAme chose tous les mois. Moi, je ressaisis tout, ligne par ligne, tous les mois.",
-          "reel",
-          "S",
-        ],
         [
           "Logistique",
           "Pouvoir consulter les disponibilit\xE9s de stock dans l'\xE9cran des exp\xE9ditions.",
           "Pour savoir si on peut exp\xE9dier, j'ouvre trois \xE9crans et j'appelle le magasin. Le magasin ouvre les m\xEAmes trois \xE9crans.",
           "reel",
           "S",
-        ],
-        [
-          "ADV",
-          "Il faut un \xE9tat des commandes en retard de livraison, envoy\xE9 chaque matin.",
-          "Je d\xE9couvre les retards quand le client appelle pour r\xE2ler.",
-          "reel",
-          "S",
-        ],
-        [
-          "Achats",
-          "Il faut g\xE9n\xE9rer les commandes fournisseurs \xE0 partir des seuils de r\xE9appro.",
-          "Le stock tombe \xE0 z\xE9ro, puis quelqu'un pense \xE0 commander. Dans cet ordre.",
-          "reel",
-          "M",
         ],
       ],
       di = (t) => vr[t][3] === "piege",
@@ -6320,6 +6270,10 @@ if (!window.React || !window.ReactDOM) {
     function J2(t, r) {
       let i = Ii(t);
       for (let o of _i) r[o] !== void 0 && (i[o] = JSON.parse(JSON.stringify(r[o])));
+      // Sauvegarde d'une version qui avait plus de besoins : on retire ceux qui n'existent plus
+      ((i.gapDeck = (i.gapDeck || []).filter((x) => x < vr.length)),
+        (i.arbitrages = (i.arbitrages || []).filter((x) => x && x.idx < vr.length)),
+        (i.queue = (i.queue || []).filter((x) => x.type !== "gap" || x.idx < vr.length)));
       return (
         ye(i),
         i.dayClick >= or && ((i.dayClick = 0), i.days++, (i.inNight = !1)),
