@@ -5518,8 +5518,8 @@ if (!window.React || !window.ReactDOM) {
             } else if (id === "samuel") {
               // avion de ligne qui passe lentement au-dessus : souffle des réacteurs qui enfle puis s'éloigne,
               // et sifflement de turbine qui baisse au passage (effet Doppler)
-              let du = 2.8,
-                pic = 1.25,
+              let du = 2.5,
+                pic = 0.55,
                 n = tab(du, (d) => {
                   let lp = 0;
                   for (let i = 0; i < d.length; i++) ((lp += 0.25 * (Math.random() * 2 - 1 - lp)), (d[i] = lp));
@@ -5529,11 +5529,11 @@ if (!window.React || !window.ReactDOM) {
                 tu = t.createOscillator(),
                 g2 = t.createGain();
               ((bp.type = "bandpass"), (bp.Q.value = 0.8));
-              (bp.frequency.setValueAtTime(400, V), bp.frequency.exponentialRampToValueAtTime(1400, V + pic), bp.frequency.exponentialRampToValueAtTime(350, V + du));
-              (g.gain.setValueAtTime(1e-4, V), g.gain.exponentialRampToValueAtTime(0.55, V + pic), g.gain.exponentialRampToValueAtTime(1e-4, V + du));
+              (bp.frequency.setValueAtTime(800, V), bp.frequency.exponentialRampToValueAtTime(1400, V + pic), bp.frequency.exponentialRampToValueAtTime(350, V + du));
+              (g.gain.setValueAtTime(1e-4, V), g.gain.linearRampToValueAtTime(0.25, V + 0.04), g.gain.exponentialRampToValueAtTime(0.5, V + pic), g.gain.exponentialRampToValueAtTime(1e-4, V + du));
               (n.connect(bp), bp.connect(g), g.connect(o), n.start(V));
-              ((tu.type = "sine"), tu.frequency.setValueAtTime(2300, V), tu.frequency.setValueAtTime(2300, V + 1.05), tu.frequency.exponentialRampToValueAtTime(1600, V + 1.55));
-              (g2.gain.setValueAtTime(1e-4, V), g2.gain.exponentialRampToValueAtTime(0.55 * 0.05, V + pic), g2.gain.exponentialRampToValueAtTime(1e-4, V + du));
+              ((tu.type = "sine"), tu.frequency.setValueAtTime(2300, V), tu.frequency.setValueAtTime(2300, V + 0.4), tu.frequency.exponentialRampToValueAtTime(1600, V + 0.9));
+              (g2.gain.setValueAtTime(1e-4, V), g2.gain.linearRampToValueAtTime(0.55 * 0.02, V + 0.04), g2.gain.exponentialRampToValueAtTime(0.55 * 0.05, V + pic), g2.gain.exponentialRampToValueAtTime(1e-4, V + du));
               (tu.connect(g2), g2.connect(o), tu.start(V), tu.stop(V + du));
             } else if (id === "francois") {
               // coup de sifflet d'arbitre « tu-tuuut » avec le roulement de la bille
