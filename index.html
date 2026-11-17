@@ -11604,7 +11604,7 @@ if (!window.React || !window.ReactDOM) {
             hi: Math.max(185, ...cv.map((m) => m[1])) * 1.05,
             max: 90,
             nul: 170,
-            f: (v) => "J+" + Math.round(v),
+            f: (v) => "J+" + Math.floor(v),
           },
         ];
       return (
