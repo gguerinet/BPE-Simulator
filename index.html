@@ -2757,9 +2757,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Ma\xEEtre Yoda",
           pitch: "Parle beaucoup, mais pas pour rien dire. Il trouve sa force dans les requ\xEAtes.",
           atout: "N\xE9gociateur",
-          atoutTxt: "Premi\xE8re mission b.workchoc offerte",
+          atoutTxt: "Missions b.workchoc de 4 jours, et la premi\xE8re est offerte",
           conseil:
-            "Il obtient sa premi\xE8re mission b.workchoc gratuitement : de quoi acc\xE9l\xE9rer le planning sans toucher au budget du Comex.",
+            "Il obtient sa premi\xE8re mission b.workchoc gratuitement, et des missions de 4 jours au lieu de 3 au m\xEAme tarif : de quoi acc\xE9l\xE9rer le planning sans toucher au budget du Comex.",
           look: {
             skin: "#F0C2A0",
             skinS: "#D49E7C",
@@ -2836,7 +2836,7 @@ if (!window.React || !window.ReactDOM) {
           atout: "Antiwrike",
           atoutTxt: "Deux fois moins impact\xE9 par les gaps et les impr\xE9vus",
           conseil:
-            "Gaps et impr\xE9vus lui co\xFBtent deux fois moins : avancement, qualit\xE9 et \xE9nergie perdus.",
+            "Gaps et impr\xE9vus lui co\xFBtent deux fois moins d'avancement, et un arbitrage deux fois moins d'\xE9nergie. La qualit\xE9 perdue reste enti\xE8re.",
           look: {
             skin: "#EBC49A",
             skinS: "#CDA27A",
@@ -2908,9 +2908,9 @@ if (!window.React || !window.ReactDOM) {
         incidentFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
         ticketEFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
-        // François : la premi\u00e8re mission b.workchoc est offerte
+        // François : la premi\u00e8re mission b.workchoc est offerte, et chaque mission dure un jour de plus
         coutBW: (t, e) => (t.id === "francois" && !(e && e.boostCalls) ? 0 : In),
-        dureeBW: (t) => Jr,
+        dureeBW: (t) => (t.id === "francois" ? Jr + 1 : Jr),
       },
       C2 = (t) => {
         let r = (i) => Math.max(0, Math.min(100, i));
@@ -6722,8 +6722,8 @@ if (!window.React || !window.ReactDOM) {
         {
           cible: "consultant",
           titre: "Le consultant b.workchoc",
-          texte: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (la premi\xE8re mission est offerte \xE0 Fran\xE7ois). Touche W.",
-          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (la premi\xE8re mission est offerte \xE0 Fran\xE7ois).",
+          texte: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte). Touche W.",
+          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte).",
         },
         {
           cible: "commandes",
@@ -7985,9 +7985,9 @@ if (!window.React || !window.ReactDOM) {
               (c.playerMood = "happy"),
               (c.playerMoodUntil = j + 1600),
               G
-                ? (qt(c, "gaps", -U.qualite * Tt.gapFacteur(t)),
+                ? (qt(c, "gaps", -U.qualite),
                   c.nPieges++,
-                  Mt("Fausse bonne id\xE9e", "ko", "", 3500, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: -U.qualite * Tt.gapFacteur(t) }] }),
+                  Mt("Fausse bonne id\xE9e", "ko", "", 3500, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: -U.qualite }] }),
                   dire(M, jt(["Parfait ! On s'en servira\u2026 s\xFBrement.", "G\xE9nial ! Euh\u2026 c'\xE9tait pour quoi d\xE9j\xE0 ?"])))
                 : (qt(c, "gaps", U.qualite),
                   Mt("Gap accept\xE9", "ok", "", 3e3, { ligne: !0, fx: [{ t: "a", v: -c.dRecul }, { t: "q", v: U.qualite }] }),
@@ -8002,8 +8002,8 @@ if (!window.React || !window.ReactDOM) {
                   qt(c, "gaps", U.qualite),
                   Mt("Bien vu, fausse bonne id\xE9e", "ok", "", 3500, { ligne: !0, fx: [{ t: "q", v: U.qualite }] }),
                   dire(M, jt(["Bon\u2026 vous avez sans doute raison.", "D'accord, d'accord. C'\xE9tait l'id\xE9e de mon chef."])))
-                : (qt(c, "gaps", rfQ(U) * Tt.gapFacteur(t)),
-                  Mt("Gap refus\xE9", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(rfQ(U) * Tt.gapFacteur(t)) }] }),
+                : (qt(c, "gaps", rfQ(U)),
+                  Mt("Gap refus\xE9", "ko", "", 3e3, { ligne: !0, fx: [{ t: "q", v: r100(rfQ(U)) }] }),
                   dire(M, jt(["On fera un fichier Excel, alors\u2026", "Je vais devoir l'annoncer \xE0 mon \xE9quipe\u2026"]))));
           else if (e === "C")
             (c.nArbitrages++,
@@ -8811,8 +8811,8 @@ if (!window.React || !window.ReactDOM) {
                       k: "B",
                       bg: "#FDA4AF",
                       titre: "Refuser",
-                      sub: `Qualit\xE9 \u2212${Kr(-rfQ(sr) * Tt.gapFacteur(t))}`,
-                      fx: [{ t: "q", v: rfQ(sr) * Tt.gapFacteur(t) }],
+                      sub: `Qualit\xE9 \u2212${Kr(-rfQ(sr))}`,
+                      fx: [{ t: "q", v: rfQ(sr) }],
                     },
                     {
                       k: "C",
@@ -10276,7 +10276,7 @@ if (!window.React || !window.ReactDOM) {
         [
           "Ressources",
           [
-            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (la premi\xE8re mission est offerte \xE0 Fran\xE7ois), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
+            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (${Jr + 1} pour Fran\xE7ois, dont la premi\xE8re mission est offerte), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
           ],
         ],
         [
@@ -10284,7 +10284,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 (1 pour Samuel) si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus d'avancement.",
+              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus d'avancement.",
             ],
             [
               "Tickets",
