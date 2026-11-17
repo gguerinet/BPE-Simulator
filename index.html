@@ -5186,8 +5186,10 @@ if (!window.React || !window.ReactDOM) {
           ),
       );
     }
-    function fa({ t, v: r, sombre: i, couleur: cc }) {
-      let o = T2[t](Math.abs(r)),
+    // Icône d'effet (énergie, avancement, qualité) : rouge si ça coûte, vert si ça rapporte.
+    // Les flèches d'ampleur ne s'affichent que sur les messages d'effet déjà appliqué (sansFleches sur les choix)
+    function fa({ t, v: r, sombre: i, couleur: cc, sansFleches: sf }) {
+      let o = sf ? 0 : T2[t](Math.abs(r)),
         n = r < 0;
       return a.default.createElement(
         "span",
@@ -6764,7 +6766,7 @@ if (!window.React || !window.ReactDOM) {
           intro:
             "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
           ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Corriger nous-m\xEAmes est garanti, au prix d'un peu d'avancement. Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, mais plus la qualit\xE9 est haute, plus l'IT risque d'\xEAtre trop tard."],
+            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Corriger nous-m\xEAmes co\xFBte un peu d'avancement. Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, et de la qualit\xE9 en attendant le correctif."],
             [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
             [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
           ],
@@ -7324,26 +7326,11 @@ if (!window.React || !window.ReactDOM) {
             if (e.kind === "regression" && k === "B") {
               let sg = (e.corr && e.corr.s) || Sg;
               ((c.energy = Math.max(1, c.energy - sg)), (c.nSignales = (c.nSignales || 0) + 1));
-              // Plus la qualité est haute, plus le signalement a de chances d'échouer
-              let tauxSucces = (c.quality >= 80) ? 0.25 :
-                               (c.quality >= 60) ? 0.5 :
-                               (c.quality >= 40) ? 0.75 : 1;
-
-              if (Math.random() < tauxSucces) {
-                // Correction à temps
-                M = null;
-                c.nRepares = (c.nRepares || 0) + 1;
-                Mt("Corrig\xE9e \xE0 temps", "ok", "", 3e3, {
-                  ligne: !0,
-                  fx: [{ t: "e", v: -sg }],
-                });
-              } else {
-                // Trop tard...
-                Mt("Trop tard\u2026", "ko", "", 3e3, {
-                  ligne: !0,
-                  fx: [{ t: "e", v: -sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
-                });
-              }
+              // L'IT ne corrige pas tout de suite : la qualité baisse toujours, selon la taille de la régression
+              Mt("Signal\xE9e \xE0 l'IT, correctif en attente", "ko", "", 3e3, {
+                ligne: !0,
+                fx: [{ t: "e", v: -sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
+              });
             } else if (e.kind === "regression" && k === "A") {
               // Corrigée par nos soins : aucune perte de qualité, seulement de l'avancement
               let co = e.corr || { a: 2 };
@@ -7495,7 +7482,7 @@ if (!window.React || !window.ReactDOM) {
                   id: "B",
                   label: "Signaler \xE0 l'IT",
                   bg: "#0E7490",
-                  sub: "qualit\xE9 perdue si l'IT tarde",
+                  sub: "qualit\xE9 perdue en attendant le correctif",
                   fx: [
                     { t: "e", v: -sg },
                     { t: "q", v: -M },
@@ -9293,7 +9280,7 @@ if (!window.React || !window.ReactDOM) {
                             a.default.createElement(
                               "span",
                               { className: "mt-0.5 flex justify-center gap-2" },
-                              U.fx.map((V, x) => a.default.createElement(fa, { key: x, ...V, sombre: !0, couleur: J === 0 ? g : void 0 })),
+                              U.fx.map((V, x) => a.default.createElement(fa, { key: x, ...V, sombre: !0, couleur: J === 0 ? g : void 0, sansFleches: !0 })),
                             ),
                           ch.length > 1 &&
                             a.default.createElement(
@@ -9588,7 +9575,7 @@ if (!window.React || !window.ReactDOM) {
                             className: "mt-auto flex flex-wrap items-center gap-x-2.5 gap-y-0.5 pt-1.5",
                             "aria-label": ft(e.sub),
                           },
-                          e.fx.map((c, g) => a.default.createElement(fa, { key: g, ...c })),
+                          e.fx.map((c, g) => a.default.createElement(fa, { key: g, ...c, sansFleches: !0 })),
                         ),
                       ),
                     ),
@@ -10296,7 +10283,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Gaps Divalife",
-              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union ne se trompe jamais (vrai besoin accept\xE9, fausse bonne id\xE9e refus\xE9e, sans le bonus de qualit\xE9 d'un refus direct), mais r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et un gap accept\xE9 en r\xE9union co\xFBte deux fois plus d'avancement.",
+              "Valider un gap, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le gap \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union tranche \xE0 ta place, elle a du flair\u2026 mais ses d\xE9cisions ont leur prix, et r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie. Tu d\xE9couvriras son verdict le jour J.",
             ],
             [
               "Tickets",
@@ -10304,7 +10291,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si elle est corrig\xE9e \xE0 temps. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais plus la qualit\xE9 du projet est haute, plus l'IT prend son temps (correction \xE0 temps 1 fois sur 4 d\xE8s 80 %, 1 fois sur 2 d\xE8s 60 %, 3 fois sur 4 d\xE8s 40 %, toujours en dessous ; trop tard, la qualit\xE9 baisse quand m\xEAme) ; ou la corriger nous-m\xEAmes, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si on la corrige nous-m\xEAmes. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais l'IT ne corrige pas tout de suite et la qualit\xE9 baisse en attendant ; ou la corriger nous-m\xEAmes, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
