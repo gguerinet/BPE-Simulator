@@ -8100,7 +8100,7 @@ if (!window.React || !window.ReactDOM) {
                 accepted: e.accepted,
                 refused: e.refused,
                 journal: e.journal,
-                curve: [...e.curve, [100, nr(_t(e)), nr(e.quality), e.bwSpent]],
+                curve: [...e.curve, [100, _t(e), nr(e.quality), e.bwSpent]], // dernier point exact : même jour que « Jours écoulés »
                 gainJ: e.gainJ || 0,
                 gainN: e.gainN || 0,
                 gainW: e.gainW || 0,
