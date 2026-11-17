@@ -6766,7 +6766,7 @@ if (!window.React || !window.ReactDOM) {
           intro:
             "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
           ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Corriger nous-m\xEAmes co\xFBte un peu d'avancement. Signaler \xE0 l'IT co\xFBte un peu d'\xE9nergie, et de la qualit\xE9 en attendant le correctif."],
+            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Corriger nous-m\xEAmes co\xFBte de l'\xE9nergie et un peu d'avancement. Signaler \xE0 l'IT co\xFBte de la qualit\xE9 en attendant le correctif."],
             [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
             [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
           ],
@@ -7324,22 +7324,23 @@ if (!window.React || !window.ReactDOM) {
             // Fin d'une interaction (imprévu, régression, bonne nouvelle) : prochaine visite recomptée à partir de maintenant
             (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
             if (e.kind === "regression" && k === "B") {
-              let sg = (e.corr && e.corr.s) || Sg;
-              ((c.energy = Math.max(1, c.energy - sg)), (c.nSignales = (c.nSignales || 0) + 1));
+              c.nSignales = (c.nSignales || 0) + 1;
               // L'IT ne corrige pas tout de suite : la qualité baisse toujours, selon la taille de la régression
               Mt("Signal\xE9e \xE0 l'IT, correctif en attente", "ko", "", 3e3, {
                 ligne: !0,
-                fx: [{ t: "e", v: -sg }, ...(M && M.v ? [{ t: "q", v: r100(M.v) }] : [])],
+                fx: M && M.v ? [{ t: "q", v: r100(M.v) }] : [],
               });
             } else if (e.kind === "regression" && k === "A") {
-              // Corrigée par nos soins : aucune perte de qualité, seulement de l'avancement
-              let co = e.corr || { a: 2 };
+              // Corrigée par nos soins : aucune perte de qualité, mais de l'énergie et de l'avancement
+              let co = e.corr || { a: 2 },
+                sg = (e.corr && e.corr.s) || Sg;
               ((M = null),
+                (c.energy = Math.max(1, c.energy - sg)),
                 (c.nCorriges = (c.nCorriges || 0) + 1),
                 Br(co.a / Be, "regressions"),
                 Mt("Corrig\xE9e par nos soins", "ok", "", 3e3, {
                   ligne: !0,
-                  fx: [{ t: "a", v: -co.a }],
+                  fx: [{ t: "e", v: -sg }, { t: "a", v: -co.a }],
                 }));
             }
             (M && Ee(M), d(), bt(yr, 150));
@@ -7477,16 +7478,21 @@ if (!window.React || !window.ReactDOM) {
               effet: { kind: "qualite", src: "regressions", v: -M },
               corr: { a: ca, s: sg },
               choix: [
-                { id: "A", label: "Corriger nous-m\xEAmes", bg: "#15803D", fx: [{ t: "a", v: -ca }] },
+                {
+                  id: "A",
+                  label: "Corriger nous-m\xEAmes",
+                  bg: "#15803D",
+                  fx: [
+                    { t: "e", v: -sg },
+                    { t: "a", v: -ca },
+                  ],
+                },
                 {
                   id: "B",
                   label: "Signaler \xE0 l'IT",
                   bg: "#0E7490",
                   sub: "qualit\xE9 perdue en attendant le correctif",
-                  fx: [
-                    { t: "e", v: -sg },
-                    { t: "q", v: -M },
-                  ],
+                  fx: [{ t: "q", v: -M }],
                 },
               ],
             }));
@@ -10291,7 +10297,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si on la corrige nous-m\xEAmes. Deux options : la signaler \xE0 l'IT, pour un peu d'\xE9nergie, mais l'IT ne corrige pas tout de suite et la qualit\xE9 baisse en attendant ; ou la corriger nous-m\xEAmes, correction garantie au prix de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si on la corrige nous-m\xEAmes. Deux options : la signaler \xE0 l'IT, mais l'IT ne corrige pas tout de suite et la qualit\xE9 baisse en attendant ; ou la corriger nous-m\xEAmes, au prix d'un peu d'\xE9nergie et de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
