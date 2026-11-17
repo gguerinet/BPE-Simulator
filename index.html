@@ -8927,12 +8927,14 @@ if (!window.React || !window.ReactDOM) {
                   ? `\xC9nergie \xB7 max ${eMx(Z)} % (week-ends au bureau)`
                   : "\xC9nergie",
             },
-            a.default.createElement(Zo, {
-              size: 18,
-              strokeWidth: 2.5,
-              className: jr ? "jde-blink" : "",
-              color: jr ? "#E11D48" : W,
-            }),
+            // Sur un très petit écran (moins de 360 px), l'icône laisse la place au pourcentage
+            window.innerWidth >= 360 &&
+              a.default.createElement(Zo, {
+                size: 18,
+                strokeWidth: 2.5,
+                className: jr ? "jde-blink" : "",
+                color: jr ? "#E11D48" : W,
+              }),
             a.default.createElement(
               "div",
               {
@@ -9524,8 +9526,8 @@ if (!window.React || !window.ReactDOM) {
                     "div",
                     {
                       className:
-                        "mt-3 grid shrink-0 gap-2 sm:gap-2.5 " +
-                        (za.length === 2 ? "grid-cols-2" : "grid-cols-3"),
+                        "mt-3 grid shrink-0 sm:gap-2.5 " +
+                        (za.length === 2 ? "grid-cols-2 gap-2" : "grid-cols-3 gap-1.5"),
                     },
                     za.map((e) =>
                       a.default.createElement(
@@ -9536,12 +9538,14 @@ if (!window.React || !window.ReactDOM) {
                           fg: W,
                           title: ft(e.sub),
                           onClick: () => ze(e.k),
+                          // Trois choix sur un petit téléphone : texte et marges réduits pour que les titres tiennent
                           className:
-                            "flex min-h-[64px] flex-col items-start justify-start px-2 py-1.5 text-left text-[14px] sm:min-h-[76px] sm:px-2.5 sm:text-[16px]",
+                            "flex min-h-[64px] min-w-0 flex-col items-start justify-start py-1.5 text-left sm:min-h-[76px] sm:px-2.5 sm:text-[16px] " +
+                            (za.length === 3 ? "px-1.5 text-[13px]" : "px-2 text-[14px]"),
                         },
                         a.default.createElement(
                           "span",
-                          { className: "flex items-start gap-1.5" },
+                          { className: "flex items-start " + (za.length === 3 ? "gap-1 sm:gap-1.5" : "gap-1.5"), style: za.length === 3 && window.innerWidth < 360 ? { flexWrap: "wrap" } : void 0 },
                           a.default.createElement(
                             "span",
                             {
@@ -11834,7 +11838,13 @@ if (!window.React || !window.ReactDOM) {
           "div",
           {
             className: "jde-pop flex max-h-full w-full max-w-6xl flex-col border-4 bg-[#FBF7EE]",
-            style: { borderColor: W, boxShadow: `6px 6px 0 ${W}` },
+            // Grands écrans : le rapport est agrandi du même facteur que l'écran d'accueil
+            style: (() => {
+              let z = cZoom(window.innerWidth, window.innerHeight);
+              return z > 1
+                ? { borderColor: W, boxShadow: `6px 6px 0 ${W}`, zoom: z, maxHeight: (window.innerHeight - 32) / z }
+                : { borderColor: W, boxShadow: `6px 6px 0 ${W}` };
+            })(),
           },
           a.default.createElement(
             "div",
