@@ -12121,17 +12121,22 @@ if (!window.React || !window.ReactDOM) {
                     className: "text-[15px] leading-tight text-[#BAE6FD] sm:text-[17px]",
                     style: { fontFamily: Yr },
                   },
-                  !!t.bonusGo &&
-                    t.score > 0 &&
-                    a.default.createElement(
-                      "div",
-                      { className: "font-bold", style: { color: t.bonusGo > 0 ? "#4ADE80" : "#F87171" } },
-                      ft(
-                        `Dont ${t.bonusGo > 0 ? "+" : "\u2212"}${Math.abs(t.bonusGo)} pts pour ${
-                          t.gonogoChoix === "nogo" ? "un NO-GO prudent" : t.gonogoChoix === "go-ok" ? "un GO r\xE9ussi" : "un GO rat\xE9"
-                        }`,
-                      ),
-                    ),
+                  (() => {
+                    // Bonus réellement gagné : le score est plafonné à 10 000 (et ne descend pas sous 0)
+                    let bg = t.bonusGo && t.score > 0 ? t.score - w2({ ...t, bonusGo: 0 }) : 0;
+                    return (
+                      !!bg &&
+                      a.default.createElement(
+                        "div",
+                        { className: "font-bold", style: { color: bg > 0 ? "#4ADE80" : "#F87171" } },
+                        ft(
+                          `Dont ${bg > 0 ? "+" : "\u2212"}${Math.abs(bg)} pts pour ${
+                            t.gonogoChoix === "nogo" ? "un NO-GO prudent" : t.gonogoChoix === "go-ok" ? "un GO r\xE9ussi" : "un GO rat\xE9"
+                          }`,
+                        ),
+                      )
+                    );
+                  })(),
                   a.default.createElement(RangLigne, { t }),
                   (() => {
                     let m = [...fe].reverse().find((V) => t.score < V.score);
