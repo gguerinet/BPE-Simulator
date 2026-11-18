@@ -6664,8 +6664,8 @@ if (!window.React || !window.ReactDOM) {
         {
           cible: "consultant",
           titre: "Le consultant b.workchoc",
-          texte: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte). Touche W.",
-          texteTactile: "Double ta vitesse pendant 3 jours travaill\xE9s, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte).",
+          texte: "Double ta vitesse pendant 3 jours, nuits comprises, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte). Les week-ends de repos et les arr\xEAts maladie ne comptent pas. Touche W.",
+          texteTactile: "Double ta vitesse pendant 3 jours, nuits comprises, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte). Les week-ends de repos et les arr\xEAts maladie ne comptent pas.",
         },
         {
           cible: "commandes",
@@ -6937,11 +6937,15 @@ if (!window.React || !window.ReactDOM) {
       n.current || (n.current = i ? J2(t, i) : Ii(t));
       // Classement en ligne : la base donne un numéro à chaque nouvelle partie et note l'heure de départ
       (0, a.useEffect)(() => {
-        i ||
-          sbPartie().then((id) => {
-            let g = n.current;
-            id && g && !g.partieId && ((g.partieId = id), (g.dirty = !0));
-          });
+        let demande = () =>
+            n.current.partieId ||
+            n.current.golive ||
+            sbPartie().then((id) => {
+              let g = n.current;
+              id && g && !g.partieId && ((g.partieId = id), (g.dirty = !0));
+            }),
+          iv = setInterval(demande, 6e4);
+        return (demande(), () => clearInterval(iv));
       }, []);
       let [, d] = (0, a.useReducer)((e) => e + 1, 0),
         u = (0, a.useRef)(null),
@@ -8622,7 +8626,7 @@ if (!window.React || !window.ReactDOM) {
           Z.busy === "nuit"
             ? "repos"
             : Z.inNight
-              ? cr >= Rt[0] && cr < Rt[1]
+              ? Z.puMax / 1e3 >= Rt[0] && Z.puMax / 1e3 < Rt[1]
                 ? "nuit de cutover"
                 : "nuit blanche"
               : er(Z)
@@ -8640,7 +8644,6 @@ if (!window.React || !window.ReactDOM) {
         Mn = Math.ceil(Z.energy / 10),
         jr = Z.energy < xe,
         mn = Tt.coutBW(t, Z),
-        i1 = cr >= Rt[0] && cr < Rt[1],
         { cs: Pa, left: Wr, top: sa, w: Ir, h: qa } = B,
         Cn = A(Pt.i, Pt.j),
         n1 = A(Xr.i, Xr.j),
@@ -10233,7 +10236,7 @@ if (!window.React || !window.ReactDOM) {
         [
           "Ressources",
           [
-            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours travaill\xE9s (${Jr + 1} pour Fran\xE7ois, dont la premi\xE8re mission est offerte), sachant qu'on ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
+            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours, nuits comprises (${Jr + 1} pour Fran\xE7ois, dont la premi\xE8re mission est offerte). Les week-ends de repos et les arr\xEAts maladie ne sont pas d\xE9compt\xE9s. On ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
           ],
         ],
         [
@@ -11065,6 +11068,8 @@ if (!window.React || !window.ReactDOM) {
     // Facteur d'agrandissement de l'écran d'accueil : 1 jusqu'à 800 px de haut, puis proportionnel à la hauteur
     var cZoom = (w, h) => (w >= 640 ? Math.max(1, Math.min(h / 800, w / 900)) : 1);
     function r1({ onStart: t, save: r, records: i }) {
+      // « Nouvelle partie » efface la partie sauvegardée : un second appui confirme
+      let [nvConf, setNvConf] = (0, a.useState)(!1);
       let [psv, setPsv] = (0, a.useState)(Ps),
         [psOuvert, setPsOuvert] = (0, a.useState)(() => wi && !Ps()),
         [o, n] = (0, a.useState)(!wi),
@@ -11397,13 +11402,14 @@ if (!window.React || !window.ReactDOM) {
                 mt,
                 {
                   bg: "#F97316",
-                  onClick: () => t(B.id, null),
+                  onClick: () =>
+                    w && !nvConf ? (setNvConf(!0), setTimeout(() => setNvConf(!1), 4e3)) : t(B.id, null),
                   className: "flex items-center gap-2 px-3 text-base sm:px-5 sm:text-2xl",
                   style: { height: cBtnH },
                 },
                 a.default.createElement(ka, { size: 22, strokeWidth: 3 }),
                 " ",
-                w ? "Nouvelle partie" : "Commencer le projet",
+                w ? (nvConf ? "Effacer la partie en cours ?" : "Nouvelle partie") : "Commencer le projet",
               ),
             ),
             a.default.createElement(Lbd, { records: i, pseudo: psv }),
