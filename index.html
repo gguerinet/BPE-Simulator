@@ -2203,16 +2203,12 @@ if (!window.React || !window.ReactDOM) {
       Qr = 4,
       ve = 40,
       bi = 50,
-      Sg = 6,
       Fi = {
         // Accepter : qualité +1 / +2 / +3 et avancement -1 / -2 / -3 % selon la taille ; refuser un vrai besoin : -2
         S: { nom: "Petit", jours: 1 / Be, qualite: 1, refus: -2 },
         M: { nom: "Moyen", jours: 2 / Be, qualite: 2, refus: -2 },
         L: { nom: "Complexe", jours: 3 / Be, qualite: 3, refus: -2 },
       },
-      regX = 1,
-      // Régression corrigée par nos soins : avancement perdu (%) selon la taille
-      corrA = { 1: 1, 2: 2, 3: 2 },
       rfQ = (g) => g.refus,
       // Besoin accepté en réunion gaps : même coût en avancement qu'une acceptation directe
       n2 = 1,
@@ -2740,7 +2736,7 @@ if (!window.React || !window.ReactDOM) {
           atout: "\u0152il de lynx",
           atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions, et ses tickets trait\xE9s rapportent plus de qualit\xE9",
           conseil:
-            "Tickets et r\xE9gressions lui co\xFBtent deux fois moins : \xE9nergie, avancement et qualit\xE9 perdus. Et un ticket trait\xE9 lui rapporte +2 de qualit\xE9 au lieu de +1,5.",
+            "Les tickets lui co\xFBtent deux fois moins d'\xE9nergie et de qualit\xE9, les r\xE9gressions deux fois moins de qualit\xE9. Et un ticket trait\xE9 lui rapporte +2 de qualit\xE9 au lieu de +1,5.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -6727,7 +6723,7 @@ if (!window.React || !window.ReactDOM) {
           intro:
             "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
           ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Corriger nous-m\xEAmes co\xFBte de l'\xE9nergie et un peu d'avancement. Signaler \xE0 l'IT co\xFBte de la qualit\xE9 en attendant le correctif."],
+            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Quelque chose a cass\xE9 : la qualit\xE9 baisse de 1 \xE0 3 selon la gravit\xE9. \xAB OK \xBB, et on continue."],
             [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
             [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
           ],
@@ -7285,7 +7281,6 @@ if (!window.React || !window.ReactDOM) {
             fx: j.fx,
             effet: !!j.effet,
             choix: j.choix || null,
-            corr: j.corr || null,
             num: j.num,
             ligne: !!j.ligne,
           }),
@@ -7326,35 +7321,6 @@ if (!window.React || !window.ReactDOM) {
               (c.dirty = !0));
             // Fin d'une interaction (imprévu, régression, bonne nouvelle) : prochaine visite recomptée à partir de maintenant
             (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
-            if (e.kind === "regression" && k === "B") {
-              // L'IT ne corrige pas tout de suite : la qualité baisse toujours, selon la taille de la régression
-              Mt("Signal\xE9e \xE0 l'IT, correctif en attente", "ko", "", 3e3, {
-                ligne: !0,
-                fx: M && M.v ? [{ t: "q", v: r100(M.v) }] : [],
-              });
-            } else if (e.kind === "regression" && k === "A") {
-              // Corrigée par nos soins : aucune perte de qualité, mais de l'énergie et de l'avancement
-              let co = e.corr || { a: 2 },
-                sg = (e.corr && e.corr.s) || Sg;
-              ((M = null),
-                (c.energy = Math.max(0, c.energy - sg)),
-                c.energy < 0.5 && (c.energy = 0),
-                Br(co.a / Be, "regressions"),
-                Mt("Corrig\xE9e par nos soins", "ok", "", 3e3, {
-                  ligne: !0,
-                  fx: [{ t: "e", v: -sg }, { t: "a", v: -co.a }],
-                }),
-                // Comme les autres dépenses d'énergie, corriger à bout de forces mène à l'arrêt maladie
-                c.energy <= 0 &&
-                  ((c.busy = "sick"),
-                  La(c),
-                  (c.holding = !1),
-                  qr(
-                    "sick",
-                    () => Yt(!0),
-                    () => n.current.busy === "sick",
-                  )));
-            }
             (M && Ee(M), d(), bt(yr, 150));
           }
         },
@@ -7480,37 +7446,17 @@ if (!window.React || !window.ReactDOM) {
             e.pu >= 1e5 && !e.golive && !(e.arbitrages.length && Sa(!0)) && ln();
           }
         },
+        // Régression : simple événement, la qualité baisse de 1, 2 ou 3 selon sa taille (deux fois moins pour Hugues)
         an = () => {
           let e = n.current,
             [c, g] = pv(e, "regressions", p2),
-            M = Math.max(0.5, Math.round(g * regX * Tt.incidentFacteur(t) * 2) / 2),
-            // Hugues : énergie, avancement et qualité divisés par deux
-            ca = (corrA[g] || 2) * Tt.incidentFacteur(t),
-            sg = Sg * Tt.incidentFacteur(t);
+            M = Math.max(0.5, Math.round(g * Tt.incidentFacteur(t) * 2) / 2);
           (e.nRegressions++,
-            Mt(c, "regression", "", 0, {
+            Mt(c, "regression", "L'IT s'en occupe\u2026 un jour.", 0, {
               ok: !0,
               fx: [{ t: "q", v: -M }],
               effet: { kind: "qualite", src: "regressions", v: -M },
-              corr: { a: ca, s: sg },
-              choix: [
-                {
-                  id: "A",
-                  label: "Corriger nous-m\xEAmes",
-                  bg: "#15803D",
-                  fx: [
-                    { t: "e", v: -sg },
-                    { t: "a", v: -ca },
-                  ],
-                },
-                {
-                  id: "B",
-                  label: "Signaler \xE0 l'IT",
-                  bg: "#0E7490",
-                  sub: "qualit\xE9 perdue en attendant le correctif",
-                  fx: [{ t: "q", v: -M }],
-                },
-              ],
+              choix: [{ id: "OK", label: "OK" }],
             }));
         },
         imp = () => {
@@ -10313,7 +10259,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa taille, sauf si on la corrige nous-m\xEAmes. Deux options : la signaler \xE0 l'IT, mais l'IT ne corrige pas tout de suite et la qualit\xE9 baisse en attendant ; ou la corriger nous-m\xEAmes, au prix d'un peu d'\xE9nergie et de 1 ou 2 % d'avancement selon sa taille. Pour Hugues, tous ces co\xFBts sont divis\xE9s par deux. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
+              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa gravit\xE9 (deux fois moins pour Hugues) : l'IT s'en occupe\u2026 un jour. Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
             ],
             [
               "Direction projet",
@@ -10459,7 +10405,7 @@ if (!window.React || !window.ReactDOM) {
                   className: "mt-1 text-[15px] leading-snug sm:text-base",
                   style: { fontFamily: Yr },
                 },
-                "Raccourcis : Espace travailler \xB7 C caf\xE9 \xB7 D dormir \xB7 W b.workchoc \xB7 A/B/C r\xE9pondre (visites, r\xE9gressions, week-end) \xB7 Entr\xE9e fermer \xB7 P pause \xB7 M son",
+                "Raccourcis : Espace travailler \xB7 C caf\xE9 \xB7 D dormir \xB7 W b.workchoc \xB7 A/B/C r\xE9pondre (visites, week-end) \xB7 Entr\xE9e fermer \xB7 P pause \xB7 M son",
               ),
               ),
           ),
@@ -11948,7 +11894,6 @@ if (!window.React || !window.ReactDOM) {
                         ["imprevus", "Impr\xE9vus", -(mv.imprevus || 0)],
                         ["gaps", "Besoins", -(mv.gaps || 0)],
                         ["ateliers", "Ateliers PMO Divalife", -(mv.ateliers || 0)],
-                        ["regressions", "R\xE9gressions corrig\xE9es", -(mv.regressions || 0)],
                         ["gonogo", "NO-GO", -(mv.gonogo || 0)],
                         ["autres", "Autres", -(mv.autres || 0)],
                       ],
