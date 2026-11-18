@@ -6019,6 +6019,7 @@ if (!window.React || !window.ReactDOM) {
         ticketsTMA: [],
         nTicketsRevenus: 0,
         gonogo: null,
+        partieId: null,
         nTickets: 0,
         nTicketsTMA: 0,
         nRegressions: 0,
@@ -6199,6 +6200,7 @@ if (!window.React || !window.ReactDOM) {
       "nReunionRefuses",
       "dq",
       "transit",
+      "partieId",
     ];
     function ye(t) {
       let r = t.transit;
@@ -6933,6 +6935,14 @@ if (!window.React || !window.ReactDOM) {
     function Q2({ hero: t, onEnd: r, resume: i, onMenu: o }) {
       let n = (0, a.useRef)(null);
       n.current || (n.current = i ? J2(t, i) : Ii(t));
+      // Classement en ligne : la base donne un numéro à chaque nouvelle partie et note l'heure de départ
+      (0, a.useEffect)(() => {
+        i ||
+          sbPartie().then((id) => {
+            let g = n.current;
+            id && g && !g.partieId && ((g.partieId = id), (g.dirty = !0));
+          });
+      }, []);
       let [, d] = (0, a.useReducer)((e) => e + 1, 0),
         u = (0, a.useRef)(null),
         p = (0, a.useRef)(null),
@@ -8029,6 +8039,7 @@ if (!window.React || !window.ReactDOM) {
                 clicsWeekend: e.clicsWeekend || 0,
                 joursRepos: e.joursRepos || 0,
                 gonogoChoix: e.gonogo,
+                partieId: e.partieId || null,
                 bonusGo: e.bonusGo || 0,
                 nTicketsRevenus: e.nTicketsRevenus,
                 nTickets: e.nTickets,
@@ -10459,16 +10470,40 @@ if (!window.React || !window.ReactDOM) {
           let r = await fetch(sbBase() + "/rest/v1/scores", {
             method: "POST",
             headers: { ...sbH(), "Content-Type": "application/json", Prefer: "return=minimal" },
-            body: JSON.stringify({ pseudo: e.pseudo, hero: e.heroId, score: e.score, joueur_id: jid() }),
+            body: JSON.stringify({
+              pseudo: e.pseudo,
+              hero: e.heroId,
+              score: e.score,
+              joueur_id: jid(),
+              // La base recalcule le score à partir de ce détail, et vérifie le numéro et la durée de la partie
+              ...(e.partieId
+                ? { partie_id: e.partieId, total: e.total, qualite: e.qualite, cout: e.cout, gonogo: e.gonogo || null }
+                : {}),
+            }),
           });
           if (r.ok) return "ok";
           let x = "";
           try {
             x = await r.text();
           } catch {}
-          return /pseudo/i.test(x) && /pris/i.test(x) ? "pris" : "erreur";
+          return /pseudo/i.test(x) && /pris/i.test(x) ? "pris" : r.status >= 400 && r.status < 500 ? "refuse" : "erreur";
         } catch {
           return "erreur";
+        }
+      },
+      sbPartie = async () => {
+        try {
+          if (!sbOk()) return null;
+          let r = await fetch(sbBase() + "/rest/v1/rpc/commencer_partie", {
+            method: "POST",
+            headers: { ...sbH(), "Content-Type": "application/json" },
+            body: JSON.stringify({ j: jid() }),
+          });
+          if (!r.ok) return null;
+          let v = await r.json();
+          return typeof v == "string" && /^[0-9a-f-]{36}$/i.test(v) ? v : null;
+        } catch {
+          return null;
         }
       },
       Cl = { p: null },
@@ -11627,7 +11662,7 @@ if (!window.React || !window.ReactDOM) {
             try {
               st = t.envoi ? await t.envoi : "erreur";
             } catch {}
-            if (st === "pris" || st === "sans-pseudo") return g || c(st);
+            if (st === "pris" || st === "sans-pseudo" || st === "refuse") return g || c(st);
             try {
               let rows = await topEnLigne(),
                 ps = (Ps() || "").toLowerCase(),
@@ -11648,6 +11683,8 @@ if (!window.React || !window.ReactDOM) {
           ? "Classement en ligne : calcul du rang\u2026"
           : e === "pris"
             ? "Ce pseudo appartient d\xE9j\xE0 \xE0 un autre joueur : score non publi\xE9. Change de pseudo depuis l'accueil."
+            : e === "refuse"
+              ? "Score non publi\xE9 : le classement en ligne l'a refus\xE9."
             : e === "sans-pseudo"
               ? "Sans pseudo, le score n'est pas publi\xE9 en ligne."
               : e === "injoignable"
@@ -12426,6 +12463,11 @@ if (!window.React || !window.ReactDOM) {
                   heroNom: f.hero.nom,
                   score: H,
                   medaille: D ? D.id : null,
+                  partieId: f.partieId,
+                  total: f.total,
+                  qualite: f.qualite,
+                  cout: f.cout,
+                  gonogo: f.gonogoChoix,
                 })));
               let kt = nt.indexOf(Y) + 1 || nt.length + 1;
               (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi }), r("report"));
