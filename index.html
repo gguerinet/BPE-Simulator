@@ -6020,6 +6020,7 @@ if (!window.React || !window.ReactDOM) {
         nTicketsRevenus: 0,
         gonogo: null,
         partieId: null,
+        vrV: VRV,
         nTickets: 0,
         nTicketsTMA: 0,
         nRegressions: 0,
@@ -6187,13 +6188,7 @@ if (!window.React || !window.ReactDOM) {
       "calme",
       "cafeAttente",
       "nReposWE",
-      "nBonnes",
-      "bnMois",
       "bnMoisN",
-      "joursGagnes",
-      "nSignales",
-      "nRepares",
-      "nCorriges",
       "weekendsMaison",
       "prochaineReunion",
       "nReunionAcceptes",
@@ -6201,6 +6196,7 @@ if (!window.React || !window.ReactDOM) {
       "dq",
       "transit",
       "partieId",
+      "vrV",
     ];
     function ye(t) {
       let r = t.transit;
@@ -6238,13 +6234,46 @@ if (!window.React || !window.ReactDOM) {
       for (let i of _i) r[i] = t[i];
       (t.pendingEvent && (r.queue = [t.pendingEvent, ...t.queue]), Tr(fr, r), (t.dirty = !1));
     }
+    // Version de la liste des besoins : à incrémenter (et à décrire dans VR_ANC) si un besoin est retiré ou déplacé.
+    // VR_ANC donne, pour chaque ancienne liste, la position de chacun de ses besoins dans la liste actuelle (-1 : retiré).
+    var VRV = 2,
+      VR_ANC = [
+        // 31 besoins (16-17 novembre ; la liste à 30 besoins d'avant a les mêmes positions)
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, -1, 18, -1, 19, -1, 20, 21, 22, 23, 24, -1, 25, 26],
+        // 38 besoins (jusqu'au 17 novembre)
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, -1, 18, -1, 19, -1, 20, 21, 22, 23, 24, -1, 25, -1, -1, -1, -1, -1, 26, -1, -1],
+      ];
+    // Sauvegarde faite avec une ancienne liste de besoins : retrouve quelle liste, puis replace chaque besoin à sa position actuelle
+    function vrRemet(i) {
+      let pioche = i.gapDeck || [],
+        arb = (i.arbitrages || []).filter((x) => x && typeof x.idx == "number"),
+        file = (i.queue || []).filter((x) => x.type === "gap" && typeof x.idx == "number"),
+        vus = new Set((i.journal || []).map((x) => x.titre)),
+        tous = [...pioche, ...arb.map((x) => x.idx), ...file.map((x) => x.idx)],
+        // Liste actuelle d'abord, puis la plus utilisée (38), puis 31 : on garde celle qui s'accorde le mieux avec la partie
+        cands = [null, VR_ANC[1], VR_ANC[0]].map((m) => {
+          let n = m ? m.length : vr.length,
+            f = (x) => (x < 0 || x >= n ? -2 : m ? m[x] : x),
+            dest = tous.map(f),
+            ok = dest.filter((x) => x >= 0),
+            ecart =
+              10 * dest.filter((x) => x === -2).length +
+              3 * ok.filter((x) => vus.has(vr[x][1])).length +
+              3 * (ok.length - new Set(ok).size) +
+              Math.abs(tous.length + vus.size - n);
+          return { f, ecart };
+        }),
+        b = cands.reduce((a, c) => (c.ecart < a.ecart ? c : a));
+      ((i.gapDeck = pioche.map(b.f).filter((x) => x >= 0)),
+        (i.arbitrages = arb.map((x) => ({ ...x, idx: b.f(x.idx) })).filter((x) => x.idx >= 0)),
+        (i.queue = (i.queue || [])
+          .map((x) => (x.type === "gap" ? { ...x, idx: typeof x.idx == "number" ? b.f(x.idx) : -1 } : x))
+          .filter((x) => x.type !== "gap" || x.idx >= 0)));
+    }
     function J2(t, r) {
       let i = Ii(t);
       for (let o of _i) r[o] !== void 0 && (i[o] = JSON.parse(JSON.stringify(r[o])));
-      // Sauvegarde d'une version qui avait plus de besoins : on retire ceux qui n'existent plus
-      ((i.gapDeck = (i.gapDeck || []).filter((x) => x < vr.length)),
-        (i.arbitrages = (i.arbitrages || []).filter((x) => x && x.idx < vr.length)),
-        (i.queue = (i.queue || []).filter((x) => x.type !== "gap" || x.idx < vr.length)));
+      (r.vrV !== VRV && vrRemet(i), (i.vrV = VRV));
       return (
         ye(i),
         i.dayClick >= or && ((i.dayClick = 0), i.days++, (i.inNight = !1)),
@@ -7059,7 +7088,11 @@ if (!window.React || !window.ReactDOM) {
         oa = (0, a.useRef)(1),
         He = (0, a.useRef)([]),
         bt = (e, c) => {
-          let g = setTimeout(e, c);
+          // La minuterie est retirée de la liste une fois exécutée (la liste sert au nettoyage en quittant la partie)
+          let g = setTimeout(() => {
+            let k = He.current.indexOf(g);
+            (k >= 0 && He.current.splice(k, 1), e());
+          }, c);
           return (He.current.push(g), g);
         };
       ((0, a.useEffect)(() => {
@@ -7230,7 +7263,6 @@ if (!window.React || !window.ReactDOM) {
             ? Br(e.j, e.src || "imprevus")
             : e.kind === "avance"
               ? (Br(-e.j, "bonnes"),
-                (c.joursGagnes = (c.joursGagnes || 0) + e.j),
                 // Une bonne nouvelle peut franchir des paliers (comité go/no-go à 95 %) sans clic
                 (() => {
                   for (; c.nextMilestone <= 99 && c.puMax >= c.nextMilestone * 1e3; ) (nn(c.nextMilestone), (c.nextMilestone += ji));
@@ -7261,7 +7293,6 @@ if (!window.React || !window.ReactDOM) {
             // Fin d'une interaction (imprévu, régression, bonne nouvelle) : prochaine visite recomptée à partir de maintenant
             (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") && nvFin(c);
             if (e.kind === "regression" && k === "B") {
-              c.nSignales = (c.nSignales || 0) + 1;
               // L'IT ne corrige pas tout de suite : la qualité baisse toujours, selon la taille de la régression
               Mt("Signal\xE9e \xE0 l'IT, correctif en attente", "ko", "", 3e3, {
                 ligne: !0,
@@ -7274,7 +7305,6 @@ if (!window.React || !window.ReactDOM) {
               ((M = null),
                 (c.energy = Math.max(0, c.energy - sg)),
                 c.energy < 0.5 && (c.energy = 0),
-                (c.nCorriges = (c.nCorriges || 0) + 1),
                 Br(co.a / Be, "regressions"),
                 Mt("Corrig\xE9e par nos soins", "ok", "", 3e3, {
                   ligne: !0,
@@ -7412,7 +7442,8 @@ if (!window.React || !window.ReactDOM) {
               dn(e.queue.shift());
               return;
             }
-            e.pu >= 1e5 && !e.golive && ln();
+            // Un besoin encore en arbitrage à 100 % est tranché par une dernière réunion avant le go-live
+            e.pu >= 1e5 && !e.golive && !(e.arbitrages.length && Sa(!0)) && ln();
           }
         },
         an = () => {
@@ -7465,13 +7496,12 @@ if (!window.React || !window.ReactDOM) {
           let e = n.current,
             [c, g, M] = pv(e, "bonnes", BonNouv);
           g === "a" && (M = r05(M));
-          ((e.nBonnes = (e.nBonnes || 0) + 1),
-            Mt(c, "bonne", "", 0, {
-              ok: !0,
-              fx: [{ t: g, v: M }],
-              effet: g === "q" ? { kind: "qualite", src: "bonnes", v: M } : { kind: "avance", j: M },
-              choix: [{ id: "OK", label: "Super !", bg: "#16A34A" }],
-            }));
+          Mt(c, "bonne", "", 0, {
+            ok: !0,
+            fx: [{ t: g, v: M }],
+            effet: g === "q" ? { kind: "qualite", src: "bonnes", v: M } : { kind: "avance", j: M },
+            choix: [{ id: "OK", label: "Super !", bg: "#16A34A" }],
+          });
         },
         Br = (e, k) => {
           let c = n.current,
@@ -8696,7 +8726,7 @@ if (!window.React || !window.ReactDOM) {
                     bg: "#86EFAC",
                     titre: "D'accord",
                     titreCourt: "D'accord",
-                    sub: "Week-end prochain chez le prestataire : ni repos ni avancement",
+                    sub: "Week-end prochain chez le prestataire : ni repos ni avancement, et \xE9nergie max \u221220 % le lundi",
                     note: "Pas de repos le week-end prochain",
                     fx: [],
                   },
@@ -9983,7 +10013,8 @@ if (!window.React || !window.ReactDOM) {
                   a.default.createElement(
                     "span",
                     { className: "text-[12px] font-normal leading-tight" },
-                    ft(`retour lundi avec +${et(Math.min(gWe(dt.jours), eMx(Z) - Z.energy))} % d'\xE9nergie`),
+                    // Même calcul que le retour réel : le café en cours est bu avant de partir
+                    ft(`retour lundi avec +${et(Math.round(Math.max(0, Math.min(gWe(dt.jours), eMx(Z) - Z.energy - (Z.cafeAttente || 0)))))} % d'\xE9nergie`),
                   ),
                 ),
                 a.default.createElement(
@@ -10256,7 +10287,7 @@ if (!window.React || !window.ReactDOM) {
             ],
             [
               "Direction projet",
-              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche (jusqu'\xE0 8 % d'\xE9nergie, comme une nuit normale), et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Refuser co\xFBte de la qualit\xE9.",
+              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche (jusqu'\xE0 8 % d'\xE9nergie, comme une nuit normale), et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Il compte comme un week-end au bureau : 20 points d'\xE9nergie maximale en moins d\xE8s le lundi. Refuser co\xFBte de la qualit\xE9.",
             ],
             [
               "Ateliers PMO Divalife",
@@ -11797,8 +11828,6 @@ if (!window.React || !window.ReactDOM) {
           arbitre: ["\u2026", "#B45309", "En attente d'arbitrage"],
           reunionAccepte: ["\u2713", "#0284C7", "Accept\xE9 en r\xE9union gaps"],
           reunionRefuse: ["\u2717", "#0284C7", "Refus\xE9 en r\xE9union gaps"],
-          enterre: ["\u26B0", "#64748B", "enterr\xE9 par le COPIL"],
-          standard: ["\u2605", "#2563EB", "couvert par le standard"],
         },
         kt = ({ bg: m, icon: V, children: x }) =>
           a.default.createElement(
