@@ -7990,7 +7990,11 @@ if (!window.React || !window.ReactDOM) {
                         pts: nogoPts,
                       }
                     : { titre: "JDE en production", texte: "La bascule est faite, Divalife tourne sur JDE.", pts: 0 }),
-            Tr(fr, null));
+            // La partie reste sauvegardée (verdict du GO compris) jusqu'à l'enregistrement du score, 5 s plus tard :
+            // fermer la page pendant les confettis ne fait plus perdre la partie, et ne permet pas de retenter le GO
+            (e.golive = !1),
+            Gr(e),
+            (e.golive = !0));
           let c = ["#F97316", "#FACC15", "#22D3EE", "#F472B6", "#4ADE80", "#FFFFFF", "#2563EB"].map(l);
           for (let g = 0; g < 140; g++) {
             let M = g < 40,
@@ -12396,6 +12400,7 @@ if (!window.React || !window.ReactDOM) {
             hero: w,
             resume: n,
             onEnd: (f) => {
+              Tr(fr, null);
               let H = w2(f),
                 D = Si(H),
                 Y = {
