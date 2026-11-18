@@ -10216,85 +10216,61 @@ if (!window.React || !window.ReactDOM) {
             "Divalife",
           );
     }
+    // Règles : « En bref » ouvert par défaut, le reste en volets repliés
     var Y2 = [
         [
-          "Objectif du jeu",
+          "En bref",
           [
-            "L'objectif est d'impl\xE9menter la soci\xE9t\xE9 Divalife le plus rapidement possible, jusqu'au go-live \xE0 100 % d'avancement. Tu y incarnes un des membres de BPE, une \xE9quipe d'architectes fonctionnels assurant l'interm\xE9diaire entre le m\xE9tier et l'IT.",
+            "Tu es membre de BPE, une équipe d'architectes fonctionnels entre le métier et l'IT. Ta mission : amener Divalife jusqu'au go-live (100 % d'avancement).",
+            ["Clique", "tapote l'écran ou garde Espace enfoncée pour faire avancer le projet."],
+            ["Ménage ton énergie", "dors, prends un café, rentre le week-end."],
+            ["Réponds aux visiteurs", "chaque choix coûte de l'énergie, de l'avancement ou de la qualité."],
+            ["Le Comex note la vitesse, la qualité et le coût", "vise l'équilibre, un seul zéro et c'est l'échec."],
           ],
         ],
         [
-          "Temps et avancement",
+          "Avancer",
           [
-            "Pour voir le projet aboutir, tapote ton \xE9cran sur mobile ou ta barre d'espace sur PC.",
-            "Le bureau reste ouvert 24/7, mais la nuit et le week-end, tu seras d\xE9sesp\xE9r\xE9ment seul et tes clics te co\xFBteront deux fois plus d'\xE9nergie.",
+            "Chaque clic fait avancer le projet et coûte un peu d'énergie.",
+            ["Nuit et week-end", "tu es seul au bureau, et un clic coûte deux fois plus d'énergie."],
+            ["Sprint final", `de ${Rt[0]} à 100 %, la nuit, un clic avance 1,5 fois plus, mais l'énergie fond 4 fois plus vite qu'en journée.`],
+            ["b.workchoc", `le consultant double ta vitesse pendant ${Jr} jours, nuits comprises, pour ${et(In)} € (${Jr + 1} jours pour François, dont la première mission est offerte). Une mission à la fois ; les week-ends de repos et les arrêts maladie ne sont pas décomptés.`],
           ],
         ],
         [
-          "\xC9nergie et sant\xE9",
+          "Énergie",
           [
-            `Chaque clic entame ta jauge d'\xE9nergie, et les heures sup te ruinent encore plus vite. En dessous de 20 % d'\xE9nergie, la frappe ralentit ; sous 10 %, c'est le naufrage : micro-sommeils intempestifs. \xC0 z\xE9ro, c'est le burn-out sec et ${Qr} jours d'arr\xEAt maladie d'office.`,
-            `Pour \xE9ponger les d\xE9g\xE2ts, une nuit de sommeil peut te rendre ${je} % de forme, et un caf\xE9 t'injecte ${pe} % (${2 * pe} % pour Gabriel)… dans la limite stricte d'une tasse tous les ${Kr(ke)} jours !`,
-            `En fin de semaine, \xE0 toi d'arbitrer : fuir chez toi pour r\xE9cup\xE9rer ${Wf} % d'\xE9nergie au prix de 2 jours perdus, ou squatter les locaux pour travailler comme un for\xE7at (un jour de repos au bureau rend ${we} %, nuit comprise, et une nuit de sommeil ${je} %, comme en semaine). Choisis ton camp : avoir une vie ou rendre ton PMO Divalife heureux !`,
-            "Attention \xE0 la fatigue qui s'accumule : chaque week-end pass\xE9 au bureau retire 20 points \xE0 ton \xE9nergie maximale, et \xE7a s'accumule tant que tu ne rentres pas. Un seul week-end \xE0 la maison efface tout.",
-          ],
-        ],
-        ["L'\xE9quipe BPE", Ca.map((h) => `${h.nom} \xB7 ${h.atout} : ${h.atoutTxt}.`)],
-        [
-          "Ressources",
-          [
-            `Le consultant qualifi\xE9 b.workchoc multiplie ta vitesse par 2 pendant ${Jr} jours, nuits comprises (${Jr + 1} pour Fran\xE7ois, dont la premi\xE8re mission est offerte). Les week-ends de repos et les arr\xEAts maladie ne sont pas d\xE9compt\xE9s. On ne peut en rappeler un nouveau que lorsque sa mission est termin\xE9e, le seul risque \xE9tant son co\xFBt. Il plantera sa tente \xE0 tes c\xF4t\xE9s 24h/24 et 7j/7, pr\xEAt \xE0 charbonner m\xEAme le dimanche \xE0 3h du matin.`,
+            ["Fatigue", `sous 20 %, tu ralentis ; sous 10 %, tu piques du nez. À 0 %, c'est l'arrêt maladie : ${Qr} jours perdus, retour avec ${ve} % d'énergie.`],
+            ["Dormir", `la nuit, jusqu'à +${je} %.`],
+            ["Café", `+${pe} % (+${2 * pe} % pour Gabriel), une tasse tous les ${Kr(ke)} jours.`],
+            ["Le week-end", `rentrer chez toi rend +${Wf} % d'énergie mais coûte 2 jours. Rester au bureau te fait avancer (un jour de repos sur place rend +${we} %), mais retire 20 % d'énergie maximale le lundi, et ça se cumule jusqu'au prochain week-end à la maison. Choisis ton camp : avoir une vie ou rendre ton PMO Divalife heureux !`],
           ],
         ],
         [
-          "Interactions",
+          "Les visites",
           [
-            [
-              "Besoins Divalife",
-              "Valider un besoin, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le besoin \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union tranche \xE0 ta place et elle a du flair : elle accepte les vrais besoins (au m\xEAme co\xFBt qu'une acceptation directe) et \xE9carte les fausses bonnes id\xE9es. Seul prix : r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et tu ne d\xE9couvriras son verdict que le jour J.",
-            ],
-            [
-              "Tickets",
-              "Fais-le toi-m\xEAme (\u2212 d'\xE9nergie, +1,5 de qualit\xE9, +2 pour Hugues) ou refile le b\xE9b\xE9 \xE0 la TMA, au prix de \u22121 de qualit\xE9 (\u22120,5 pour Hugues). Le ticket a des chances de revenir vers toi, et le renvoyer co\xFBte \xE0 nouveau \u22121 (\u22120,5 pour Hugues).",
-            ],
-            [
-              "Tuiles du quotidien",
-              "Une r\xE9gression co\xFBte 1, 2 ou 3 de qualit\xE9 selon sa gravit\xE9 (deux fois moins pour Hugues). Et parce qu'une roadmap respect\xE9e, ce serait vraiment trop facile, des impr\xE9vus peuvent survenir et la plomber.",
-            ],
-            [
-              "Direction projet",
-              "Certains lundis, \xE0 partir de 60 % d'avancement, la direction projet te demande de sacrifier le week-end suivant pour aider un prestataire en urgence. Accepter, c'est un week-end sans repos, \xE0 part la nuit du samedi au dimanche (jusqu'\xE0 8 % d'\xE9nergie, comme une nuit normale), et tes clics y servent le prestataire : la barre d'avancement ne bouge pas. Il compte comme un week-end au bureau : 20 points d'\xE9nergie maximale en moins d\xE8s le lundi. Refuser co\xFBte de la qualit\xE9.",
-            ],
-            [
-              "Ateliers PMO Divalife",
-              "Les s\xE9cher, ce sont des utilisateurs moins bien form\xE9s qui ruinent le projet et font perdre en qualit\xE9. Les faire, c'est reculer de 1 % d'avancement (un peu moins d'une journ\xE9e de travail) et y laisser de l'\xE9nergie. Choisis ton poison !",
-            ],
+            "Un visiteur entre, une fiche s'ouvre : à toi de choisir.",
+            ["Besoin", `accepter rapporte +1 à +3 de qualité contre 1 à 3 % d'avancement, mais gare aux fausses bonnes idées, qui font perdre de la qualité. Refuser coûte 2 de qualité si c'était un vrai besoin. Arbitrer coûte ${ie} % d'énergie : la réunion gaps, toutes les 3 semaines, tranche à ta place sans se tromper.`],
+            ["Ticket", `le traiter coûte ${oi} % d'énergie et rapporte +1,5 de qualité ; le passer à la TMA coûte 1 de qualité, et il peut revenir.`],
+            ["Atelier PMO", `le suivre coûte ${ai} % d'énergie et 1 % d'avancement ; le sécher coûte 2 de qualité.`],
+            ["Direction projet", "certains lundis, dès 60 % d'avancement. Accepter, c'est travailler le week-end suivant pour un prestataire, sans repos ni avancement, et perdre 20 % d'énergie maximale le lundi. Refuser coûte 2 de qualité."],
+            ["Comité go/no-go", "au passage des 95 %. Avec un GO, rien ne bouge tout de suite et le verdict tombe au go-live ; avec un NO-GO, la recette complémentaire coûte 2 % d'avancement, mais le bonus est assuré."],
+            "Et sans prévenir : les régressions (−1 à −3 de qualité), les imprévus (l'avancement recule) et les bonnes nouvelles (un coup de pouce).",
           ],
         ],
+        ["L'équipe BPE", Ca.map((h) => `${h.nom} · ${h.atout} : ${h.atoutTxt}.`)],
         [
-          "Phases du projet et visites",
+          "Score et médailles",
           [
-            "Chaque phase a son ambiance\u2026 et ses visiteurs pr\xE9f\xE9r\xE9s.",
-            [`${Sr[0][0]} % \xB7 ${Sr[0][1]}`, "la promenade de sant\xE9. Quelques tickets, les premiers besoins, des r\xE9unions o\xF9 tout le monde est d'accord, et l'illusion que le planning tiendra."],
-            [`${Sr[1][0]} % \xB7 ${Sr[1][1]}`, "la foire aux besoins. Les demandes arrivent en rafale, chacune \xAB vraiment indispensable \xBB, et quelques retardataires tomberont encore plus tard. Accepter co\xFBte des jours, refuser co\xFBte de la qualit\xE9 : choisis tes combats."],
-            [`${Sr[2][0]} % \xB7 ${Sr[2][1]}`, "le marathon des ateliers. La PMO Divalife a d\xE9couvert les invitations Outlook. Chaque atelier suivi te vide un peu plus, chaque atelier s\xE9ch\xE9 se paie en qualit\xE9."],
-            [`${Sr[3][0]} % \xB7 ${Sr[3][1]}`, "la reprise des donn\xE9es. Ce qui marchait hier ne marche plus aujourd'hui : les r\xE9gressions se multiplient et les impr\xE9vus aussi. Heureusement, les bonnes nouvelles aussi deviennent plus fr\xE9quentes."],
-            [`${Sr[4][0]} % \xB7 ${Sr[4][1]}`, "le sprint des braves. La nuit, chaque clic avance une fois et demie plus vite, mais l'\xE9nergie fond deux fois plus vite qu'une nuit normale, soit quatre fois plus vite qu'en journ\xE9e. Caf\xE9, sueur et SQL."],
-            [`${Sr[5][0]} % \xB7 ${Sr[5][1]}`, "l'heure de v\xE9rit\xE9. Le comit\xE9 go/no-go te met face au choix : un GO h\xE9ro\xEFque qui peut te valoir les f\xE9licitations du Comex\u2026 ou ses foudres si le d\xE9marrage tourne mal (mieux vaut une bonne qualit\xE9), ou un NO-GO prudent qui repousse la ligne d'arriv\xE9e mais que le Comex appr\xE9ciera. Le verdict tombe au go-live, directement sur ton score."],
-            [`${Sr[6][0]} % \xB7 ${Sr[6][1]}`, "le Comex rend son verdict. Champagne\u2026 ou \xAB point de recadrage \xBB."],
-          ],
-        ],
-        [
-          "Score et m\xE9dailles",
-          [
-            "Pour d\xE9crocher les f\xE9licitations du Comex, le combo magique est simple : du vite fait, du bien fait, et un budget consultant plus que r\xE9duit !",
-            "Attention aux faux pas, car un seul indicateur plomb\xE9 ruine tout ; oublie donc les paris de casse-cou et joue l'\xE9quilibre.",
-            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+90, nul \xE0 partir de J+170. Qualit\xE9 : parfaite d\xE8s 90 %, nulle \xE0 40 % ou moins. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
-            `Le comit\xE9 go/no-go ajoute son verdict au score : +${goPts} points pour un GO r\xE9ussi, \u2212${goPts} pour un GO rat\xE9, +${nogoPts} pour un NO-GO. Plus la qualit\xE9 est haute, plus le GO a de chances de r\xE9ussir (1 sur 2 \xE0 60 %, 9 sur 10 d\xE8s 84 %).`,
-            ["5 000 points", "m\xE9daille de bronze et une bise du patron."],
-            ["7 000 points", "m\xE9daille d'argent et 15 secondes de gloire dans l'intranet."],
-            ["8 000 points", "m\xE9daille d'or et ton visage grav\xE9 sur les murs de l'usine jusqu'\xE0 la fin des temps."],
-            ["9 000 points", "m\xE9daille de platine et une statue \xE0 ton effigie dans le hall de Divalife."],
+            "Pour décrocher les félicitations du Comex : du vite fait, du bien fait, et un budget consultant plus que réduit ! Le Comex multiplie trois notes sur 100 : une seule à zéro et le score tombe à 0 ; 10 000 points récompensent une partie parfaite.",
+            ["Délai", "parfait jusqu'à J+90, nul à partir de J+170."],
+            ["Qualité", "parfaite dès 90 %, nulle à 40 % ou moins."],
+            ["Coût", `une mission b.workchoc est tolérée (${et(In)} €), nul à partir de 30 000 €.`],
+            ["Go/no-go", `+${goPts} points pour un GO réussi (plus probable si la qualité est haute), −${goPts} pour un GO raté, +${nogoPts} pour un NO-GO.`],
+            ["5 000 points", "médaille de bronze et une bise du patron."],
+            ["7 000 points", "médaille d'argent et 15 secondes de gloire dans l'intranet."],
+            ["8 000 points", "médaille d'or et ton visage gravé sur les murs de l'usine jusqu'à la fin des temps."],
+            ["9 000 points", "médaille de platine et une statue à ton effigie dans le hall de Divalife."],
           ],
         ],
       ];
@@ -10344,12 +10320,12 @@ if (!window.React || !window.ReactDOM) {
                       className: d === 0 ? "border-l-4 pl-2" : "jde-volet border-l-4 pl-2",
                       style: {
                         borderColor:
-                          o === "Ressources"
-                            ? Zt["b.workchoc"].c
-                            : o === "Interactions"
-                              ? Zt.Divalife.c
-                              : o === "\xC9nergie et sant\xE9"
-                                ? "#16A34A"
+                          o === "Les visites"
+                            ? Zt.Divalife.c
+                            : o === "\xC9nergie"
+                              ? "#16A34A"
+                              : o === "Score et m\xE9dailles"
+                                ? Zt["b.workchoc"].c
                                 : "#F97316",
                       },
                     },
