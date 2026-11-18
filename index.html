@@ -2847,8 +2847,8 @@ if (!window.React || !window.ReactDOM) {
       C2 = (t) => {
         let r = (i) => Math.max(0, Math.min(100, i));
         return {
-          // Note de qualité : nulle à 30 %, parfaite seulement à 100 %
-          qualite: r(((t.qualite - 30) / 70) * 100),
+          // Note de qualité : nulle à 40 %, parfaite dès 90 %
+          qualite: r(((t.qualite - 40) / 50) * 100),
           budget: r(100 - (Math.max(0, (t.cout || 0) - 5e3) / 25e3) * 100),
           delai: r(((170 - Math.max(90, t.total)) / 80) * 100),
         };
@@ -10319,7 +10319,7 @@ if (!window.React || !window.ReactDOM) {
           [
             "Pour d\xE9crocher les f\xE9licitations du Comex, le combo magique est simple : du vite fait, du bien fait, et un budget consultant plus que r\xE9duit !",
             "Attention aux faux pas, car un seul indicateur plomb\xE9 ruine tout ; oublie donc les paris de casse-cou et joue l'\xE9quilibre.",
-            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+90, nul \xE0 partir de J+170. Qualit\xE9 : parfaite seulement \xE0 100 %, nulle sous 30 %. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
+            "Le Comex multiplie trois notes. D\xE9lai : parfait jusqu'\xE0 J+90, nul \xE0 partir de J+170. Qualit\xE9 : parfaite d\xE8s 90 %, nulle \xE0 40 % ou moins. Co\xFBt : une mission b.workchoc est tol\xE9r\xE9e (5 000 \u20AC), la note est nulle au-del\xE0 de 5 missions (30 000 \u20AC). Une note \xE0 z\xE9ro et le score tombe \xE0 0 ; 10 000 points r\xE9compensent une partie parfaite.",
             `Le comit\xE9 go/no-go ajoute son verdict au score : +${goPts} points pour un GO r\xE9ussi, \u2212${goPts} pour un GO rat\xE9, +${nogoPts} pour un NO-GO. Plus la qualit\xE9 est haute, plus le GO a de chances de r\xE9ussir (1 sur 2 \xE0 60 %, 9 sur 10 d\xE8s 84 %).`,
             ["5 000 points", "m\xE9daille de bronze et une bise du patron."],
             ["7 000 points", "m\xE9daille d'argent et 15 secondes de gloire dans l'intranet."],
@@ -11607,8 +11607,8 @@ if (!window.React || !window.ReactDOM) {
             i: 2,
             lo: 0,
             hi: 100,
-            max: 100,
-            nul: 30,
+            max: 90,
+            nul: 40,
             f: (v) => et(v) + " %",
           },
           {
