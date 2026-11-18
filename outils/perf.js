@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 const { open } = require('./harness');
 (async () => {
   const b = await chromium.launch();
-  for (const thr of [1, 4]) {
+  for (const thr of [1, 6]) {
     const t0 = Date.now();
     const { p, ctx } = await open({ browser: b, url: 'http://bpe.test/game.html', wait: 10, viewport: { width: 390, height: 844 }, init: 'window.__noDraw=false;' });
     const cdp = await ctx.newCDPSession(p);
