@@ -2174,16 +2174,13 @@ if (!window.React || !window.ReactDOM) {
       re = 1.5,
       Jn = 1 / 3,
       Rn = 95,
-      Kn = 0.5,
       // Go/no-go : un GO réussi rapporte goPts au score, raté il en retire autant ; la chance de réussite
       // dépend de la qualité au go-live (même échelle que la note : 30 % -> 10 %, 90 % -> 90 %).
       // Un NO-GO rapporte nogoPts, au prix d'un peu d'avancement.
       goPts = 200,
       nogoPts = 100,
       goChance = (q) => Math.max(0.1, Math.min(0.9, (q - 30) / 60)),
-      ae = { qualite: -5 },
-      ee = 2,
-      gr = { jours: 2 / Be, qualite: 2 },
+      gr = { jours: 2 / Be },
       // Énergie par clic : -0,33 % le jour, double la nuit (et le week-end via _2), x4 la nuit du sprint final (d2)
       Qn = -0.33,
       Yn = -0.66,
@@ -6677,8 +6674,8 @@ if (!window.React || !window.ReactDOM) {
         {
           titre: "Les visites",
           intro:
-            "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons (ou les touches A, B, C) : les fl\xE8ches sous chaque choix montrent l'effet sur l'\xE9nergie, l'avancement et la qualit\xE9.",
-          introTactile: "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons : les fl\xE8ches sous chaque choix montrent l'effet sur l'\xE9nergie, l'avancement et la qualit\xE9.",
+            "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons (ou les touches A, B, C) : les ic\xF4nes sous chaque choix montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert) en \xE9nergie, avancement et qualit\xE9.",
+          introTactile: "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons : les ic\xF4nes sous chaque choix montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert) en \xE9nergie, avancement et qualit\xE9.",
           ex: [
             [[["DIVALIFE", "#0284C7"], ["BESOIN", "#1F2937"]], "Un besoin m\xE9tier : accepter, refuser ou faire arbitrer en r\xE9union gaps."],
             [[["INVENTEK", "#EA580C"], ["TICKET", "#2563EB"]], "Un ticket de prestataire : le traiter toi-m\xEAme ou le passer \xE0 la TMA."],
@@ -7261,13 +7258,24 @@ if (!window.React || !window.ReactDOM) {
               let co = e.corr || { a: 2 },
                 sg = (e.corr && e.corr.s) || Sg;
               ((M = null),
-                (c.energy = Math.max(1, c.energy - sg)),
+                (c.energy = Math.max(0, c.energy - sg)),
+                c.energy < 0.5 && (c.energy = 0),
                 (c.nCorriges = (c.nCorriges || 0) + 1),
                 Br(co.a / Be, "regressions"),
                 Mt("Corrig\xE9e par nos soins", "ok", "", 3e3, {
                   ligne: !0,
                   fx: [{ t: "e", v: -sg }, { t: "a", v: -co.a }],
-                }));
+                }),
+                // Comme les autres dépenses d'énergie, corriger à bout de forces mène à l'arrêt maladie
+                c.energy <= 0 &&
+                  ((c.busy = "sick"),
+                  La(c),
+                  (c.holding = !1),
+                  qr(
+                    "sick",
+                    () => Yt(!0),
+                    () => n.current.busy === "sick",
+                  )));
             }
             (M && Ee(M), d(), bt(yr, 150));
           }
@@ -9798,7 +9806,7 @@ if (!window.React || !window.ReactDOM) {
                   ? ft("Projection du score d\xE8s 5 % d'avancement")
                   : (() => {
                       let tot = I2(Z) * (1e5 / Math.max(1, Z.pu)),
-                        sc = w2({ total: tot, cout: ge(Z), qualite: Z.quality });
+                        sc = w2({ total: tot, cout: ge(Z), qualite: Z.quality, bonusGo: Z.gonogo === "nogo" ? nogoPts : 0 }); // NO-GO : bonus déjà acquis
                       return a.default.createElement("b", null, ft(`Score projet\xE9 : ${et(sc)} pts`));
                     })(),
               ),
