@@ -2166,7 +2166,8 @@ if (!window.React || !window.ReactDOM) {
       // Conversion « jours » -> % des imprévus et bonnes nouvelles : fixée (indépendante du nombre de clics par jour)
       Be = 40 * 0.017,
       impX = 1.4, // imprévus : impact doublé par rapport à la version à 28 clics/jour avant correction de Be
-      pPiege = 0.2,
+      // Fausses bonnes idées tirées au sort à chaque partie, puis mélangées aux vrais besoins (environ 20 % de la pioche)
+      nbPieges = 4,
       ai = 12,
       ei = 1 / Be,
       te = -2,
@@ -2210,7 +2211,8 @@ if (!window.React || !window.ReactDOM) {
       // Régression corrigée par nos soins : avancement perdu (%) selon la taille
       corrA = { 1: 1, 2: 2, 3: 2 },
       rfQ = (g) => g.refus,
-      n2 = 2,
+      // Besoin accepté en réunion gaps : même coût en avancement qu'une acceptation directe
+      n2 = 1,
       ie = 10,
       Rt = [85, 100],
       ne = 1.5,
@@ -5989,11 +5991,9 @@ if (!window.React || !window.ReactDOM) {
       let r = (C) => vr.map((B, f) => (B[3] === C ? f : -1)).filter((B) => B >= 0),
         i = Er(r("reel")),
         o = Er(r("piege")),
-        // Pioche des gaps : chaque gap a pPiege (20 %) de chances d'être une fausse bonne idée ; quand les
-        // vrais besoins sont épuisés, les suivants sont forcément des fausses bonnes idées (et inversement)
-        gapDeck = Array.from({ length: i.length + o.length }, () =>
-          (Math.random() < pPiege && o.length) || !i.length ? o.shift() : i.shift(),
-        );
+        // Pioche des besoins : tous les vrais besoins, plus quelques fausses bonnes idées tirées au sort,
+        // le tout mélangé pour que les pièges soient répartis du début à la fin du projet
+        gapDeck = Er([...i, ...o.slice(0, nbPieges)]);
       return {
         hero: t,
         clicks: 0,
@@ -10275,7 +10275,7 @@ if (!window.React || !window.ReactDOM) {
           [
             [
               "Besoins Divalife",
-              "Valider un besoin, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le besoin \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union tranche \xE0 ta place, elle a du flair\u2026 mais ses d\xE9cisions ont leur prix, et r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie. Tu d\xE9couvriras son verdict le jour J.",
+              "Valider un besoin, c'est plus de boulot mais du travail propre : +1, +2 ou +3 de qualit\xE9 selon sa taille, pour autant de % d'avancement perdus ; attention cependant aux faux besoins. Le refuser, c'est perdre 2 de qualit\xE9 si le besoin \xE9tait un incontournable. En cas de doute, fais-le arbitrer en r\xE9union des gaps, toutes les 3 semaines, le lundi (J+21, J+42\u2026), avec une r\xE9union exceptionnelle avant le go/no-go s'il en reste : la r\xE9union tranche \xE0 ta place et elle a du flair : elle accepte les vrais besoins (au m\xEAme co\xFBt qu'une acceptation directe) et \xE9carte les fausses bonnes id\xE9es. Seul prix : r\xE9diger le cahier des charges te co\xFBte 10 % d'\xE9nergie, et tu ne d\xE9couvriras son verdict que le jour J.",
             ],
             [
               "Tickets",
