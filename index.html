@@ -7385,6 +7385,9 @@ if (!window.React || !window.ReactDOM) {
         Xt = () => {
           let e = n.current;
           if (e.sortie && performance.now() < (e.sortieMax || 0)) {
+            // Pendant que le visiteur repart, la proposition du week-end doit quand même tomber le vendredi soir :
+            // sinon la nuit du vendredi défile sous les clics et la fenêtre n'apparaît que le samedi
+            if (hn()) return;
             qe();
             return;
           }
