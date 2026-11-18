@@ -6967,6 +6967,33 @@ if (!window.React || !window.ReactDOM) {
         ),
       );
     }
+    // Nom (ou pseudo) du bandeau : affiché seulement s'il tient en entier, sinon seul le portrait reste
+    function NomHud({ texte }) {
+      let rf = (0, a.useRef)(null);
+      (0, a.useLayoutEffect)(() => {
+        let el = rf.current;
+        if (!el) return;
+        let bloc = el.parentNode,
+          mesure = () => {
+            bloc.style.display = "";
+            bloc.style.display = el.scrollWidth > el.clientWidth + 1 ? "none" : "";
+          };
+        mesure();
+        let ro = typeof ResizeObserver < "u" && bloc.parentNode ? new ResizeObserver(mesure) : null;
+        return (
+          ro && ro.observe(bloc.parentNode),
+          window.addEventListener("resize", mesure),
+          () => {
+            (ro && ro.disconnect(), window.removeEventListener("resize", mesure));
+          }
+        );
+      }, [texte]);
+      return a.default.createElement(
+        "span",
+        { className: "flex min-w-0 flex-col leading-none" },
+        a.default.createElement("span", { ref: rf, className: "truncate font-bold", style: { lineHeight: 1.25, paddingBottom: 1 } }, texte),
+      );
+    }
     function Q2({ hero: t, onEnd: r, resume: i, onMenu: o }) {
       let n = (0, a.useRef)(null);
       n.current || (n.current = i ? J2(t, i) : Ii(t));
@@ -8832,7 +8859,7 @@ if (!window.React || !window.ReactDOM) {
           },
           a.default.createElement(
             _r,
-            { bg: "#F97316", tuto: "hero", title: `${t.role} \xB7 atout : ${t.atout} (${t.atoutTxt})` },
+            { bg: "#F97316", tuto: "hero", title: `${Ps() || t.nom} \xB7 ${t.role} \xB7 atout : ${t.atout} (${t.atoutTxt})` },
             a.default.createElement(
               "div",
               { className: "jde-avatar shrink-0 border-2 bg-[#FFE8D2]", style: { borderColor: W } },
@@ -8843,11 +8870,7 @@ if (!window.React || !window.ReactDOM) {
                 scale: 1.5,
               }),
             ),
-            a.default.createElement(
-              "span",
-              { className: "flex min-w-0 flex-col leading-none" },
-              a.default.createElement("span", { className: "truncate font-bold", style: { lineHeight: 1.25, paddingBottom: 1 } }, Ps() || t.nom),
-            ),
+            a.default.createElement(NomHud, { texte: Ps() || t.nom }),
           ),
           a.default.createElement(
             _r,
