@@ -2157,10 +2157,13 @@ if (!window.React || !window.ReactDOM) {
         { p: 85, inter: [1.5, 2.0], gap: 0, atelier: 0, regression: 0.2, imprevu: 0.2, bonne: 0.1 }, // ticket 50 %
       ],
       ma = (t) => ya.reduce((r, i) => (t >= i.p ? i : r), ya[0]),
+      // Horloge des visites : les jours de travail réellement cliqués (28 clics = 1 jour). Dormir, rentrer le week-end
+      // ou être en arrêt n'amène donc pas de visites en plus : elles suivent le travail fourni, pas le calendrier
+      hv = (c) => c.clicks / or,
       // Prochaine visite comptée à partir de la fin de l'interaction ; si elle tombe la nuit ou le week-end, elle attend le matin suivant
       nvFin = (c) => {
         let i = ma(c.puMax / 1e3).inter;
-        c.nextVisite = Math.max(c.nextVisite || 0, _t(c) + Nt(i[0], i[1]));
+        c.nextVisite = Math.max(c.nextVisite || 0, hv(c) + Nt(i[0], i[1]));
       },
       ji = 1,
       // Conversion « jours » -> % des imprévus et bonnes nouvelles : fixée (indépendante du nombre de clics par jour)
@@ -6277,6 +6280,8 @@ if (!window.React || !window.ReactDOM) {
       return (
         ye(i),
         i.dayClick >= or && ((i.dayClick = 0), i.days++, (i.inNight = !1)),
+        // Partie sauvegardée quand les visites suivaient le calendrier : prochaine visite recalée sur l'horloge du travail
+        (i.nextVisite = Math.min(i.nextVisite || 0, hv(i) + 2)),
         i.dayClick >= Ha && !r.hasOwnProperty("inNight") && (i.inNight = !0),
         i.energy <= 0 && (i.energy = ve),
         i.cafeAttente > 0 && ((i.energy = Math.min(eMx(i), i.energy + i.cafeAttente)), (i.cafeAttente = 0)),
@@ -7623,7 +7628,7 @@ if (!window.React || !window.ReactDOM) {
             Ui(e)
           )
             return;
-          let c = _t(e);
+          let c = hv(e);
           if (c < e.nextVisite) return;
           let g = ma(e.puMax / 1e3);
           ((e.nextVisite = c + Nt(g.inter[0], g.inter[1])), on(c));
