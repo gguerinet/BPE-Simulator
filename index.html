@@ -4820,7 +4820,7 @@ if (!window.React || !window.ReactDOM) {
 .jde-pop{animation:jdePop .3s steps(4) both;}
 .jde-blink{animation:jdeBlink 1s steps(2) infinite;}
 .jde-info-new{animation:jdeInfo 1.2s ease-in-out infinite;}
-@keyframes jdeInfo{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(250,204,21,.9)}50%{transform:scale(1.15);box-shadow:0 0 0 5px rgba(250,204,21,0)}}
+@keyframes jdeInfo{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,.8)}50%{box-shadow:0 0 0 4px rgba(250,204,21,0)}}
 @media (prefers-reduced-motion: reduce){.jde-float,.jde-toast,.jde-phase,.jde-phase-out,.jde-chute,.jde-pop,.jde-blink,.jde-info-new,.jde-card .jde-hop,.jde-anim{animation:none!important}}
 `;
     function ta({ look: t, pose: r, scale: i = 4, crop: o, lying: n, className: d = "" }) {
@@ -10136,7 +10136,7 @@ if (!window.React || !window.ReactDOM) {
                 "data-astuce": "reunion",
                 style: { borderColor: W, boxShadow: `6px 6px 0 ${W}` },
               },
-              a.default.createElement(InfoFen, { k: "reunion", style: { top: 10, right: 44 } }),
+              a.default.createElement(InfoFen, { k: "reunion", style: { top: 12, right: 44 } }),
               a.default.createElement(
                 "button",
                 {
@@ -10461,8 +10461,8 @@ if (!window.React || !window.ReactDOM) {
             onClick: ouvrir,
             "aria-label": `Comment ça marche : ${inf[0].toLowerCase()}`,
             title: "Comment ça marche ?",
-            className: "absolute flex h-6 w-6 items-center justify-center rounded-full border-2 text-[14px] font-bold leading-none" + (vu ? "" : " jde-info-new"),
-            style: { top: 4, right: 4, borderColor: encre, color: vu ? encre : W, background: vu ? "transparent" : "#FACC15", fontFamily: "Georgia, serif", zIndex: 20, ...st },
+            className: "absolute flex items-center justify-center rounded-full border-2 font-bold leading-none hover:opacity-100" + (vu ? "" : " jde-info-new"),
+            style: { width: 20, height: 20, fontSize: 12, padding: 0, top: 5, right: 5, borderColor: vu ? encre : W, color: vu ? encre : W, background: vu ? "transparent" : "#FACC15", opacity: vu ? 0.45 : 1, fontFamily: "Georgia, serif", zIndex: 20, ...st },
           },
           "i",
         ),
