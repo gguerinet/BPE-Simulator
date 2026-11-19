@@ -14,7 +14,7 @@ const fs = require('fs');
   if (await input.count()) { await input.fill('Nouveau'); await clic(/Valider/); await shot('apres_pseudo'); }
   await clic(/Commencer le projet|Nouvelle partie/); await p.waitForTimeout(1500); await shot('debut_partie');
   await clic(/Suivre le tutoriel/);
-  for (let i = 0; i < 8; i++) { await shot('tuto_' + i); const s = p.getByRole('button', { name: /^Suivant|^Commencer$/ }).first(); if (!(await s.count())) break; const txt = await s.innerText(); await s.click(); if (/Commencer/.test(txt)) break; }
+  for (let i = 0; i < 12; i++) { await shot('tuto_' + i); const s = p.getByRole('button', { name: /^Suivant|^Commencer$/ }).first(); if (!(await s.count())) break; const txt = await s.innerText(); await s.click(); if (/Commencer/.test(txt)) break; }
   await shot('apres_tuto');
   const sc = p.locator('canvas[data-tuto=scene]');
   const vues = new Set();

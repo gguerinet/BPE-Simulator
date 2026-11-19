@@ -6654,6 +6654,11 @@ if (!window.React || !window.ReactDOM) {
           texte: "J+0 au d\xE9marrage. Le soleil ou la lune indique le jour ou la nuit. Plus le go-live arrive t\xF4t, meilleur est le score.",
         },
         {
+          cible: "cout",
+          titre: "Le co\xFBt",
+          texte: `Ce que t'ont co\xFBt\xE9 les consultants b.workchoc. Le Comex tol\xE8re une mission (${et(In)} \u20AC) ; \xE0 partir de 30 000 \u20AC, la note de co\xFBt tombe \xE0 0.`,
+        },
+        {
           cible: "qualite",
           titre: "La qualit\xE9",
           texte: "Elle monte ou baisse selon tes choix et clignote \xE0 chaque changement. Elle compte pour le score et pour les chances de r\xE9ussir un GO.",
@@ -9494,13 +9499,12 @@ if (!window.React || !window.ReactDOM) {
                       maxHeight: Ut.ecran ? "calc(100dvh - 16px)" : void 0,
                     },
                   },
-                  a.default.createElement(InfoFen, { key: "info" + q.ent + q.kind, k: q.kind }),
                   a.default.createElement(
                     "div",
                     { className: "min-h-0 flex-1 overflow-y-auto", tabIndex: 0, role: "region", "aria-label": "Fiche du visiteur" },
                     a.default.createElement(
                       "div",
-                      { className: "flex flex-wrap items-center gap-1.5 text-[13px] sm:text-sm", style: { paddingRight: 26 } },
+                      { className: "flex flex-wrap items-center gap-1.5 text-[13px] sm:text-sm" },
                       q.societe &&
                         a.default.createElement(
                           "span",
@@ -9549,6 +9553,7 @@ if (!window.React || !window.ReactDOM) {
                           { className: "border-2 bg-white px-1.5 font-bold", style: { borderColor: W } },
                           sr.nom,
                         ),
+                      a.default.createElement(InfoFen, { key: "info" + q.ent + q.kind, k: q.kind, enLigne: !0 }),
                     ),
                     a.default.createElement(
                       "div",
@@ -10420,7 +10425,7 @@ if (!window.React || !window.ReactDOM) {
           ["Rester au bureau", `le projet avance (un jour de repos sur place rend +${we} %), mais un clic coûte deux fois plus d'énergie et tu perds 20 % d'énergie maximale le lundi. Ça se cumule jusqu'au prochain week-end à la maison.`],
         ]],
       };
-    function InfoFen({ k, fond = "#FFFBEB", encre = W, style: st }) {
+    function InfoFen({ k, fond = "#FFFBEB", encre = W, style: st, enLigne: el = !1 }) {
       let inf = INFOS[k],
         [ouv, setOuv] = (0, a.useState)(!1),
         [vu, setVu] = (0, a.useState)(() => {
@@ -10461,8 +10466,8 @@ if (!window.React || !window.ReactDOM) {
             onClick: ouvrir,
             "aria-label": `Comment ça marche : ${inf[0].toLowerCase()}`,
             title: "Comment ça marche ?",
-            className: "absolute flex items-center justify-center rounded-full border-2 font-bold leading-none hover:opacity-100" + (vu ? "" : " jde-info-new"),
-            style: { width: 20, height: 20, fontSize: 12, padding: 0, top: 5, right: 5, borderColor: vu ? encre : W, color: vu ? encre : W, background: vu ? "transparent" : "#FACC15", opacity: vu ? 0.45 : 1, fontFamily: "Georgia, serif", zIndex: 20, ...st },
+            className: (el ? "relative shrink-0 " : "absolute ") + "flex items-center justify-center rounded-full border-2 font-bold leading-none hover:opacity-100" + (vu ? "" : " jde-info-new"),
+            style: { width: 20, height: 20, fontSize: 12, padding: 0, ...(el ? { marginLeft: "auto", alignSelf: "flex-start" } : { top: 5, right: 5 }), borderColor: vu ? encre : W, color: vu ? encre : W, background: vu ? "transparent" : "#FACC15", opacity: vu ? 0.45 : 1, fontFamily: "Georgia, serif", zIndex: 20, ...st },
           },
           "i",
         ),
