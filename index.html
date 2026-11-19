@@ -2179,11 +2179,11 @@ if (!window.React || !window.ReactDOM) {
       Jn = 1 / 3,
       Rn = 95,
       // Go/no-go : un GO réussi rapporte goPts au score, raté il en retire autant ; la chance de réussite
-      // dépend de la qualité au go-live : 10 % de chances à 30 % de qualité ou moins, 90 % dès 84 %.
+      // dépend de la qualité au go-live, par paliers : 20 % jusqu'à 40 % de qualité, puis +10 points par tranche de 10 %, 80 % dès 90 %.
       // Un NO-GO rapporte nogoPts, au prix d'un peu d'avancement.
       goPts = 200,
       nogoPts = 100,
-      goChance = (q) => Math.max(0.1, Math.min(0.9, (q - 30) / 60)),
+      goChance = (q) => (q <= 40 ? 0.2 : q < 50 ? 0.3 : q < 60 ? 0.4 : q < 70 ? 0.5 : q < 80 ? 0.6 : q < 90 ? 0.7 : 0.8),
       gr = { jours: 2 / Be },
       // Énergie par clic : -0,33 % le jour, double la nuit (et le week-end via _2), x4 la nuit du sprint final (d2)
       Qn = -0.33,
@@ -2734,9 +2734,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Virtuose de la qualit\xE9",
           pitch: "Conna\xEEt chaque test de conformit\xE9 et certificat d'analyse par c\u0153ur.",
           atout: "\u0152il de lynx",
-          atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions",
+          atoutTxt: "Perd deux fois moins de qualit\xE9 avec la TMA et les r\xE9gressions",
           conseil:
-            "Les tickets lui co\xFBtent deux fois moins d'\xE9nergie et de qualit\xE9, les r\xE9gressions deux fois moins de qualit\xE9.",
+            "Passer un ticket \xE0 la TMA et subir une r\xE9gression lui co\xFBtent deux fois moins de qualit\xE9. Traiter un ticket lui co\xFBte autant d'\xE9nergie qu'aux autres.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -2832,7 +2832,7 @@ if (!window.React || !window.ReactDOM) {
       Tt = {
         gapFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         incidentFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
-        ticketEFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
+        ticketEFacteur: () => 1,
         ticketQ: () => re,
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         // François : la premi\u00e8re mission b.workchoc est offerte, et chaque mission dure un jour de plus
@@ -10250,11 +10250,11 @@ if (!window.React || !window.ReactDOM) {
           [
             "Un visiteur entre, une fiche s'ouvre : à toi de choisir.",
             ["Besoin", `accepter rapporte +1 à +3 de qualité contre 1 à 3 % d'avancement, mais gare aux fausses bonnes idées, qui font perdre de la qualité. Refuser coûte 2 de qualité si c'était un vrai besoin. Arbitrer coûte ${ie} % d'énergie : la réunion gaps, toutes les 3 semaines, tranche à ta place sans se tromper.`],
-            ["Ticket", `le traiter coûte ${oi} % d'énergie et rapporte +1,5 de qualité ; le passer à la TMA coûte 1 de qualité, et il peut revenir.`],
+            ["Ticket", `le traiter coûte ${oi} % d'énergie et rapporte +1,5 de qualité ; le passer à la TMA coûte 1 de qualité (0,5 pour Hugues), et il peut revenir.`],
             ["Atelier PMO", `le suivre coûte ${ai} % d'énergie et 1 % d'avancement ; le sécher coûte 2 de qualité.`],
             ["Direction projet", "certains lundis, dès 60 % d'avancement. Accepter, c'est travailler le week-end suivant pour un prestataire, sans repos ni avancement, et perdre 20 % d'énergie maximale le lundi. Refuser coûte 2 de qualité."],
             ["Comité go/no-go", "au passage des 95 %. Avec un GO, rien ne bouge tout de suite et le verdict tombe au go-live ; avec un NO-GO, la recette complémentaire coûte 2 % d'avancement, mais le bonus est assuré."],
-            "Et sans prévenir : les régressions (−1 à −3 de qualité), les imprévus (l'avancement recule) et les bonnes nouvelles (un coup de pouce).",
+            "Et sans prévenir : les régressions (−1 à −3 de qualité, deux fois moins pour Hugues), les imprévus (l'avancement recule) et les bonnes nouvelles (un coup de pouce).",
           ],
         ],
         ["L'équipe BPE", Ca.map((h) => `${h.nom} · ${h.atout} : ${h.atoutTxt}.`)],
@@ -10265,7 +10265,7 @@ if (!window.React || !window.ReactDOM) {
             ["Délai", "parfait jusqu'à J+90, nul à partir de J+170."],
             ["Qualité", "parfaite dès 90 %, nulle à 40 % ou moins."],
             ["Coût", `une mission b.workchoc est tolérée (${et(In)} €), nul à partir de 30 000 €.`],
-            ["Go/no-go", `+${goPts} points pour un GO réussi (plus probable si la qualité est haute), −${goPts} pour un GO raté, +${nogoPts} pour un NO-GO.`],
+            ["Go/no-go", `+${goPts} points pour un GO réussi, −${goPts} pour un GO raté, +${nogoPts} pour un NO-GO. Le GO réussit selon la qualité au go-live : 20 % de chances jusqu'à 40 % de qualité, puis 10 points de plus par tranche de 10 %, jusqu'à 80 % dès 90 % de qualité.`],
             ["5 000 points", "médaille de bronze et une bise du patron."],
             ["7 000 points", "médaille d'argent et 15 secondes de gloire dans l'intranet."],
             ["8 000 points", "médaille d'or et ton visage gravé sur les murs de l'usine jusqu'à la fin des temps."],
