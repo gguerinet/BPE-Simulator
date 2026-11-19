@@ -7044,6 +7044,7 @@ if (!window.React || !window.ReactDOM) {
         Hh = (0, a.useRef)(null),
         oa = (0, a.useRef)(1),
         He = (0, a.useRef)([]),
+        astRef = (0, a.useRef)(null),
         bt = (e, c) => {
           // La minuterie est retirée de la liste une fois exécutée (la liste sert au nettoyage en quittant la partie)
           let g = setTimeout(() => {
@@ -7061,6 +7062,31 @@ if (!window.React || !window.ReactDOM) {
           let g = n.current;
           ((g.holding = !1), (g.astuce = !0), (g.paused = !0), setAstuceV({ id: oa.current++, txt, cible }));
         };
+      (0, a.useEffect)(() => {
+        if (!astuceV) return;
+        let id,
+          place = () => {
+            let t = astRef.current,
+              vw = window.innerWidth,
+              vh = window.innerHeight,
+              el =
+                astuceV.cible === "scene"
+                  ? document.querySelector("canvas[data-tuto=scene]")
+                  : astuceV.cible && document.querySelector(`[data-astuce="${astuceV.cible}"]`);
+            if (t && (el || !astuceV.cible)) {
+              let r = el ? el.getBoundingClientRect() : { left: 0, top: 0, width: vw, height: vh },
+                // largeur réelle de la fenêtre (offsetWidth ignore son animation d'ouverture)
+                lg = Math.min(vw - 16, Math.max(280, Math.min(el && el.offsetWidth ? el.offsetWidth : r.width, 520))),
+                ht = t.offsetHeight;
+              ((t.style.width = lg + "px"),
+                (t.style.left = Math.max(8, Math.min(vw - lg - 8, r.left + r.width / 2 - lg / 2)) + "px"),
+                (t.style.top = Math.max(8, Math.min(vh - ht - 8, r.top + r.height / 2 - ht / 2)) + "px"),
+                (t.style.visibility = "visible"));
+            }
+            id = requestAnimationFrame(place);
+          };
+        return (place(), () => cancelAnimationFrame(id));
+      }, [astuceV]);
       ((0, a.useEffect)(() => {
         let e = ea.current;
         if (!q || !e || (Nr(e.offsetHeight), typeof ResizeObserver > "u")) return;
@@ -8767,40 +8793,24 @@ if (!window.React || !window.ReactDOM) {
               tactile() ? "Touche le bureau !" : "Clique sur le bureau !",
             ),
           ),
-        // Bulle « Première fois » : centrée devant la fenêtre qu'elle explique ; le jeu attend le « OK »
+        // Bulle « Première fois » : centrée devant la fenêtre qu'elle explique (placée à chaque image) ; le jeu attend le « OK »
         astuceV &&
-          (() => {
-            let h = a.default.createElement,
-              vw = window.innerWidth,
-              vh = window.innerHeight,
-              el =
-                astuceV.cible === "scene"
-                  ? document.querySelector("canvas[data-tuto=scene]")
-                  : astuceV.cible && document.querySelector(`[data-astuce="${astuceV.cible}"]`);
-            // La fenêtre n'est pas encore à l'écran : on attend l'image suivante pour se placer
-            if (astuceV.cible && !el) return (requestAnimationFrame(() => d()), null);
-            let r = el ? el.getBoundingClientRect() : { left: 8, width: vw - 16, top: 0, bottom: 0 },
-              // largeur réelle de la fenêtre (offsetWidth ignore son animation d'ouverture)
-              lg = Math.min(vw - 16, Math.max(280, Math.min(el && el.offsetWidth ? el.offsetWidth : r.width, 520))),
-              x = Math.max(8, Math.min(vw - lg - 8, r.left + r.width / 2 - lg / 2)),
-              cy = Math.max(90, Math.min(vh - 90, r.top + r.height / 2)),
-              pos = { top: cy, transform: "translateY(-50%)", maxHeight: vh - 16, overflowY: "auto" };
-            return h(
-              "div",
-              {
-                key: astuceV.id,
-                role: "dialog",
-                "aria-modal": "true",
-                "aria-label": "Premi\xE8re fois",
-                className: "absolute flex flex-col items-center gap-3 border-4 bg-[#FFFBEB] px-4 py-3 text-center text-[14px] leading-snug sm:text-[16px]",
-                style: { ...pos, left: x, width: lg, zIndex: 60, borderColor: W, color: W, boxShadow: `6px 6px 0 ${W}`, fontFamily: Yr },
-                onPointerDown: (e) => e.stopPropagation(),
-              },
-              h("span", { className: "border-2 bg-[#FACC15] px-2 text-[12px] font-bold leading-tight", style: { borderColor: W } }, "Premi\xE8re fois"),
-              h("span", null, ft(astuceV.txt)),
-              h(mt, { bg: "#F97316", fg: W, onClick: astuceFin, className: "text-lg", style: { padding: "4px 36px" } }, "OK"),
-            );
-          })(),
+          a.default.createElement(
+            "div",
+            {
+              key: astuceV.id,
+              ref: astRef,
+              role: "dialog",
+              "aria-modal": "true",
+              "aria-label": "Premi\xE8re fois",
+              className: "flex flex-col items-center gap-3 border-4 bg-[#FFFBEB] px-4 py-3 text-center text-[14px] leading-snug sm:text-[16px]",
+              style: { position: "fixed", top: 8, left: 8, width: 300, maxHeight: "calc(100dvh - 16px)", overflowY: "auto", visibility: "hidden", zIndex: 60, borderColor: W, color: W, boxShadow: `6px 6px 0 ${W}`, fontFamily: Yr },
+              onPointerDown: (e) => e.stopPropagation(),
+            },
+            a.default.createElement("span", { className: "border-2 bg-[#FACC15] px-2 text-[12px] font-bold leading-tight", style: { borderColor: W } }, "Premi\xE8re fois"),
+            a.default.createElement("span", null, ft(astuceV.txt)),
+            a.default.createElement(mt, { bg: "#F97316", fg: W, onClick: astuceFin, className: "text-lg", style: { padding: "4px 36px" } }, "OK"),
+          ),
         a.default.createElement(
           "div",
           { ref: Hh, className: "jde-haut pointer-events-none absolute inset-x-0 z-[15]", style: { top: 0 } },

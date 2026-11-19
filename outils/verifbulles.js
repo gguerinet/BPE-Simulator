@@ -16,13 +16,13 @@ const scen = {
   for (const [w, h] of [[390, 844], [320, 568], [844, 390]]) for (const [nom, f] of Object.entries(scen)) {
     const { p, ctx, errs } = await open({ browser: b, url: 'http://bpe.test/game.html', viewport: { width: w, height: h }, ctx: { deviceScaleFactor: 1 }, wait: 300, init: FC + ';window.__noDraw=false;try{localStorage.removeItem("bpe-simulator-astuces")}catch(e){}' });
     await p.evaluate(() => window.__start('gabriel')); await adv(p, 8);
-    await f(p); await adv(p, 40); await p.waitForTimeout(700);
+    await f(p); await adv(p, 40); await p.waitForTimeout(700); await adv(p, 4);
     const m = await p.evaluate(() => {
       const t = document.querySelector('[aria-label="Première fois"]'); if (!t) return null;
       const r = t.getBoundingClientRect(), ok = [...t.querySelectorAll('button')].some((x) => x.innerText.trim() === 'OK');
       const c = document.querySelector('[data-astuce]') || document.querySelector('canvas[data-tuto=scene]'); const rc = c ? c.getBoundingClientRect() : null;
       const ecartX = rc ? Math.round(Math.abs((r.left + r.width / 2) - (rc.left + rc.width / 2))) : null;
-      const ecartY = rc ? Math.round(Math.abs((r.top + r.height / 2) - Math.max(90, Math.min(innerHeight - 90, rc.top + rc.height / 2)))) : null;
+      const ecartY = rc ? Math.round(Math.abs((r.top + r.height / 2) - Math.max(8 + r.height / 2, Math.min(innerHeight - 8 - r.height / 2, rc.top + rc.height / 2)))) : null;
       return { ecartX, ecartY, dansEcran: r.top >= 0 && r.bottom <= innerHeight + 1 && r.left >= 0 && r.right <= innerWidth + 1, ok, enPause: window.__api.n.current.paused };
     });
     await p.screenshot({ path: `travail/bulle_${w}_${nom}.png` });
