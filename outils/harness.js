@@ -30,7 +30,7 @@ async function open(opts = {}) {
     if (u.startsWith('http://bpe.test/')) return r.fulfill({ path: u.startsWith('http://bpe.test/repo/') ? path.join(__dirname, '..', u.slice(21)) : T + u.slice(16), contentType: 'text/html; charset=utf-8' });
     return r.abort();
   });
-  await p.addInitScript(() => { try { localStorage.setItem('bpe-simulator-tuto-off', 'true'); } catch (e) {} window.__noDraw = true; });
+  await p.addInitScript((vierge) => { try { vierge || localStorage.setItem('bpe-simulator-tuto-off', 'true'); } catch (e) {} window.__noDraw = !vierge; }, !!opts.vierge);
   if (opts.init) await p.addInitScript(opts.init);
   if (opts.clock) await p.clock.install();
   await p.goto(opts.url || 'http://bpe.test/repo/index.html');
