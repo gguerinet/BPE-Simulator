@@ -4819,7 +4819,9 @@ if (!window.React || !window.ReactDOM) {
 .jde-chute{transform-origin:50% 100%;animation:jdeChute 2s both;}
 .jde-pop{animation:jdePop .3s steps(4) both;}
 .jde-blink{animation:jdeBlink 1s steps(2) infinite;}
-@media (prefers-reduced-motion: reduce){.jde-float,.jde-toast,.jde-phase,.jde-phase-out,.jde-chute,.jde-pop,.jde-blink,.jde-card .jde-hop,.jde-anim{animation:none!important}}
+.jde-info-new{animation:jdeInfo 1.2s ease-in-out infinite;}
+@keyframes jdeInfo{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,.8)}50%{box-shadow:0 0 0 4px rgba(250,204,21,0)}}
+@media (prefers-reduced-motion: reduce){.jde-float,.jde-toast,.jde-phase,.jde-phase-out,.jde-chute,.jde-pop,.jde-blink,.jde-info-new,.jde-card .jde-hop,.jde-anim{animation:none!important}}
 `;
     function ta({ look: t, pose: r, scale: i = 4, crop: o, lying: n, className: d = "" }) {
       let u = (0, a.useRef)(null),
@@ -7037,7 +7039,8 @@ if (!window.React || !window.ReactDOM) {
         },
         tuPas = (e) => setTuE((c) => (c == null ? c : Math.max(0, Math.min(TUTO.length - 1, c + e)))),
         ut = (e) => {
-          ((n.current.paused = e), (n.current.holding = !1), O(e), I(!1), st(!1), e || (vt.reveil(), bt(yr, 120)));
+          // Une bulle « Première fois » ouverte garde le jeu en attente même après la pause
+          ((n.current.paused = e || !!n.current.astuce), (n.current.holding = !1), O(e), I(!1), st(!1), e || n.current.astuce || (vt.reveil(), bt(yr, 120)));
         },
         lt = (e) => {
           let c = n.current;
@@ -7756,10 +7759,7 @@ if (!window.React || !window.ReactDOM) {
               qr(
                 "dilemme",
                 () => {
-                  ((c.dilemma = { ...g, ent: U.id }),
-                    ht(c.dilemma),
-                    g.kind === "gonogo" ||
-                      astuce("visiteur", "Un visiteur ! Sous chaque choix, les ic\xF4nes montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert).", "fiche"));
+                  ((c.dilemma = { ...g, ent: U.id }), ht(c.dilemma));
                 },
                 () => c.busy === "dilemma" && !c.dilemma,
               ),
@@ -8097,7 +8097,7 @@ if (!window.React || !window.ReactDOM) {
           return (
             qr(
               "weekend",
-              () => (mr({ jours: g }), astuce("weekend", `Le week-end : rentrer chez toi recharge l'\xE9nergie (jusqu'\xE0 +${Wf} %) ; rester au bureau fait avancer, mais fatigue.`, "weekend")),
+              () => mr({ jours: g }),
               () => e.busy === "weekend",
             ),
             d(),
@@ -8501,6 +8501,11 @@ if (!window.React || !window.ReactDOM) {
           let e = (M) => {
               let j = (M.key || "").toLowerCase();
               if (n.current.tutoOffre) return;
+              // Explication « i » ouverte : Échap la ferme, Entrée et Espace agissent sur le bouton « Compris »
+              if (infoOuv.v) {
+                j === "escape" && (M.preventDefault(), infoOuv.fermer && infoOuv.fermer());
+                return;
+              }
               // Bulle « Première fois » ouverte : Entrée, Espace ou O la valident
               if (n.current.astuce) {
                 (j === "enter" || j === " " || j === "o") && !M.repeat && (M.preventDefault(), Gt.current.astuceFin());
@@ -9213,9 +9218,11 @@ if (!window.React || !window.ReactDOM) {
                       borderColor: j,
                       width: "max-content",
                       maxWidth: "min(640px, 100%)",
+                      ...(e.ok && INFOS[e.kind] ? { paddingLeft: 32, paddingRight: 32 } : {}),
                     },
                     onPointerDown: e.ok ? (U) => U.stopPropagation() : void 0,
                   },
+                  e.ok && INFOS[e.kind] && a.default.createElement(InfoFen, { key: "info" + e.id, k: e.kind, fond: g, encre: M, style: ch ? void 0 : { right: 30 } }),
                   e.kind === "phase" &&
                     a.default.createElement(
                       "div",
@@ -9487,12 +9494,13 @@ if (!window.React || !window.ReactDOM) {
                       maxHeight: Ut.ecran ? "calc(100dvh - 16px)" : void 0,
                     },
                   },
+                  a.default.createElement(InfoFen, { key: "info" + q.ent + q.kind, k: q.kind }),
                   a.default.createElement(
                     "div",
                     { className: "min-h-0 flex-1 overflow-y-auto", tabIndex: 0, role: "region", "aria-label": "Fiche du visiteur" },
                     a.default.createElement(
                       "div",
-                      { className: "flex flex-wrap items-center gap-1.5 text-[13px] sm:text-sm" },
+                      { className: "flex flex-wrap items-center gap-1.5 text-[13px] sm:text-sm", style: { paddingRight: 26 } },
                       q.societe &&
                         a.default.createElement(
                           "span",
@@ -10026,18 +10034,19 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "div",
               {
-                className: "jde-pop my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center",
+                className: "jde-pop relative my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center",
                 role: "dialog",
                 "aria-modal": "true",
                 "aria-label": "Week-end",
                 "data-astuce": "weekend",
                 style: { borderColor: W, boxShadow: `6px 6px 0 ${W}` },
               },
+              a.default.createElement(InfoFen, { k: "weekend" }),
               a.default.createElement(
                 "div",
                 {
                   className: "flex items-center justify-center gap-2 text-2xl font-bold sm:text-3xl",
-                  style: { fontFamily: Lr, whiteSpace: "nowrap" },
+                  style: { fontFamily: Lr, whiteSpace: "nowrap", ...(window.innerWidth < 380 ? { fontSize: 20, paddingRight: 16 } : {}) },
                 },
                 a.default.createElement(xa, { size: 28, strokeWidth: 2.5 }),
                 " C'est le week-end !",
@@ -10127,6 +10136,7 @@ if (!window.React || !window.ReactDOM) {
                 "data-astuce": "reunion",
                 style: { borderColor: W, boxShadow: `6px 6px 0 ${W}` },
               },
+              a.default.createElement(InfoFen, { k: "reunion", style: { top: 12, right: 44 } }),
               a.default.createElement(
                 "button",
                 {
@@ -10143,7 +10153,7 @@ if (!window.React || !window.ReactDOM) {
               ),
               a.default.createElement(
                 "div",
-                { className: "pr-8 text-[13px] font-bold tracking-widest text-[#0284C7]" },
+                { className: "text-[13px] font-bold tracking-widest text-[#0284C7]", style: { paddingRight: 64 } },
                 "DIVALIFE \xB7 ARBITRAGES",
               ),
               a.default.createElement("div", { className: "pr-8 text-2xl font-bold leading-tight" }, v.titre),
@@ -10362,6 +10372,145 @@ if (!window.React || !window.ReactDOM) {
           ],
         ],
       ];
+    // Bouton « i » des fenêtres : il clignote tant que ce type de fenêtre n'a jamais été expliqué, puis reste disponible.
+    // L'explication s'affiche dans la fenêtre elle-même, par-dessus ses choix, avec « Compris » pour revenir.
+    var infoOuv = { v: !1, fermer: null },
+      INFOS = {
+        gap: ["Un besoin métier", [
+          ["Accepter", "+1 à +3 de qualité contre 1 à 3 % d'avancement. Mais une fausse bonne idée acceptée fait perdre de la qualité."],
+          ["Refuser", "une fausse bonne idée refusée rapporte de la qualité ; un vrai besoin refusé en coûte 2."],
+          ["Arbitrer", `${ie} % d'énergie : la réunion gaps, toutes les 3 semaines, tranchera à ta place sans se tromper.`],
+          "Sous chaque choix, les icônes montrent ce qu'il coûte (en rouge) ou rapporte (en vert).",
+        ]],
+        ticket: ["Un ticket", [
+          ["Le traiter", `${oi} % d'énergie, et la qualité monte.`],
+          ["Le passer à la TMA", "ne coûte pas d'énergie mais fait perdre un peu de qualité. Et le ticket peut revenir : le renvoyer à la TMA agace l'utilisateur et coûte encore de la qualité."],
+        ]],
+        atelier: ["Un atelier PMO", [
+          ["Y aller", `${ai} % d'énergie et 1 % d'avancement.`],
+          ["Le sécher", "ne coûte ni énergie ni avancement, mais 2 de qualité."],
+        ]],
+        direction: ["La direction projet", [
+          "Certains lundis, dès 60 % d'avancement, la direction te demande un coup de main pour un prestataire.",
+          ["Accepter", "tu travailles le week-end suivant pour lui, sans repos ni avancement, et tu perds 20 % d'énergie maximale le lundi."],
+          ["Refuser", "coûte 2 de qualité."],
+        ]],
+        gonogo: ["Le comité go/no-go", [
+          "Au passage des 95 %, le comité décide si le projet bascule.",
+          ["GO", `rien ne bouge tout de suite ; au go-live, le GO réussit (+${goPts} points) ou rate (−${goPts} points). Ses chances dépendent de la qualité : 20 % jusqu'à 40 % de qualité, puis 10 points de plus par tranche de 10 %, jusqu'à 80 % dès 90 %.`],
+          ["NO-GO", `une recette complémentaire coûte 2 % d'avancement, mais le bonus de ${nogoPts} points est assuré.`],
+        ]],
+        regression: ["Une régression", [
+          "Une ancienne livraison casse quelque chose : la qualité baisse de 1 à 3 (deux fois moins pour Hugues).",
+          "Tu ne peux rien y faire, sinon garder une bonne qualité pour l'encaisser.",
+        ]],
+        imprevu: ["Un imprévu", [
+          "Un contretemps fait reculer l'avancement du projet.",
+          "Tu ne peux rien y faire : il faudra rattraper en cliquant.",
+        ]],
+        bonne: ["Une bonne nouvelle", [
+          "Un coup de pouce inattendu : un peu d'avancement ou de qualité en plus.",
+        ]],
+        reunion: ["La réunion gaps", [
+          "Toutes les 3 semaines, elle tranche les besoins que tu as mis en arbitrage.",
+          "Elle ne se trompe jamais : les vrais besoins sont acceptés (qualité en plus, avancement en moins) et les fausses bonnes idées sont refusées, sans perte.",
+        ]],
+        weekend: ["Le week-end", [
+          ["Rentrer chez toi", `rend +${Wf} % d'énergie, mais le projet n'avance pas pendant 2 jours.`],
+          ["Rester au bureau", `le projet avance (un jour de repos sur place rend +${we} %), mais un clic coûte deux fois plus d'énergie et tu perds 20 % d'énergie maximale le lundi. Ça se cumule jusqu'au prochain week-end à la maison.`],
+        ]],
+      };
+    function InfoFen({ k, fond = "#FFFBEB", encre = W, style: st }) {
+      let inf = INFOS[k],
+        [ouv, setOuv] = (0, a.useState)(!1),
+        [vu, setVu] = (0, a.useState)(() => {
+          let l = xr("bpe-simulator-infos", []);
+          return Array.isArray(l) && l.includes(k);
+        });
+      if (
+        ((0, a.useEffect)(
+          () =>
+            ouv
+              ? ((infoOuv.v = !0),
+                (infoOuv.fermer = () => setOuv(!1)),
+                () => {
+                  ((infoOuv.v = !1), (infoOuv.fermer = null));
+                })
+              : void 0,
+          [ouv],
+        ),
+        !inf)
+      )
+        return null;
+      let ouvrir = (e) => {
+        (e.stopPropagation(), setOuv(!0));
+        if (!vu) {
+          setVu(!0);
+          let l = xr("bpe-simulator-infos", []);
+          Tr("bpe-simulator-infos", [...(Array.isArray(l) ? l : []), k]);
+        }
+      };
+      return a.default.createElement(
+        a.default.Fragment,
+        null,
+        a.default.createElement(
+          "button",
+          {
+            type: "button",
+            onPointerDown: (e) => e.stopPropagation(),
+            onClick: ouvrir,
+            "aria-label": `Comment ça marche : ${inf[0].toLowerCase()}`,
+            title: "Comment ça marche ?",
+            className: "absolute flex items-center justify-center rounded-full border-2 font-bold leading-none hover:opacity-100" + (vu ? "" : " jde-info-new"),
+            style: { width: 20, height: 20, fontSize: 12, padding: 0, top: 5, right: 5, borderColor: vu ? encre : W, color: vu ? encre : W, background: vu ? "transparent" : "#FACC15", opacity: vu ? 0.45 : 1, fontFamily: "Georgia, serif", zIndex: 20, ...st },
+          },
+          "i",
+        ),
+        ouv &&
+          a.default.createElement(
+            "div",
+            {
+              role: "dialog",
+              "aria-label": inf[0],
+              className: "absolute flex flex-col p-3 text-left",
+              style: { top: 0, left: "50%", transform: "translateX(-50%)", width: "max(100%, min(340px, 92vw))", minHeight: "100%", zIndex: 21, background: fond, color: encre, fontFamily: Yr, border: `3px solid ${encre}` },
+              onPointerDown: (e) => e.stopPropagation(),
+              onClick: (e) => e.stopPropagation(),
+              onKeyDown: (e) => {
+                (e.key === "Escape" || e.key === "Esc") && (e.preventDefault(), e.stopPropagation(), setOuv(!1));
+              },
+            },
+            a.default.createElement("div", { className: "text-[16px] font-bold leading-tight sm:text-lg", style: { fontFamily: Lr } }, inf[0]),
+            a.default.createElement(
+              "ul",
+              { className: "mt-1 flex flex-col gap-1 text-[14px] leading-snug sm:text-[15px]" },
+              inf[1].map((x, i) =>
+                a.default.createElement(
+                  "li",
+                  { key: i },
+                  Array.isArray(x) ? a.default.createElement(a.default.Fragment, null, a.default.createElement("b", null, x[0]), " : ", ft(x[1])) : ft(x),
+                ),
+              ),
+            ),
+            a.default.createElement(
+              "div",
+              { className: "mt-auto flex justify-center pt-2" },
+              a.default.createElement(
+                "button",
+                {
+                  type: "button",
+                  autoFocus: !0,
+                  onPointerDown: (e) => e.stopPropagation(),
+                  onClick: (e) => (e.stopPropagation(), setOuv(!1)),
+                  className: "border-[3px] px-5 py-1 text-[15px] font-bold text-white",
+                  style: { background: "#0E7490", borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr },
+                },
+                "Compris",
+              ),
+            ),
+          ),
+      );
+    }
     function Gi({ onClose: t, bouton: r = "Commencer", detail: i = !1 }) {
       return a.default.createElement(
         "div",
@@ -11254,7 +11403,7 @@ if (!window.React || !window.ReactDOM) {
       return a.default.createElement(
         "div",
         { className: "h-full w-full overflow-y-auto", ref: cOut },
-        o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: wi ? "Retour" : "Commencer" }),
+        o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: "Retour" }),
         !o && psOuvert && a.default.createElement(PsModal, { initial: psv, onSave: psSave }),
         a.default.createElement(
           "div",
