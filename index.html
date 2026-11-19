@@ -6634,38 +6634,57 @@ if (!window.React || !window.ReactDOM) {
           return !1;
         }
       },
-      // Tutoriel court : le reste est expliqué au bon moment par les bulles « Première fois »
+      // Tutoriel : présentation de l'écran, élément par élément ; les situations (visiteurs, week-end…) sont expliquées
+      // au bon moment par les bulles « Première fois »
       TUTO = [
         {
-          cible: "scene",
-          titre: "Touche le bureau pour avancer",
+          cible: "avancement",
+          titre: "L'avancement",
           texte:
-            "Clique sur le bureau pour faire avancer le projet jusqu'au go-live (100 %). Maintiens Espace pour encha\xEEner.",
-          texteTactile: "Touche le bureau pour faire avancer le projet jusqu'au go-live (100 %). Garde le doigt appuy\xE9 pour encha\xEEner.",
+            "Ta progression jusqu'au go-live (100 %). Clique sur le bureau pour la faire avancer, ou maintiens Espace pour encha\xEEner. Les traits jaunes s\xE9parent les phases du projet.",
+          texteTactile:
+            "Ta progression jusqu'au go-live (100 %). Touche le bureau pour la faire avancer, ou garde le doigt appuy\xE9 pour encha\xEEner. Les traits jaunes s\xE9parent les phases du projet.",
+        },
+        { cible: "hero", titre: "Ton membre BPE", texte: "Ton membre de l'\xE9quipe BPE, architecte fonctionnel entre le m\xE9tier et l'IT. Son atout est d\xE9crit dans les r\xE8gles." },
+        {
+          cible: "date",
+          titre: "Le jour du projet",
+          texte: "J+0 au d\xE9marrage. Le soleil ou la lune indique le jour ou la nuit. Plus le go-live arrive t\xF4t, meilleur est le score.",
+        },
+        {
+          cible: "qualite",
+          titre: "La qualit\xE9",
+          texte: "Elle monte ou baisse selon tes choix et clignote \xE0 chaque changement. Elle compte pour le score et pour les chances de r\xE9ussir un GO.",
         },
         {
           cible: "energie",
-          titre: "Surveille ton \xE9nergie",
+          titre: "L'\xE9nergie",
           texte:
-            "Chaque clic en consomme, deux fois plus la nuit et le week-end. \xC0 0 %, c'est l'arr\xEAt maladie. Pour r\xE9cup\xE9rer : dormir la nuit, un caf\xE9, ou rentrer chez toi le week-end.",
+            "Chaque clic en consomme, deux fois plus la nuit et le week-end (le badge \xD72 te le rappelle). Sous 20 %, tu ralentis ; \xE0 0 %, c'est l'arr\xEAt maladie (4 jours).",
         },
         {
-          titre: "R\xE9ponds aux visiteurs",
-          intro:
-            "Des visiteurs entrent par la porte et une fiche s'ouvre : choisis avec les boutons (ou les touches A, B, C). Chaque choix co\xFBte de l'\xE9nergie, de l'avancement ou de la qualit\xE9.",
-          introTactile:
-            "Des visiteurs entrent par la porte et une fiche s'ouvre : choisis avec les boutons. Chaque choix co\xFBte de l'\xE9nergie, de l'avancement ou de la qualit\xE9.",
-          ex: [
-            [[["DIVALIFE", "#0369A1"], ["BESOIN", "#1F2937"]], "Un besoin m\xE9tier : l'accepter, le refuser ou le faire arbitrer. Gare aux fausses bonnes id\xE9es !"],
-            [[["INVENTEK", "#EA580C", "#1B1B2F"], ["TICKET", "#1D4ED8"]], "Un ticket : le traiter toi-m\xEAme ou le passer \xE0 la TMA."],
-            [[["DIVALIFE", "#0369A1"], ["ATELIER PMO DIVALIFE", "#0F766E"]], "Une formation : la suivre ou la s\xE9cher."],
-          ],
+          cible: "cafe",
+          titre: "Le caf\xE9",
+          texte: "Rend un peu d'\xE9nergie (le bouton affiche le gain r\xE9el), une tasse tous les 2 jours. Touche C.",
+          texteTactile: "Rend un peu d'\xE9nergie (le bouton affiche le gain r\xE9el), une tasse tous les 2 jours.",
+        },
+        {
+          cible: "dormir",
+          titre: "Dormir",
+          texte: "Disponible la nuit, et le week-end : tu dors jusqu'\xE0 demain et tu r\xE9cup\xE8res de l'\xE9nergie. Touche D.",
+          texteTactile: "Disponible la nuit, et le week-end : tu dors jusqu'\xE0 demain et tu r\xE9cup\xE8res de l'\xE9nergie.",
+        },
+        {
+          cible: "consultant",
+          titre: "Le consultant b.workchoc",
+          texte: "Double ta vitesse pendant 3 jours, nuits comprises, mais co\xFBte cher : 5 000 \u20AC par mission. Touche W.",
+          texteTactile: "Double ta vitesse pendant 3 jours, nuits comprises, mais co\xFBte cher : 5 000 \u20AC par mission.",
         },
         {
           cible: "notes",
-          titre: "Le Comex note vitesse, qualit\xE9 et co\xFBt",
+          titre: "Score et m\xE9daille projet\xE9s",
           texte:
-            "Trois notes sur 100 : le d\xE9lai, la qualit\xE9 et le co\xFBt. Un seul z\xE9ro et le score tombe \xE0 0. Ici, tu vois en direct la m\xE9daille vers laquelle tu te diriges : bronze, argent, or ou platine.",
+            "Les notes du Comex sur 100 (d\xE9lai, qualit\xE9, co\xFBt), projet\xE9es \xE0 la fin du projet au rythme actuel, et l'ic\xF4ne de la m\xE9daille vers laquelle tu te diriges. Un seul z\xE9ro et le score tombe \xE0 0.",
         },
       ];
     function TutoVue({ etape: t, setEtape: r, onFin: i }) {

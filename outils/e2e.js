@@ -25,7 +25,7 @@ async function jouer(b, nom, opts) {
 (async () => {
   const b = await chromium.launch();
   
-  await jouer(b, 'Partie normale             ', { pseudo: 'Audit3', vieillir: true });
+  await jouer(b, 'Partie normale             ', { pseudo: 'Mandalorien', vieillir: true });
   await b.close();
   console.log(require('child_process').execFileSync('su', ['postgres', '-c', 'psql -d bpe -qAt'], { input: "select pseudo || ' : ' || score || ' (partie ' || coalesce(left(partie_id::text, 8), 'aucune') || ')' from scores order by id;" }).toString());
 })();
