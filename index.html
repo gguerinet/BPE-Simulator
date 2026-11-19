@@ -7227,8 +7227,6 @@ if (!window.React || !window.ReactDOM) {
                 e.ok)
               ) {
                 ((rr.current = e), x([e]), (n.current.attenteOK = !0), (n.current.holding = !1));
-                (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") &&
-                  astuce("evenement", "Un \xE9v\xE9nement : son effet s'applique tout seul. Valide avec le bouton pour continuer.", "evenement");
                 return;
               }
               let c = wr.current.length >= 3 ? 0.65 : 1,
@@ -7760,9 +7758,8 @@ if (!window.React || !window.ReactDOM) {
                 () => {
                   ((c.dilemma = { ...g, ent: U.id }),
                     ht(c.dilemma),
-                    g.kind === "gonogo"
-                      ? astuce("gonogo", `Comit\xE9 go/no-go : un GO r\xE9ussi rapporte +${goPts} points, rat\xE9 il en retire ${goPts} ; le NO-GO assure +${nogoPts}. Plus ta qualit\xE9 est haute, plus le GO a de chances de r\xE9ussir.`, "fiche")
-                      : astuce("visiteur", "Un visiteur ! Sous chaque choix, les ic\xF4nes montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert).", "fiche"));
+                    g.kind === "gonogo" ||
+                      astuce("visiteur", "Un visiteur ! Sous chaque choix, les ic\xF4nes montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert).", "fiche"));
                 },
                 () => c.busy === "dilemma" && !c.dilemma,
               ),
