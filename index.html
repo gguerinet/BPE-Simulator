@@ -9076,15 +9076,19 @@ if (!window.React || !window.ReactDOM) {
                 {
                   "data-tuto": "notes",
                   title: "Notes du Comex sur 100, projet\xE9es \xE0 la fin du projet au rythme actuel",
-                  className: "mt-1 flex flex-wrap items-baseline justify-between gap-x-3 text-[12px] leading-tight text-white sm:text-[13px]",
+                  className: "mt-1 flex flex-wrap items-center justify-between gap-x-3 text-[12px] leading-tight text-white sm:text-[13px]",
                   style: { fontFamily: Yr },
                 },
                 h("span", { className: "flex flex-wrap gap-x-2" }, note("D\xE9lai", nt.delai), note("Qualit\xE9", nt.qualite), note("Co\xFBt", nt.budget)),
-                h(
-                  "span",
-                  { className: "whitespace-nowrap font-bold", style: { color: md ? "#FACC15" : "#CBD5E1" } },
-                  md ? `En route pour ${md.id === "platine" ? "le platine" : md.id === "or" ? "l'or" : md.id === "argent" ? "l'argent" : "le bronze"}` : "Pas encore de m\xE9daille",
-                ),
+                // Médaille visée : l'icône de la médaille (grisée tant qu'aucune n'est en vue)
+                (() => {
+                  let lib = md ? `M\xE9daille vis\xE9e : ${md.id === "or" ? "or" : md.id}` : "Pas encore de m\xE9daille en vue";
+                  return h(
+                    "span",
+                    { className: "flex shrink-0 items-center", role: "img", "aria-label": lib, title: lib, style: { opacity: md ? 1 : 0.55 } },
+                    h(D2, { kind: md ? md.id : "echec", scale: 0.75 }),
+                  );
+                })(),
               );
             })(),
           ),
