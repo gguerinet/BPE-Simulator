@@ -8,5 +8,6 @@ P() { su postgres -c "psql -q -v ON_ERROR_STOP=1 $*"; }
 P -f - < base.sql
 P -d bpe -f - < anti.sql
 P -d bpe -f - < advisor.sql
+P -d bpe -f - < pseudos.sql
 echo 'create policy "aucun accès direct" on public.parties for all to anon, authenticated using (false) with check (false);' | P -d bpe -f -
 echo "Base locale « bpe » prête"

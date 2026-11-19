@@ -7037,7 +7037,8 @@ if (!window.React || !window.ReactDOM) {
         },
         tuPas = (e) => setTuE((c) => (c == null ? c : Math.max(0, Math.min(TUTO.length - 1, c + e)))),
         ut = (e) => {
-          ((n.current.paused = e), (n.current.holding = !1), O(e), I(!1), st(!1), e || (vt.reveil(), bt(yr, 120)));
+          // Une bulle « Première fois » ouverte garde le jeu en attente même après la pause
+          ((n.current.paused = e || !!n.current.astuce), (n.current.holding = !1), O(e), I(!1), st(!1), e || n.current.astuce || (vt.reveil(), bt(yr, 120)));
         },
         lt = (e) => {
           let c = n.current;
@@ -11254,7 +11255,7 @@ if (!window.React || !window.ReactDOM) {
       return a.default.createElement(
         "div",
         { className: "h-full w-full overflow-y-auto", ref: cOut },
-        o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: wi ? "Retour" : "Commencer" }),
+        o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: "Retour" }),
         !o && psOuvert && a.default.createElement(PsModal, { initial: psv, onSave: psSave }),
         a.default.createElement(
           "div",

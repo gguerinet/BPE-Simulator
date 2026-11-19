@@ -52,4 +52,13 @@ for i in 1 2 3 4 5; do A "insert into scores (pseudo,hero,score,joueur_id,partie
 n=$(echo "select count(*) from scores where partie_id = '$P4'" | DB)
 if [ "$n" = "1" ]; then ok=$((ok+1)); s=OK; else ko=$((ko+1)); s=ÉCHEC; fi
 printf '%-6s %-62s → %s\n' "$s" "5 envois simultanés de la même partie" "$n score(s) enregistré(s)"
+# Réservation des pseudos
+J5=55555555-5555-4555-8555-555555555555; J6=66666666-6666-4666-8666-666666666666
+t "Pseudo réservé sans score par un joueur"    "^ok$"   "select reserver_pseudo('Grogu', '$J5')"
+t "Même pseudo demandé par un autre joueur"    "^pris$" "select reserver_pseudo('GROGU ', '$J6')"
+t "Lecture de la table des pseudos"            "permission denied" "select * from pseudos"
+P6=$(A "select commencer_partie('$J6')")
+t "Score de l'autre joueur sous ce pseudo"     "déjà pris" "insert into scores (pseudo,hero,score,joueur_id,partie_id,total,qualite,cout,gonogo) values ('Grogu','samuel',1,'$J6','$P6',100,80,5000,'nogo')"
+for i in $(seq 1 10); do A "select reserver_pseudo('Lot$i', '$J6')" >/dev/null; done
+t "11e pseudo réservé dans la journée"         "^inconnu$" "select reserver_pseudo('Lot11', '$J6')"
 echo "BILAN : $ok réussis, $ko échecs"

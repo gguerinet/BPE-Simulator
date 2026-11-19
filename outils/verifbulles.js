@@ -7,9 +7,11 @@ const adv = (p, n) => p.evaluate((n) => { for (let i = 0; i < n; i++) window.__a
 const scen = {
   weekend: async (p) => { await p.evaluate(() => { const g = window.__api.n.current; g.days = 4; g.dayClick = 21; g.inNight = true; g.nextVisite = 1e9; window.__api.hn(); }); },
   visiteur: async (p) => { await p.evaluate(() => window.__api.dn({ type: 'ticket', palier: 10 })); },
-  evenement: async (p) => { await p.evaluate(() => window.__api.an()); },
-  reunion: async (p) => { await p.evaluate(() => { const g = window.__api.n.current; g.arbitrages.push({ idx: g.gapDeck[0], palier: 20 }); window.__api.Sa(false); }); },
   nuit: async (p) => { await p.evaluate(() => { const g = window.__api.n.current; g.dayClick = 19; g.nextVisite = 1e9; g.lastClick = -1e9; window.__api.la(100, 100); }); },
+  // Ces situations ne doivent plus afficher de bulle
+  'sans:evenement': async (p) => { await p.evaluate(() => window.__api.an()); },
+  'sans:reunion': async (p) => { await p.evaluate(() => { const g = window.__api.n.current; g.arbitrages.push({ idx: g.gapDeck[0], palier: 20 }); window.__api.Sa(false); }); },
+  'sans:gonogo': async (p) => { await p.evaluate(() => { const g = window.__api.n.current; g.pu = g.puMax = 95000; window.__api.dn({ type: 'gonogo', palier: 95 }); }); },
 };
 (async () => {
   const b = await chromium.launch();

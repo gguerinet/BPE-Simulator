@@ -26,11 +26,12 @@ const check = (p) => p.evaluate(() => {
   const report = {};
   for (const sz of only) {
     const [w, h] = sizes[sz];
-    const { p, ctx, errs } = await open({ browser: b, url: 'http://bpe.test/game.html', viewport: { width: w, height: h }, ctx: { deviceScaleFactor: 1, hasTouch: w < 900, isMobile: w < 900 && h > w }, wait: 300, init: FC + ';window.__noDraw=false;' });
+    const { p, ctx, errs } = await open({ browser: b, url: 'http://bpe.test/game.html', viewport: { width: w, height: h }, ctx: { deviceScaleFactor: 1, hasTouch: w < 900, isMobile: w < 900 && h > w }, wait: 300, init: FC + ';window.__noDraw=false;try{localStorage.setItem("bpe-simulator-pseudo",JSON.stringify("Capture"))}catch(e){}' });
     await adv(p, 8);
     const shot = async (nom) => { await adv(p, 6); await p.screenshot({ path: `travail/shots/${sz}_${nom}.png` }); report[sz + ' ' + nom] = await check(p); };
     await shot('01_accueil');
-    await p.getByRole('button', { name: /Commencer/ }).first().click(); await shot('02_selection');
+    // L'arrivée affiche directement le choix du héros (le pseudo est déjà connu)
+    await shot('02_selection');
     await p.evaluate(() => window.__start('samuel')); await adv(p, 12);
     await p.evaluate(() => { const g = window.__api.n.current; g.pu = 41500; g.puMax = 41500; g.nextMilestone = 42; g.phaseVue = 2; g.days = 31; g.dayClick = 8; g.energy = 63; g.quality = 72.5; g.bwSpent = 5000; g.dirty = true; });
     await shot('03_jeu');
