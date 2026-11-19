@@ -2411,9 +2411,9 @@ if (!window.React || !window.ReactDOM) {
       ],
       We = "#2E328D",
       Zt = {
-        Divalife: { c: "#0284C7", txt: "#FFFFFF", role: "Client \xB7 besoins et PMO Divalife" },
-        Inventek: { c: "#EA580C", txt: "#FFFFFF", role: "Prestataire \xB7 tickets et r\xE9gressions" },
-        Soderek: { c: "#16A34A", txt: "#FFFFFF", role: "Prestataire \xB7 tickets et r\xE9gressions" },
+        Divalife: { c: "#0369A1", txt: "#FFFFFF", role: "Client \xB7 besoins et PMO Divalife" },
+        Inventek: { c: "#EA580C", txt: "#1B1B2F", role: "Prestataire \xB7 tickets et r\xE9gressions" },
+        Soderek: { c: "#16A34A", txt: "#1B1B2F", role: "Prestataire \xB7 tickets et r\xE9gressions" },
         SMD: { c: "#DC2626", txt: "#FFFFFF", role: "Prestataire \xB7 tickets et r\xE9gressions" },
         "b.workchoc": { c: We, txt: "#FFFFFF", role: "Consultant" },
       },
@@ -2734,9 +2734,9 @@ if (!window.React || !window.ReactDOM) {
           role: "Virtuose de la qualit\xE9",
           pitch: "Conna\xEEt chaque test de conformit\xE9 et certificat d'analyse par c\u0153ur.",
           atout: "\u0152il de lynx",
-          atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions, et ses tickets trait\xE9s rapportent plus de qualit\xE9",
+          atoutTxt: "Deux fois moins impact\xE9 par les tickets et les r\xE9gressions",
           conseil:
-            "Les tickets lui co\xFBtent deux fois moins d'\xE9nergie et de qualit\xE9, les r\xE9gressions deux fois moins de qualit\xE9. Et un ticket trait\xE9 lui rapporte +2 de qualit\xE9 au lieu de +1,5.",
+            "Les tickets lui co\xFBtent deux fois moins d'\xE9nergie et de qualit\xE9, les r\xE9gressions deux fois moins de qualit\xE9.",
           look: {
             skin: "#F3CDB0",
             skinS: "#D8A88A",
@@ -2833,8 +2833,7 @@ if (!window.React || !window.ReactDOM) {
         gapFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         incidentFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
         ticketEFacteur: (t) => (t.id === "hugues" ? 0.5 : 1),
-        // Hugues : un ticket traité lui rapporte +2 de qualité (au lieu de +1,5)
-        ticketQ: (t) => (t.id === "hugues" ? 2 : re),
+        ticketQ: () => re,
         imprevuFacteur: (t) => (t.id === "samuel" ? 0.5 : 1),
         // François : la premi\u00e8re mission b.workchoc est offerte, et chaque mission dure un jour de plus
         coutBW: (t, e) => (t.id === "francois" && !(e && e.boostCalls) ? 0 : In),
@@ -8726,8 +8725,8 @@ if (!window.React || !window.ReactDOM) {
                     bg: "#86EFAC",
                     titre: "GO : on bascule",
                     titreCourt: "GO",
-                    sub: "L'avancement ne bouge pas, mais le d\xE9marrage peut mal se passer : mieux vaut une bonne qualit\xE9",
-                    note: "C'est risqu\xE9, mais sur un malentendu \xE7a peut passer",
+                    sub: `L'avancement ne bouge pas \xB7 chance de r\xE9ussite au go-live : ${Math.round(goChance(Z.quality) * 100)} % avec la qualit\xE9 actuelle`,
+                    note: `${Math.round(goChance(Z.quality) * 100)} % de chances de r\xE9ussite avec la qualit\xE9 actuelle`,
                     fx: [],
                   },
                   {
@@ -9403,7 +9402,7 @@ if (!window.React || !window.ReactDOM) {
                   },
                   a.default.createElement(
                     "div",
-                    { className: "min-h-0 flex-1 overflow-y-auto" },
+                    { className: "min-h-0 flex-1 overflow-y-auto", tabIndex: 0, role: "region", "aria-label": "Fiche du visiteur" },
                     a.default.createElement(
                       "div",
                       { className: "flex flex-wrap items-center gap-1.5 text-[13px] sm:text-sm" },
@@ -9624,7 +9623,7 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               mt,
               {
-                bg: ca && ha <= 0 ? "#B7791F" : "#7C5A3A",
+                bg: ca && ha <= 0 ? "#93590B" : "#7C5A3A",
                 tuto: "cafe",
                 onClick: Xe,
                 disabled: !ca || ha > 0 || Z.golive || Z.dodoApres || Z.maisonApres || (Z.busy && Z.busy !== "dilemma") || cafeInutile,
@@ -9909,12 +9908,12 @@ if (!window.React || !window.ReactDOM) {
               ),
               a.default.createElement(
                 "p",
-                { className: "jde-kbd jde-pause-info mt-2 text-center text-xs opacity-60" },
+                { className: "jde-kbd jde-pause-info mt-2 text-center text-xs opacity-80" },
                 "P ou \xC9chap pour reprendre",
               ),
               a.default.createElement(
                 "p",
-                { className: "mt-[12px] text-center text-[11px] leading-tight opacity-60" },
+                { className: "mt-[12px] text-center text-[11px] leading-tight opacity-80" },
                 "BPE Simulator \xB7 Gabriel Gu\xE9rinet 2026",
               ),
             ),
@@ -10307,7 +10306,7 @@ if (!window.React || !window.ReactDOM) {
           ),
           a.default.createElement(
             "div",
-            { className: "min-h-0 flex-1 overflow-y-auto px-3 py-2.5 sm:px-4 sm:py-3" },
+            { className: "min-h-0 flex-1 overflow-y-auto px-3 py-2.5 sm:px-4 sm:py-3", tabIndex: 0, role: "region", "aria-label": "R\xE8gles du jeu" },
             i &&
               a.default.createElement(
                 "div",
@@ -10872,7 +10871,7 @@ if (!window.React || !window.ReactDOM) {
         tm &&
           a.default.createElement(
             "p",
-            { className: "jde-kbd jde-pause-info text-[12px] opacity-60" },
+            { className: "jde-kbd jde-pause-info text-[12px] opacity-80" },
             "Touche M : tout couper ou tout r\xE9tablir",
           ),
       );
@@ -11385,6 +11384,7 @@ if (!window.React || !window.ReactDOM) {
                 mt,
                 {
                   bg: "#F97316",
+                  fg: W,
                   onClick: () =>
                     w && !nvConf ? (setNvConf(!0), setTimeout(() => setNvConf(!1), 4e3)) : t(B.id, null),
                   className: "flex items-center gap-2 px-3 text-base sm:px-5 sm:text-2xl",
@@ -11829,6 +11829,9 @@ if (!window.React || !window.ReactDOM) {
             {
               className:
                 "jde-rapport grid min-h-0 flex-1 gap-2 overflow-y-auto p-2 sm:gap-3 sm:p-3 md:grid-cols-2 xl:grid-cols-[1.15fr_1fr_1fr]",
+              tabIndex: 0,
+              role: "region",
+              "aria-label": "Rapport Comex",
             },
             a.default.createElement(
               "div",
@@ -12021,7 +12024,7 @@ if (!window.React || !window.ReactDOM) {
                         : a.default.createElement(
                             "div",
                             { key: m, className: "flex justify-between gap-1" },
-                            a.default.createElement("span", { className: "min-w-0 truncate" }, V),
+                            a.default.createElement("span", { className: "min-w-0", style: { overflowWrap: "anywhere" } }, V),
                             a.default.createElement(
                               "span",
                               { className: "tabular-nums", style: { color: x > 0 ? "#15803D" : "#B91C1C" } },
@@ -12067,7 +12070,7 @@ if (!window.React || !window.ReactDOM) {
                 ),
                 a.default.createElement(
                   "div",
-                  { className: "mt-1 max-w-full overflow-x-auto" },
+                  { className: "mt-1 max-w-full overflow-x-auto", tabIndex: 0, role: "region", "aria-label": "Seuils des m\xE9dailles" },
                   a.default.createElement(
                     "table",
                     {
@@ -12222,6 +12225,9 @@ if (!window.React || !window.ReactDOM) {
                   "div",
                   {
                     className: "max-h-40 overflow-y-auto px-2 py-1 text-[15px] leading-tight sm:text-[17px]",
+                    tabIndex: 0,
+                    role: "region",
+                    "aria-label": "Journal des arbitrages",
                     style: { fontFamily: Yr },
                   },
                   (() => {
@@ -12300,6 +12306,7 @@ if (!window.React || !window.ReactDOM) {
               mt,
               {
                 bg: "#F97316",
+                fg: W,
                 onClick: r,
                 className: "flex flex-1 items-center justify-center gap-2 px-4 py-2 text-xl",
               },
@@ -12410,7 +12417,7 @@ if (!window.React || !window.ReactDOM) {
         }, []);
       return a.default.createElement(
         "div",
-        { className: "jde-root fixed inset-0 overflow-hidden" },
+        { className: "jde-root fixed inset-0 overflow-hidden", role: "main" },
         a.default.createElement("style", null, S2),
         t === "select" &&
           a.default.createElement(r1, {
