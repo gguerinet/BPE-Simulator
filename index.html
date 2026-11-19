@@ -6634,111 +6634,38 @@ if (!window.React || !window.ReactDOM) {
           return !1;
         }
       },
+      // Tutoriel court : le reste est expliqué au bon moment par les bulles « Première fois »
       TUTO = [
         {
-          titre: "Bienvenue chez Divalife !",
-          texte:
-            "En une minute, voici l'\xE9cran puis les interactions du jeu. Avance avec \xAB Suivant \xBB (ou la fl\xE8che droite du clavier).",
-          texteTactile: "En une minute, voici l'\xE9cran puis les interactions du jeu. Avance avec \xAB Suivant \xBB.",
-        },
-        {
           cible: "scene",
-          titre: "Le bureau : travailler",
+          titre: "Touche le bureau pour avancer",
           texte:
-            "Clique ou touche le bureau pour faire avancer le projet. Maintiens Espace ou le doigt pour encha\xEEner. Molette ou pincement pour zoomer.",
-          texteTactile: "Touche le bureau pour faire avancer le projet ; garde le doigt appuy\xE9 pour encha\xEEner. Pince pour zoomer.",
-        },
-        {
-          cible: "avancement",
-          titre: "L'avancement",
-          texte:
-            "Ta progression jusqu'au go-live (100 %). Les traits jaunes s\xE9parent les phases du projet : chaque phase change le type de visites.",
-        },
-        { cible: "hero", titre: "Ton h\xE9ros", texte: "Ton membre de l'\xE9quipe BPE, architecte fonctionnel entre le m\xE9tier et l'IT. Son atout est d\xE9crit dans les r\xE8gles." },
-        {
-          cible: "date",
-          titre: "Le jour du projet",
-          texte:
-            "J+0 au d\xE9marrage. Le soleil ou la lune indique le jour ou la nuit. Plus le go-live arrive t\xF4t, meilleur est le score.",
-        },
-        {
-          cible: "cout",
-          titre: "Le co\xFBt",
-          texte: "Le total d\xE9pens\xE9 en consultants b.workchoc. Il p\xE8se sur le score Comex.",
-        },
-        {
-          cible: "qualite",
-          titre: "La qualit\xE9",
-          texte:
-            "Elle monte ou baisse selon tes choix et clignote \xE0 chaque changement. Elle compte aussi pour le score.",
+            "Clique sur le bureau pour faire avancer le projet jusqu'au go-live (100 %). Maintiens Espace pour encha\xEEner.",
+          texteTactile: "Touche le bureau pour faire avancer le projet jusqu'au go-live (100 %). Garde le doigt appuy\xE9 pour encha\xEEner.",
         },
         {
           cible: "energie",
-          titre: "L'\xE9nergie",
+          titre: "Surveille ton \xE9nergie",
           texte:
-            "Chaque clic en consomme, deux fois plus la nuit et le week-end. Sous 20 %, tu ralentis ; \xE0 0 %, c'est l'arr\xEAt maladie (4 jours). Chaque week-end pass\xE9 au bureau retire 20 points \xE0 l'\xE9nergie maximale (cases gris\xE9es) ; un week-end \xE0 la maison efface tout.",
+            "Chaque clic en consomme, deux fois plus la nuit et le week-end. \xC0 0 %, c'est l'arr\xEAt maladie. Pour r\xE9cup\xE9rer : dormir la nuit, un caf\xE9, ou rentrer chez toi le week-end.",
         },
         {
-          cible: "cafe",
-          titre: "Le caf\xE9",
-          texte:
-            "Rend un peu d'\xE9nergie (le bouton affiche le gain r\xE9el), une tasse tous les 2 jours. Touche C.",
-          texteTactile: "Rend un peu d'\xE9nergie (le bouton affiche le gain r\xE9el), une tasse tous les 2 jours.",
-        },
-        {
-          cible: "dormir",
-          titre: "Dormir",
-          texte:
-            "Disponible la nuit, et le week-end (bouton Dormir) : tu dors jusqu'\xE0 demain. Touche D.",
-          texteTactile: "Disponible la nuit, et le week-end (bouton Dormir) : tu dors jusqu'\xE0 demain.",
-        },
-        {
-          cible: "consultant",
-          titre: "Le consultant b.workchoc",
-          texte: "Double ta vitesse pendant 3 jours, nuits comprises, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte). Les week-ends de repos et les arr\xEAts maladie ne comptent pas. Touche W.",
-          texteTactile: "Double ta vitesse pendant 3 jours, nuits comprises, mais co\xFBte cher (4 jours pour Fran\xE7ois, et sa premi\xE8re mission est offerte). Les week-ends de repos et les arr\xEAts maladie ne comptent pas.",
-        },
-        {
-          cible: "commandes",
-          titre: "Plein \xE9cran et pause",
-          texte:
-            "La pause donne acc\xE8s aux r\xE8gles d\xE9taill\xE9es, au son et \xE0 ce tutoriel, que tu pourras relancer \xE0 tout moment.",
-        },
-        {
-          titre: "Les visites",
+          titre: "R\xE9ponds aux visiteurs",
           intro:
-            "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons (ou les touches A, B, C) : les ic\xF4nes sous chaque choix montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert) en \xE9nergie, avancement et qualit\xE9.",
-          introTactile: "Un personnage entre par la porte avec un \xAB ! \xBB au-dessus de la t\xEAte, puis une fiche s'ouvre. R\xE9ponds avec les boutons : les ic\xF4nes sous chaque choix montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert) en \xE9nergie, avancement et qualit\xE9.",
+            "Des visiteurs entrent par la porte et une fiche s'ouvre : choisis avec les boutons (ou les touches A, B, C). Chaque choix co\xFBte de l'\xE9nergie, de l'avancement ou de la qualit\xE9.",
+          introTactile:
+            "Des visiteurs entrent par la porte et une fiche s'ouvre : choisis avec les boutons. Chaque choix co\xFBte de l'\xE9nergie, de l'avancement ou de la qualit\xE9.",
           ex: [
-            [[["DIVALIFE", "#0284C7"], ["BESOIN", "#1F2937"]], "Un besoin m\xE9tier : accepter, refuser ou faire arbitrer en r\xE9union gaps."],
-            [[["INVENTEK", "#EA580C"], ["TICKET", "#2563EB"]], "Un ticket de prestataire : le traiter toi-m\xEAme ou le passer \xE0 la TMA."],
-            [[["DIVALIFE", "#0284C7"], ["ATELIER PMO DIVALIFE", "#0F766E"]], "Une formation : la suivre ou la s\xE9cher."],
-            [[["DIRECTION PROJET", "#1E3A8A"]], "Certains lundis : sacrifier le week-end suivant ou perdre de la qualit\xE9."],
-            [[["DIVALIFE", "#0284C7"], ["GO / NO-GO", "#7C3AED"]], "\xC0 95 % : basculer en production ou s\xE9curiser."],
+            [[["DIVALIFE", "#0369A1"], ["BESOIN", "#1F2937"]], "Un besoin m\xE9tier : l'accepter, le refuser ou le faire arbitrer. Gare aux fausses bonnes id\xE9es !"],
+            [[["INVENTEK", "#EA580C", "#1B1B2F"], ["TICKET", "#1D4ED8"]], "Un ticket : le traiter toi-m\xEAme ou le passer \xE0 la TMA."],
+            [[["DIVALIFE", "#0369A1"], ["ATELIER PMO DIVALIFE", "#0F766E"]], "Une formation : la suivre ou la s\xE9cher."],
           ],
         },
         {
-          titre: "Les \xE9v\xE9nements",
-          intro:
-            "Ils s'affichent en haut de l'\xE9cran et mettent le jeu en attente jusqu'\xE0 ta r\xE9ponse.",
-          ex: [
-            [[["⚠ R\xC9GRESSION", "#0B0F0C", "#F87171"]], "Quelque chose a cass\xE9 : la qualit\xE9 baisse de 1 \xE0 3 selon la gravit\xE9. \xAB OK \xBB, et on continue."],
-            [[["⚠ IMPR\xC9VU", "#0B0F0C", "#F87171"]], "Un contretemps : l'avancement recule."],
-            [[["☺ BONNE NOUVELLE", "#0B0F0C", "#4ADE80"]], "Un coup de pouce en avancement ou en qualit\xE9 : \xAB Super ! \xBB"],
-          ],
-        },
-        {
-          titre: "Les rendez-vous",
-          ex: [
-            [[["R\xC9UNION GAPS", "#0284C7"]], "Toutes les 3 semaines, le lundi (J+21, J+42…), elle tranche les besoins mis en arbitrage."],
-            [[["WEEK-END", "#B45309"]], "Le vendredi soir : rentrer chez toi pour r\xE9cup\xE9rer, ou rester travailler."],
-            [[["ARR\xCAT MALADIE", "#DC2626"]], "\xC0 0 % d'\xE9nergie : 4 jours perdus. Dors et bois du caf\xE9 avant d'en arriver l\xE0."],
-          ],
-        },
-        {
-          titre: "\xC0 toi de jouer !",
+          cible: "notes",
+          titre: "Le Comex note vitesse, qualit\xE9 et co\xFBt",
           texte:
-            "Le Comex note le d\xE9lai, le co\xFBt et la qualit\xE9 : bronze d\xE8s 5 000 points, argent d\xE8s 7 000, or d\xE8s 8 000, platine d\xE8s 9 000. Un seul indicateur \xE0 z\xE9ro et le score tombe \xE0 0. Bonne chance !",
+            "Trois notes sur 100 : le d\xE9lai, la qualit\xE9 et le co\xFBt. Un seul z\xE9ro et le score tombe \xE0 0. Ici, tu vois en direct la m\xE9daille vers laquelle tu te diriges : bronze, argent, or ou platine.",
         },
       ];
     function TutoVue({ etape: t, setEtape: r, onFin: i }) {
@@ -7076,6 +7003,7 @@ if (!window.React || !window.ReactDOM) {
         [Q, I] = (0, a.useState)(!1),
         [R, st] = (0, a.useState)(!1),
         [tuE, setTuE] = (0, a.useState)(null),
+        [astuceV, setAstuceV] = (0, a.useState)(null),
         [tuO, setTuO] = (0, a.useState)(() => {
           let e = !i && !xr("bpe-simulator-tuto-off", !1);
           return (e && ((n.current.paused = !0), (n.current.tutoOffre = !0)), e);
@@ -7123,6 +7051,14 @@ if (!window.React || !window.ReactDOM) {
             (k >= 0 && He.current.splice(k, 1), e());
           }, c);
           return (He.current.push(g), g);
+        },
+        // Bulle « Première fois » : une phrase d'explication, une seule fois par navigateur pour chaque situation
+        astuce = (k, txt) => {
+          let vues = xr("bpe-simulator-astuces", []);
+          if (!Array.isArray(vues) || vues.includes(k)) return;
+          Tr("bpe-simulator-astuces", [...vues, k]);
+          let id = oa.current++;
+          (setAstuceV({ id, txt }), bt(() => setAstuceV((v) => (v && v.id === id ? null : v)), 9e3));
         };
       ((0, a.useEffect)(() => {
         let e = ea.current;
@@ -7245,6 +7181,8 @@ if (!window.React || !window.ReactDOM) {
                 e.ok)
               ) {
                 ((rr.current = e), x([e]), (n.current.attenteOK = !0), (n.current.holding = !1));
+                (e.kind === "imprevu" || e.kind === "regression" || e.kind === "bonne") &&
+                  astuce("evenement", "Un \xE9v\xE9nement : son effet s'applique tout seul. Valide avec le bouton pour continuer.");
                 return;
               }
               let c = wr.current.length >= 3 ? 0.65 : 1,
@@ -7533,7 +7471,7 @@ if (!window.React || !window.ReactDOM) {
             qr(
               "reunion",
               () => {
-                (E({ titre: G, decisions: T, impact: U }), vt.marteau(), setTimeout(() => vt.gong(), 650));
+                (E({ titre: G, decisions: T, impact: U }), vt.marteau(), setTimeout(() => vt.gong(), 650), astuce("reunion", "R\xE9union gaps : elle tranche les besoins que tu as fait arbitrer, en acceptant les vrais et en \xE9cartant les fausses bonnes id\xE9es."));
               },
               () => c.busy === "reunion",
             ),
@@ -7774,7 +7712,11 @@ if (!window.React || !window.ReactDOM) {
               qr(
                 "dilemme",
                 () => {
-                  ((c.dilemma = { ...g, ent: U.id }), ht(c.dilemma));
+                  ((c.dilemma = { ...g, ent: U.id }),
+                    ht(c.dilemma),
+                    g.kind === "gonogo"
+                      ? astuce("gonogo", `Comit\xE9 go/no-go : un GO r\xE9ussi rapporte +${goPts} points, rat\xE9 il en retire ${goPts} ; le NO-GO assure +${nogoPts}. Plus ta qualit\xE9 est haute, plus le GO a de chances de r\xE9ussir.`)
+                      : astuce("visiteur", "Un visiteur ! Sous chaque choix, les ic\xF4nes montrent ce qu'il co\xFBte (en rouge) ou rapporte (en vert)."));
                 },
                 () => c.busy === "dilemma" && !c.dilemma,
               ),
@@ -8112,7 +8054,7 @@ if (!window.React || !window.ReactDOM) {
           return (
             qr(
               "weekend",
-              () => mr({ jours: g }),
+              () => (mr({ jours: g }), astuce("weekend", `Le week-end : rentrer chez toi recharge l'\xE9nergie (jusqu'\xE0 +${Wf} %) ; rester au bureau fait avancer, mais fatigue.`)),
               () => e.busy === "weekend",
             ),
             d(),
@@ -8219,7 +8161,7 @@ if (!window.React || !window.ReactDOM) {
         },
         sn = () => {
           let e = n.current;
-          ((e.inNight = !0), e.nightsWorked++, (e.nightTarget = 1));
+          ((e.inNight = !0), e.nightsWorked++, (e.nightTarget = 1), astuce("nuit", "La nuit tombe : chaque clic co\xFBte deux fois plus d'\xE9nergie. Le bouton Dormir te fait passer \xE0 demain."));
         },
         la = (e, c) => {
           let g = n.current,
@@ -8794,6 +8736,49 @@ if (!window.React || !window.ReactDOM) {
       return a.default.createElement(
         "div",
         { className: "relative h-full w-full overflow-hidden select-none" },
+        // Invitation à agir tant que le joueur n'a pas encore cliqué
+        Z.clicks === 0 &&
+          !q &&
+          !tuO &&
+          tuE == null &&
+          !Z.busy &&
+          !Z.paused &&
+          !Z.golive &&
+          a.default.createElement(
+            "div",
+            { className: "pointer-events-none absolute inset-x-0 flex justify-center", style: { top: "56%", zIndex: 14 } },
+            a.default.createElement(
+              "div",
+              {
+                className: "jde-blink border-[3px] bg-[#FACC15] px-3 text-lg font-bold sm:text-xl",
+                style: { paddingTop: 6, paddingBottom: 6, borderColor: W, color: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Lr, animationDuration: "1.6s", animationTimingFunction: "ease-in-out" },
+              },
+              tactile() ? "Touche le bureau !" : "Clique sur le bureau !",
+            ),
+          ),
+        // Bulle « Première fois » : en haut de l'écran, par-dessus le bandeau, pour ne jamais cacher les choix ; touchée pour la fermer
+        astuceV &&
+          (() => {
+            let st = { top: "calc(6px + env(safe-area-inset-top, 0px))", left: 8, right: 8 };
+            return a.default.createElement(
+              "div",
+              { key: astuceV.id, className: "absolute flex justify-center", style: { ...st, zIndex: 60 } },
+              a.default.createElement(
+                "button",
+                {
+                  type: "button",
+                  "data-nosnd": "1",
+                  onClick: () => setAstuceV(null),
+                  className: "jde-toast flex items-start gap-2 border-[3px] bg-[#FFFBEB] px-3 py-2 text-left text-[13px] leading-snug sm:text-[15px]",
+                  style: { maxWidth: 560, borderColor: W, color: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr },
+                  "aria-live": "polite",
+                },
+                a.default.createElement("span", { className: "shrink-0 border-2 bg-[#FACC15] px-1 text-[11px] font-bold leading-tight", style: { borderColor: W } }, "1re fois"),
+                a.default.createElement("span", null, ft(astuceV.txt)),
+                a.default.createElement("span", { className: "shrink-0 text-[16px] font-bold leading-none opacity-70", "aria-hidden": "true" }, "\xD7"),
+              ),
+            );
+          })(),
         a.default.createElement(
           "div",
           { ref: Hh, className: "jde-haut pointer-events-none absolute inset-x-0 z-[15]", style: { top: 0 } },
@@ -8876,6 +8861,7 @@ if (!window.React || !window.ReactDOM) {
             {
               bg: "#FFFFFF",
               tuto: "energie",
+              className: "relative",
               title: jr
                 ? "Fatigue : clics ralentis et avancement r\xE9duit de 40 %"
                 : eMx(Z) < 100
@@ -8913,6 +8899,23 @@ if (!window.React || !window.ReactDOM) {
               et(Z.energy),
               "%",
             ),
+            // Coût du clic : ×2 la nuit et le week-end, ×4 la nuit du sprint final
+            (() => {
+              let x = Z.busy === "nuit" || Z.busy === "maison" ? 1 : Z.inNight ? (Z.puMax / 1e3 >= Rt[0] && Z.puMax / 1e3 < Rt[1] ? 4 : 2) : er(Z) ? 2 : 1;
+              return (
+                x > 1 &&
+                a.default.createElement(
+                  "span",
+                  {
+                    className: "border-2 px-1 text-[11px] font-bold leading-tight",
+                    style: { position: "absolute", top: -9, right: -7, zIndex: 1, background: x > 2 ? "#B91C1C" : "#FDE68A", color: x > 2 ? "#FFFFFF" : W, borderColor: W },
+                    title: `Chaque clic co\xFBte ${x} fois plus d'\xE9nergie qu'en journ\xE9e`,
+                  },
+                  "\xD7",
+                  x,
+                )
+              );
+            })(),
           ),
           a.default.createElement(
             "div",
@@ -9022,6 +9025,36 @@ if (!window.React || !window.ReactDOM) {
                 });
               }),
             ),
+            // Notes du Comex projetées à la fin du projet au rythme actuel, et médaille visée
+            (() => {
+              let h = a.default.createElement;
+              if (Z.pu < 5e3)
+                return h(
+                  "div",
+                  { "data-tuto": "notes", className: "mt-1 text-[12px] leading-tight sm:text-[13px]", style: { fontFamily: Yr, color: "#CBD5E1" } },
+                  "Notes du Comex d\xE8s 5 % d'avancement",
+                );
+              let proj = { total: I2(Z) * (1e5 / Math.max(1, Z.pu)), cout: ge(Z), qualite: Z.quality, bonusGo: Z.gonogo === "nogo" ? nogoPts : 0 },
+                nt = C2(proj),
+                md = Si(w2(proj)),
+                col = (v) => (v >= 67 ? "#4ADE80" : v >= 34 ? "#FACC15" : "#F87171"),
+                note = (l, v) => h("span", { className: "whitespace-nowrap" }, l, " ", h("b", { className: "tabular-nums", style: { color: col(v) } }, Math.round(v)));
+              return h(
+                "div",
+                {
+                  "data-tuto": "notes",
+                  title: "Notes du Comex sur 100, projet\xE9es \xE0 la fin du projet au rythme actuel",
+                  className: "mt-1 flex flex-wrap items-baseline justify-between gap-x-3 text-[12px] leading-tight text-white sm:text-[13px]",
+                  style: { fontFamily: Yr },
+                },
+                h("span", { className: "flex flex-wrap gap-x-2" }, note("D\xE9lai", nt.delai), note("Qualit\xE9", nt.qualite), note("Co\xFBt", nt.budget)),
+                h(
+                  "span",
+                  { className: "whitespace-nowrap font-bold", style: { color: md ? "#FACC15" : "#CBD5E1" } },
+                  md ? `En route pour ${md.id === "platine" ? "le platine" : md.id === "or" ? "l'or" : md.id === "argent" ? "l'argent" : "le bronze"}` : "Pas encore de m\xE9daille",
+                ),
+              );
+            })(),
           ),
         ),
         ),
@@ -10745,14 +10778,14 @@ if (!window.React || !window.ReactDOM) {
         "div",
         {
           className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0B1B2B]/75 p-4",
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-label": "Ton pseudo",
         },
         a.default.createElement(
           "form",
           {
             className: "jde-pop my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center",
-            role: "dialog",
-            "aria-modal": "true",
-            "aria-label": "Ton pseudo",
             style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W },
             onSubmit: async (d) => {
               if ((d.preventDefault(), !n || vf === "verif")) return;
@@ -11053,8 +11086,8 @@ if (!window.React || !window.ReactDOM) {
       // « Nouvelle partie » efface la partie sauvegardée : un second appui confirme
       let [nvConf, setNvConf] = (0, a.useState)(!1);
       let [psv, setPsv] = (0, a.useState)(Ps),
-        [psOuvert, setPsOuvert] = (0, a.useState)(() => wi && !Ps()),
-        [o, n] = (0, a.useState)(!wi),
+        [psOuvert, setPsOuvert] = (0, a.useState)(() => !Ps()),
+        [o, n] = (0, a.useState)(!1),
         d = (f) => {
           (f || ((wi = !0), Tr("bpe-simulator-regles-vues", !0)),
             n(f),
