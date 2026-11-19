@@ -9,7 +9,7 @@ const BOT = fs.readFileSync(__dirname + '/bot.js', 'utf8');
 const KEY = 'bpe-simulator-partie-v18';
 const heroes = ['francois', 'gabriel', 'hugues', 'samuel'];
 const P = `{ gap: () => 'ABC'[Math.floor(Math.random()*3)], ticket: () => Math.random()<.5?'A':'B', atelier: () => Math.random()<.5?'A':'B', direction: () => Math.random()<.3?'A':'B', gonogo: () => Math.random()<.5?'A':'B', regression: 'OK', maison: () => Math.random()<.6, dort: (g) => g.energy < 30 + Math.random()*40, reposWE: () => Math.random()<0.05, cafe: true, bw: (g) => g.boostCalls < 2 && Math.random()<0.002 }`;
-const etat = (p) => p.evaluate(() => { const g = window.__api && window.__api.n.current; if (!g) return null; return { clicks: g.clicks, journal: g.journal.length, deck: g.gapDeck.length, burn: g.d.burnout, nB: g.nBurnout, jours: g.days + g.dayClick / 28, pu: g.pu, q: g.quality, tickets: g.nTickets, bw: g.boostCalls, cout: g.bwSpent, golive: g.golive }; });
+const etat = (p) => p.evaluate(() => { const g = window.__api && window.__api.n.current; if (!g) return null; return { clicks: g.clicks, journal: g.journal.length, jr: g.journal.map((x) => x.choix), busy: g.busy, deck: g.gapDeck.length, burn: g.d.burnout, nB: g.nBurnout, jours: g.days + g.dayClick / 28, pu: g.pu, q: g.quality, tickets: g.nTickets, bw: g.boostCalls, cout: g.bwSpent, golive: g.golive }; });
 (async () => {
   const b = await chromium.launch();
   const n = +process.argv[2], off = +process.argv[3];
@@ -42,6 +42,8 @@ const etat = (p) => p.evaluate(() => { const g = window.__api && window.__api.n.
         for (let k = 0; k < 3; k++) await p.evaluate(() => window.__adv(500));
         const apres = await etat(p);
         // Ce qui ne doit jamais bouger lors d'une reprise
+        // Une nuit en cours se termine à la reprise : la réunion du matin peut alors légitimement ajouter ses lignes au journal
+        if (apres.busy === 'reunion' && avant.busy !== 'reunion' && apres.journal > avant.journal && apres.jr.slice(avant.journal).every((c) => /^reunion/.test(c))) apres.journal = avant.journal;
         for (const k of ['clicks', 'journal', 'tickets', 'bw', 'cout', 'nB', 'burn']) if (apres[k] !== avant[k]) an.push(`${k} ${avant[k]} → ${apres[k]}`);
         if (apres.deck > avant.deck) an.push(`pioche ${avant.deck} → ${apres.deck}`);
         if (apres.jours < avant.jours - 1e-9) an.push(`jours ${avant.jours} → ${apres.jours}`);
