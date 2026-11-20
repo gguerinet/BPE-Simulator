@@ -6716,6 +6716,12 @@ if (!window.React || !window.ReactDOM) {
               U = Math.min(...T);
             return d({ x: G, y: U, w: Math.max(...j) - G, h: Math.max(...T) - U, poly: M });
           }
+          // Avancement : on encadre le titre et la barre, sans les notes du Comex (présentées à la dernière étape)
+          let nt = o.cible === "avancement" && c.querySelector('[data-tuto="notes"]');
+          if (nt) {
+            let nr = nt.getBoundingClientRect();
+            if (nr.height > 0 && nr.top > g.top) return d({ x: g.left, y: g.top, w: g.width, h: nr.top - g.top + 2 });
+          }
           d({ x: g.left, y: g.top, w: g.width, h: g.height });
         };
         return (e(), window.addEventListener("resize", e), () => window.removeEventListener("resize", e));
