@@ -4819,8 +4819,8 @@ if (!window.React || !window.ReactDOM) {
 .jde-chute{transform-origin:50% 100%;animation:jdeChute 2s both;}
 .jde-pop{animation:jdePop .3s steps(4) both;}
 .jde-blink{animation:jdeBlink 1s steps(2) infinite;}
-.jde-info-new{animation:jdeInfo 1.2s ease-in-out infinite;}
-@keyframes jdeInfo{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,.8)}50%{box-shadow:0 0 0 4px rgba(250,204,21,0)}}
+.jde-info-new{animation:jdeInfo .9s ease-out infinite;}
+@keyframes jdeInfo{0%{box-shadow:0 0 0 0 rgba(245,158,11,.95)}70%,100%{box-shadow:0 0 0 9px rgba(245,158,11,0)}}
 @media (prefers-reduced-motion: reduce){.jde-float,.jde-toast,.jde-phase,.jde-phase-out,.jde-chute,.jde-pop,.jde-blink,.jde-info-new,.jde-card .jde-hop,.jde-anim{animation:none!important}}
 `;
     function ta({ look: t, pose: r, scale: i = 4, crop: o, lying: n, className: d = "" }) {
@@ -9500,7 +9500,7 @@ if (!window.React || !window.ReactDOM) {
                   },
                   a.default.createElement(
                     "div",
-                    { className: "min-h-0 flex-1 overflow-y-auto", tabIndex: 0, role: "region", "aria-label": "Fiche du visiteur" },
+                    { className: "min-h-0 flex-1 overflow-y-auto", tabIndex: 0, role: "region", "aria-label": "Fiche du visiteur", style: { margin: -9, padding: 9 } }, // marge pour que le halo du « i » ne soit pas rogné
                     a.default.createElement(
                       "div",
                       { className: "flex flex-wrap items-center gap-1.5 text-[13px] sm:text-sm" },
