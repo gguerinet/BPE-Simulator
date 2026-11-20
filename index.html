@@ -2144,6 +2144,7 @@ if (!window.React || !window.ReactDOM) {
       yi = 8,
       Bi = 5,
       nuitCad = 2.5,
+      nuitCadF = 1.5,
       On = 3,
       Ka = 0.1275,
       Jr = 3,
@@ -8233,8 +8234,8 @@ if (!window.React || !window.ReactDOM) {
             ((g.alerteFatigue = !0), (g.msgIn = 30));
           let T = j;
           let T2slow = g.energy < 20;
-          // Cadence maximale : 5 clics/s, 3 sous 20 % d'énergie, 2,5 la nuit (la nuit dure plus longtemps à l'écran et laisse le temps de dormir)
-          if (M - g.lastClick < 1e3 / Math.min(T2slow ? On : Bi, g.inNight ? nuitCad : Bi) - 2) return;
+          // Cadence maximale : jour 5 clics/s (3 sous 20 % d'énergie) ; nuit 2,5 clics/s (1,5 sous 20 %) : la nuit dure plus longtemps à l'écran et laisse le temps de dormir
+          if (M - g.lastClick < 1e3 / (g.inNight ? (T2slow ? nuitCadF : nuitCad) : T2slow ? On : Bi) - 2) return;
           ((g.lastClick = M), urgW(g) && (g.joursUrg = (g.joursUrg || 0) + 1 / or), g.dayClick++, vt.frappe());
           let G = f.current,
             U = e ?? G.left + A(Pt.i, Pt.j)[0] * G.cs,
