@@ -8172,11 +8172,11 @@ if (!window.React || !window.ReactDOM) {
         urgW = (e) => {
           if (e.weUrgence == null) return !1;
           let c = wt(e);
-          // Du vendredi soir au dimanche soir : la nuit du dimanche au lundi redevient une nuit normale (travail pour Divalife, sommeil possible)
-          return (er(e) && Mi(c) === e.weUrgence && !(Mr(c).getDay() === 0 && e.inNight)) || (Mr(c).getDay() === 5 && e.inNight && c + 1 === e.weUrgence);
+          // Du vendredi soir au lundi matin : la nuit du dimanche au lundi compte encore pour l'autre société
+          return (er(e) && Mi(c) === e.weUrgence) || (Mr(c).getDay() === 5 && e.inNight && c + 1 === e.weUrgence);
         },
-        // Pendant un week-end d'urgence, on ne dort que la nuit du samedi au dimanche (celle du dimanche au lundi est hors urgence)
-        urgDodo = (e) => urgW(e) && !(e.inNight && Mr(wt(e)).getDay() === 6),
+        // Pendant un week-end d'urgence, on peut dormir les nuits du samedi et du dimanche
+        urgDodo = (e) => urgW(e) && !(e.inNight && (Mr(wt(e)).getDay() === 6 || Mr(wt(e)).getDay() === 0)),
         weAtt = (e) => Mr(wt(e)).getDay() === 5 && e.inNight && e.pu < 1e5 && e.weekendPropose !== wt(e) + 1,
         Ue = () => {
           let e = n.current,
@@ -8966,12 +8966,13 @@ if (!window.React || !window.ReactDOM) {
                   ? `\xC9nergie \xB7 max ${eMx(Z)} % (week-ends au bureau)`
                   : "\xC9nergie",
             },
-            // Sur un très petit écran (moins de 360 px), l'icône laisse la place au pourcentage
-            window.innerWidth >= 360 &&
+            // Sur un petit écran (moins de 390 px), l'icône laisse la place au pourcentage : la tuile est trop étroite pour les trois
+            window.innerWidth >= 390 &&
               a.default.createElement(Zo, {
-                size: 18,
+                // Taille fixe : sans shrink-0, la tuile trop étroite écrasait l'éclair en largeur
+                size: window.innerWidth < 430 ? 15 : 18,
                 strokeWidth: 2.5,
-                className: jr ? "jde-blink" : "",
+                className: "shrink-0" + (jr ? " jde-blink" : ""),
                 color: jr ? "#E11D48" : W,
               }),
             a.default.createElement(
