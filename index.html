@@ -2152,8 +2152,8 @@ if (!window.React || !window.ReactDOM) {
         // Probabilité de chaque interaction par visite ; le ticket prend le reste.
         // Pas de gap avant 5 % d'avancement (la visite devient un ticket).
         { p: 0, inter: [1.5, 2.0], gap: 0.8, atelier: 0, regression: 0, imprevu: 0, bonne: 0 }, // ticket 20 %
-        { p: 30, inter: [1.5, 2.0], gap: 0.3, atelier: 0.4, regression: 0.05, imprevu: 0.1, bonne: 0.05 }, // ticket 10 %
-        { p: 60, inter: [1.5, 2.0], gap: 0, atelier: 0.2, regression: 0.15, imprevu: 0.2, bonne: 0.15 }, // ticket 30 %
+        { p: 30, inter: [1.5, 2.0], gap: 0.3, atelier: 0.5, regression: 0.05, imprevu: 0.1, bonne: 0.05 }, // ticket 0 % (sauf atelier bloqué : jamais deux de suite)
+        { p: 60, inter: [1.5, 2.0], gap: 0, atelier: 0.3, regression: 0.15, imprevu: 0.2, bonne: 0.15 }, // ticket 20 %
         { p: 85, inter: [1.5, 2.0], gap: 0, atelier: 0, regression: 0.2, imprevu: 0.2, bonne: 0.1 }, // ticket 50 %
       ],
       ma = (t) => ya.reduce((r, i) => (t >= i.p ? i : r), ya[0]),
@@ -6126,6 +6126,7 @@ if (!window.React || !window.ReactDOM) {
       "urgMsg",
       "effetsAttente",
       "reunionEffets",
+      "derVis",
       "clicks",
       "days",
       "dayClick",
@@ -7630,6 +7631,10 @@ if (!window.React || !window.ReactDOM) {
           (k === "bonne" && (c.bnMoisN || 0) >= cap)
             ? (k = "ticket")
             : 0;
+          // Jamais deux ateliers de suite : le second devient un ticket
+          k === "atelier" && c.derVis === "atelier" && (k = "ticket");
+          // Seules les visites à fiche comptent (un message de régression entre deux ateliers ne les sépare pas)
+          (k === "atelier" || k === "ticket" || k === "gap") && ((c.derVis = k), (c.dirty = !0));
           k === "gap"
             ? (c.queue.push({ type: "gap", idx: c.gapDeck.shift(), palier: g }), (c.dirty = !0))
             : k === "regression"
