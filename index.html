@@ -8966,12 +8966,13 @@ if (!window.React || !window.ReactDOM) {
                   ? `\xC9nergie \xB7 max ${eMx(Z)} % (week-ends au bureau)`
                   : "\xC9nergie",
             },
-            // Sur un très petit écran (moins de 360 px), l'icône laisse la place au pourcentage
-            window.innerWidth >= 360 &&
+            // Sur un petit écran (moins de 390 px), l'icône laisse la place au pourcentage : la tuile est trop étroite pour les trois
+            window.innerWidth >= 390 &&
               a.default.createElement(Zo, {
-                size: 18,
+                // Taille fixe : sans shrink-0, la tuile trop étroite écrasait l'éclair en largeur
+                size: window.innerWidth < 430 ? 15 : 18,
                 strokeWidth: 2.5,
-                className: jr ? "jde-blink" : "",
+                className: "shrink-0" + (jr ? " jde-blink" : ""),
                 color: jr ? "#E11D48" : W,
               }),
             a.default.createElement(
