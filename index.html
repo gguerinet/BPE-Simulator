@@ -8494,6 +8494,28 @@ if (!window.React || !window.ReactDOM) {
         ((g.astuce = !1), setAstuceV(null), P || ((g.paused = !1), bt(yr, 120)));
       };
       let Gt = (0, a.useRef)(null);
+      // Zone de jeu tactile : le navigateur ne doit pas lancer son propre zoom à deux doigts (sinon il annule le doigt
+      // qui clique, et les clics ne peuvent pas reprendre) ; le jeu gère lui-même le zoom
+      (0, a.useEffect)(() => {
+        let el = u.current;
+        if (!el) return;
+        let f = (e) => {
+            e.touches && e.touches.length > 1 && e.cancelable && e.preventDefault();
+          },
+          gs = (e) => e.preventDefault();
+        return (
+          el.addEventListener("touchstart", f, { passive: !1 }),
+          el.addEventListener("touchmove", f, { passive: !1 }),
+          el.addEventListener("gesturestart", gs),
+          el.addEventListener("gesturechange", gs),
+          () => {
+            (el.removeEventListener("touchstart", f),
+              el.removeEventListener("touchmove", f),
+              el.removeEventListener("gesturestart", gs),
+              el.removeEventListener("gesturechange", gs));
+          }
+        );
+      }, []);
       ((Gt.current = {
         decide: ze,
         dormir: Ue,
