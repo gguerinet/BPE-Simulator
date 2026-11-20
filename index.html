@@ -8172,9 +8172,10 @@ if (!window.React || !window.ReactDOM) {
         urgW = (e) => {
           if (e.weUrgence == null) return !1;
           let c = wt(e);
-          return (er(e) && Mi(c) === e.weUrgence) || (Mr(c).getDay() === 5 && e.inNight && c + 1 === e.weUrgence);
+          // Du vendredi soir au dimanche soir : la nuit du dimanche au lundi redevient une nuit normale (travail pour Divalife, sommeil possible)
+          return (er(e) && Mi(c) === e.weUrgence && !(Mr(c).getDay() === 0 && e.inNight)) || (Mr(c).getDay() === 5 && e.inNight && c + 1 === e.weUrgence);
         },
-        // Pendant un week-end d'urgence, seule la nuit du samedi au dimanche permet de dormir
+        // Pendant un week-end d'urgence, on ne dort que la nuit du samedi au dimanche (celle du dimanche au lundi est hors urgence)
         urgDodo = (e) => urgW(e) && !(e.inNight && Mr(wt(e)).getDay() === 6),
         weAtt = (e) => Mr(wt(e)).getDay() === 5 && e.inNight && e.pu < 1e5 && e.weekendPropose !== wt(e) + 1,
         Ue = () => {
@@ -9809,7 +9810,7 @@ if (!window.React || !window.ReactDOM) {
                 onClick: Ue,
                 disabled: Ln || Z.golive || !(Z.inNight || Or) || urgDodo(Z) || weAtt(Z),
                 title: urgDodo(Z)
-                  ? `Week-end d'urgence pour ${Z.weUrgSoc || "une autre soci\xE9t\xE9"} : seule la nuit du samedi au dimanche permet de dormir.`
+                  ? `Week-end d'urgence pour ${Z.weUrgSoc || "une autre soci\xE9t\xE9"} : dormir n'est possible que les nuits de samedi et de dimanche.`
                   : Or
                   ? `Week-end : dormir jusqu'\xE0 demain (jusqu'\xE0 +${we}\u00A0% d'\xE9nergie pour une journ\xE9e enti\xE8re, nuit comprise). Touche D.`
                   : `La nuit (ou le week-end) : dormir jusqu'\xE0 demain (+${je}\u00A0% d'\xE9nergie au plus). Touche D.`,
