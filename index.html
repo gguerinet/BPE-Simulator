@@ -8637,9 +8637,17 @@ if (!window.React || !window.ReactDOM) {
           n.current.holding && (zr.current = [g, M]);
         },
         Na = (e) => {
-          (e && e.pointerId !== void 0 && kt.current.delete(e.pointerId),
-            kt.current.size === 0 && (m.current = null),
-            (n.current.holding = !1));
+          // La perte de capture qui suit le lever d'un doigt déjà traité ne doit pas arrêter les clics de l'autre doigt
+          if (e && e.type === "lostpointercapture" && !kt.current.has(e.pointerId)) return;
+          (e && e.pointerId !== void 0 && kt.current.delete(e.pointerId), kt.current.size === 0 && (m.current = null));
+          // Fin d'un zoom à deux doigts : si un doigt reste posé, les clics reprennent sous ce doigt
+          if (m.current && kt.current.size === 1 && e && e.type === "pointerup") {
+            m.current = null;
+            let [pos] = [...kt.current.values()];
+            ((zr.current = pos), (n.current.holding = !0), (n.current.holdSrc = "pointer"));
+            return;
+          }
+          n.current.holding = !1;
         },
         Z = n.current,
         cr = Z.pu / 1e3,
