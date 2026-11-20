@@ -5110,7 +5110,7 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Icône d'effet (énergie, avancement, qualité) : rouge si ça coûte, vert si ça rapporte.
-    // Les flèches d'ampleur ne s'affichent que sur les messages d'effet déjà appliqué (sansFleches sur les choix)
+    // Les flèches d'ampleur ne sont plus affichées nulle part (sansFleches partout) : les messages montrent des valeurs chiffrées
     function fa({ t, v: r, sombre: i, couleur: cc, sansFleches: sf }) {
       let o = sf ? 0 : T2[t](Math.abs(r)),
         n = r < 0;
@@ -9297,10 +9297,9 @@ if (!window.React || !window.ReactDOM) {
                     a.default.createElement(
                       "div",
                       { className: "mt-1 flex justify-center gap-3" },
+                      // Effets en valeurs chiffrées, sans flèches (les imprévus et bonnes nouvelles donnent l'avancement en jours)
                       e.fx.map((U, J) =>
-                        e.kind === "imprevu" || e.kind === "bonne"
-                          ? a.default.createElement(ChipV, { key: J, x: U.t === "a" ? { ...U, v: pr(U.v) } : U, sombre: c })
-                          : a.default.createElement(fa, { key: J, ...U, sombre: c }),
+                        a.default.createElement(ChipV, { key: J, x: U.t === "a" && (e.kind === "imprevu" || e.kind === "bonne") ? { ...U, v: pr(U.v) } : U, sombre: c }),
                       ),
                     ),
                   ch &&
@@ -10380,42 +10379,66 @@ if (!window.React || !window.ReactDOM) {
     // Bouton « i » des fenêtres : il clignote tant que ce type de fenêtre n'a jamais été expliqué, puis reste disponible.
     // L'explication s'affiche dans la fenêtre elle-même, par-dessus ses choix, avec « Compris » pour revenir.
     var infoOuv = { v: !1, fermer: null },
+      // Chaque explication est un tableau : le choix (même lettre et même couleur que le bouton), son effet, et quand il est le bon
+      // [lettre, couleur, choix, effets, « bon quand… »] ; un effet est [type d'icône ou null, texte, rouge ?]
       INFOS = {
-        gap: ["Un besoin métier", [
-          ["Accepter", "+1 à +3 de qualité contre 1 à 3 % d'avancement. Mais une fausse bonne idée acceptée fait perdre de la qualité."],
-          ["Refuser", "une fausse bonne idée refusée rapporte de la qualité ; un vrai besoin refusé en coûte 2."],
-          ["Arbitrer", `${ie} % d'énergie : la réunion gaps, toutes les 3 semaines, tranchera à ta place sans se tromper.`],
-          "Sous chaque choix, les icônes montrent ce qu'il coûte (en rouge) ou rapporte (en vert).",
-        ]],
-        ticket: ["Un ticket", [
-          ["Le traiter", `${oi} % d'énergie, et la qualité monte.`],
-          ["Le passer à la TMA", "ne coûte pas d'énergie mais fait perdre un peu de qualité. Et le ticket peut revenir : le renvoyer à la TMA agace l'utilisateur et coûte encore de la qualité."],
-        ]],
-        atelier: ["Un atelier PMO", [
-          ["Accepter l'atelier", `${ai} % d'énergie et 1 % d'avancement.`],
-          ["Refuser", "ne coûte ni énergie ni avancement, mais 2 de qualité."],
-        ]],
-        direction: ["La direction projet", [
-          "Certains lundis, dès 60 % d'avancement, la direction te demande un coup de main pour un prestataire.",
-          ["D'accord", "tu travailles le week-end suivant pour lui, sans repos ni avancement, et tu perds 20 % d'énergie maximale le lundi."],
-          ["Pas d'accord", "coûte 2 de qualité."],
-        ]],
-        gonogo: ["Le comité go/no-go", [
-          "Au passage des 95 %, le comité décide si le projet bascule.",
-          ["GO", `rien ne bouge tout de suite ; au go-live, le GO réussit (+${goPts} points) ou rate (−${goPts} points). Ses chances dépendent de la qualité : 20 % jusqu'à 40 % de qualité, puis 10 points de plus par tranche de 10 %, jusqu'à 80 % dès 90 %.`],
-          ["NO-GO", `une recette complémentaire coûte 2 % d'avancement, mais le bonus de ${nogoPts} points est assuré.`],
-        ]],
-        bonne: ["Une bonne nouvelle", [
-          "Un coup de pouce inattendu : un peu d'avancement ou de qualité en plus.",
-        ]],
-        reunion: ["La réunion gaps", [
-          "Toutes les 3 semaines, elle tranche les besoins que tu as mis en arbitrage.",
-          "Elle ne se trompe jamais : les vrais besoins sont acceptés (qualité en plus, avancement en moins) et les fausses bonnes idées sont refusées, sans perte.",
-        ]],
-        weekend: ["Le week-end", [
-          ["Rentrer chez toi", `rend +${Wf} % d'énergie, mais le projet n'avance pas pendant 2 jours.`],
-          ["Rester au bureau", `le projet avance (un jour de repos sur place rend +${we} %), mais un clic coûte deux fois plus d'énergie et tu perds 20 % d'énergie maximale le lundi. Ça se cumule jusqu'au prochain week-end à la maison.`],
-        ]],
+        gap: {
+          titre: "Comment choisir ?",
+          lignes: [
+            ["A", "#86EFAC", "Accepter", [["q", "+1 à +3"], ["a", "−1 à 3 %", 1]], "c'est un vrai besoin"],
+            ["B", "#FDA4AF", "Refuser", [["q", "−2", 1]], "c'est une fausse bonne idée : tu gagnes alors de la qualité"],
+            ["C", "#FDE68A", "Arbitrer", [["e", `−${ie} %`, 1]], "tu hésites : la réunion gaps (toutes les 3 semaines) tranchera sans se tromper"],
+          ],
+          note: "Une fausse bonne idée acceptée fait perdre de la qualité.",
+        },
+        ticket: {
+          titre: "Comment choisir ?",
+          lignes: [
+            ["A", "#86EFAC", "Traiter", [["e", `−${oi} %`, 1], ["q", "+1,5"]], "tu as de l'énergie"],
+            ["B", "#FDA4AF", "TMA", [["q", "−1", 1]], "tu es à court d'énergie ; mais le ticket peut revenir, et le renvoyer agace l'utilisateur"],
+          ],
+          note: "Hugues perd deux fois moins de qualité avec la TMA.",
+        },
+        atelier: {
+          titre: "Comment choisir ?",
+          lignes: [
+            ["A", "#86EFAC", "Accepter", [["e", `−${ai} %`, 1], ["a", "−1 %", 1]], "tu veux garder ta qualité"],
+            ["B", "#FDA4AF", "Refuser", [["q", "−2", 1]], "tu manques d'énergie ou de temps"],
+          ],
+        },
+        direction: {
+          titre: "Comment choisir ?",
+          lignes: [
+            ["A", "#86EFAC", "D'accord", [[null, "pas de repos", 1], ["e", "max −20 % lundi", 1]], "ta qualité est fragile et ton énergie solide"],
+            ["B", "#FDA4AF", "Pas d'accord", [["q", "−2", 1]], "tu as besoin de ton week-end"],
+          ],
+          note: "Certains lundis, dès 60 % d'avancement : la direction te prête à un prestataire pour le week-end.",
+        },
+        gonogo: {
+          titre: "Comment choisir ?",
+          lignes: [
+            ["A", "#86EFAC", "GO", [[null, `±${goPts} pts`]], "ta qualité est haute : de 20 % de chances de réussite (qualité ≤ 40 %) à 80 % (qualité ≥ 90 %)"],
+            ["B", "#FDE68A", "NO-GO", [["a", "−2 %", 1], [null, `+${nogoPts} pts`]], "ta qualité est basse : le bonus est assuré"],
+          ],
+          note: "Avec un GO, le verdict tombe au go-live.",
+        },
+        reunion: {
+          titre: "Ce que décide la réunion",
+          entetes: ["Besoin", "Effet", "Verdict"],
+          lignes: [
+            [null, null, "Vrai besoin", [["q", "+1 à +3"], ["a", "−1 à 3 %", 1]], "accepté"],
+            [null, null, "Fausse bonne idée", [[null, "aucun"]], "refusée, sans perte"],
+          ],
+          note: "Toutes les 3 semaines, elle tranche les besoins que tu as mis en arbitrage, sans jamais se tromper.",
+        },
+        weekend: {
+          titre: "Comment choisir ?",
+          lignes: [
+            ["A", "#86EFAC", "Rentrer", [["e", `+${Wf} %`], ["a", "−2 jours", 1]], "ton énergie est basse"],
+            ["B", "#FDE68A", "Rester", [["e", "clic ×2", 1], ["e", "max −20 % lundi", 1]], "tu veux avancer ; la fatigue se cumule jusqu'au prochain week-end à la maison"],
+          ],
+          note: `Un jour de repos au bureau rend +${we} % d'énergie.`,
+        },
       };
     function InfoFen({ k, fond = "#FFFBEB", encre = W, style: st, enLigne: el = !1 }) {
       let inf = INFOS[k],
@@ -10456,7 +10479,7 @@ if (!window.React || !window.ReactDOM) {
             type: "button",
             onPointerDown: (e) => e.stopPropagation(),
             onClick: ouvrir,
-            "aria-label": `Comment ça marche : ${inf[0].toLowerCase()}`,
+            "aria-label": "Comment ça marche ?",
             title: "Comment ça marche ?",
             className: (el ? "relative shrink-0 " : "absolute ") + "flex items-center justify-center rounded-full border-2 font-bold leading-none hover:opacity-100" + (vu ? "" : " jde-info-new"),
             style: { width: 20, height: 20, fontSize: 12, padding: 0, ...(el ? { marginLeft: "auto", alignSelf: "flex-start" } : { top: 5, right: 5 }), borderColor: vu ? encre : W, color: vu ? encre : W, background: vu ? "transparent" : "#FACC15", opacity: vu ? 0.45 : 1, fontFamily: "Georgia, serif", zIndex: 20, ...st },
@@ -10468,7 +10491,7 @@ if (!window.React || !window.ReactDOM) {
             "div",
             {
               role: "dialog",
-              "aria-label": inf[0],
+              "aria-label": "Comment choisir",
               className: "absolute flex flex-col p-3 text-left",
               style: { top: 0, left: "50%", transform: "translateX(-50%)", width: "max(100%, min(340px, 92vw))", minHeight: "100%", zIndex: 21, background: fond, color: encre, fontFamily: Yr, border: `3px solid ${encre}` },
               onPointerDown: (e) => e.stopPropagation(),
@@ -10477,18 +10500,72 @@ if (!window.React || !window.ReactDOM) {
                 (e.key === "Escape" || e.key === "Esc") && (e.preventDefault(), e.stopPropagation(), setOuv(!1));
               },
             },
-            a.default.createElement("div", { className: "text-[16px] font-bold leading-tight sm:text-lg", style: { fontFamily: Lr } }, inf[0]),
-            a.default.createElement(
-              "ul",
-              { className: "mt-1 flex flex-col gap-1 text-[14px] leading-snug sm:text-[15px]" },
-              inf[1].map((x, i) =>
+            a.default.createElement("div", { className: "text-[16px] font-bold leading-tight sm:text-lg", style: { fontFamily: Lr, paddingRight: 24 } }, inf.titre),
+            (() => {
+              let large = window.innerWidth >= 420,
+                ent = inf.entetes || ["Choix", "Effet", "Bon quand…"],
+                th = { textAlign: "left", fontSize: 11, letterSpacing: ".06em", textTransform: "uppercase", color: "#64748B", padding: "3px 4px", borderBottom: `2px solid ${encre}`, fontWeight: 700 },
+                td = { padding: "6px 4px", borderBottom: "1px solid #E5DCC0", verticalAlign: "top" },
+                effets = (l) =>
+                  a.default.createElement(
+                    "span",
+                    { className: "flex flex-col items-start", style: { gap: 2 } },
+                    l[3].map((x, k) => a.default.createElement(ChipV, { key: k, x: { t: x[0] || void 0, txt: x[1], couleur: x[2] ? "#B91C1C" : "#15803D" } })),
+                  ),
+                choix = (l) =>
+                  a.default.createElement(
+                    "span",
+                    { className: "flex items-center font-bold", style: { gap: 5 } },
+                    l[0] &&
+                      a.default.createElement(
+                        "span",
+                        { className: "inline-flex shrink-0 items-center justify-center border-2", style: { width: 18, height: 18, fontSize: 11, background: l[1], borderColor: encre } },
+                        l[0],
+                      ),
+                    l[2],
+                  );
+              return a.default.createElement(
+                "table",
+                { className: "mt-2 w-full", style: { borderCollapse: "collapse", fontSize: 13, lineHeight: 1.35 } },
                 a.default.createElement(
-                  "li",
-                  { key: i },
-                  Array.isArray(x) ? a.default.createElement(a.default.Fragment, null, a.default.createElement("b", null, x[0]), " : ", ft(x[1])) : ft(x),
+                  "thead",
+                  null,
+                  a.default.createElement(
+                    "tr",
+                    null,
+                    large
+                      ? ent.map((x, k) => a.default.createElement("th", { key: k, style: th }, x))
+                      : [a.default.createElement("th", { key: 0, style: th }, ent[0] + " · " + ent[1].toLowerCase()), a.default.createElement("th", { key: 1, style: th }, ent[2])],
+                  ),
                 ),
+                a.default.createElement(
+                  "tbody",
+                  null,
+                  inf.lignes.map((l, k) =>
+                    a.default.createElement(
+                      "tr",
+                      { key: k },
+                      large
+                        ? [
+                            a.default.createElement("td", { key: 0, style: { ...td, whiteSpace: "nowrap" } }, choix(l)),
+                            a.default.createElement("td", { key: 1, style: { ...td, whiteSpace: "nowrap" } }, effets(l)),
+                            a.default.createElement("td", { key: 2, style: td }, ft(l[4])),
+                          ]
+                        : [
+                            a.default.createElement("td", { key: 0, style: { ...td, width: "45%" } }, choix(l), a.default.createElement("div", { style: { marginTop: 3, whiteSpace: "nowrap" } }, effets(l))),
+                            a.default.createElement("td", { key: 1, style: td }, ft(l[4])),
+                          ],
+                    ),
+                  ),
+                ),
+              );
+            })(),
+            inf.note &&
+              a.default.createElement(
+                "div",
+                { className: "mt-2 text-[13px] leading-snug", style: { borderLeft: "4px solid #F59E0B", paddingLeft: 8 } },
+                ft(inf.note),
               ),
-            ),
             a.default.createElement(
               "div",
               { className: "mt-auto flex justify-center pt-2" },
