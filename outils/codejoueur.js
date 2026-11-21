@@ -13,7 +13,7 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
     const r = await open({ browser: b, url: 'http://bpe.test/repo/index.html', viewport: { width: 390, height: 844 }, supabase: mock(), wait: 1500, vierge: true, init: init || '' });
     return r;
   };
-  const choisir = async (p, nom) => { await p.getByLabel('Pseudo', { exact: true }).fill(nom); await p.getByRole('button', { name: 'Valider' }).click(); await p.waitForTimeout(800); };
+  const choisir = async (p, nom) => { const nv = p.getByRole('button', { name: 'Nouveau joueur' }); if (await nv.count()) { await nv.click(); await p.waitForTimeout(200); } await p.getByLabel('Pseudo', { exact: true }).fill(nom); await p.getByRole('button', { name: 'Valider' }).click(); await p.waitForTimeout(800); };
   const code = (p) => p.evaluate(() => JSON.parse(localStorage.getItem('bpe-simulator-joueur')));
   const pseudo = (p) => p.evaluate(() => JSON.parse(localStorage.getItem('bpe-simulator-pseudo') || '""'));
   const param = async (p) => { await p.getByRole('button', { name: 'Paramètres' }).first().click(); await p.waitForTimeout(300); };
@@ -46,7 +46,7 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
   // C : appareil qui avait « Grogu » en local sans en être propriétaire → alerte dès le lancement
   const C = await appareil(`try{localStorage.setItem('bpe-simulator-pseudo', JSON.stringify('Grogu'));localStorage.setItem('bpe-simulator-regles-vues','true')}catch(e){}`);
   await C.p.waitForTimeout(800);
-  ok(/appartient à un autre joueur/.test(await C.p.innerText('body')), 'C (Grogu en local, autre code) : alerte au lancement, avant de jouer');
+  ok(/appartient déjà à un autre joueur/.test(await C.p.innerText('body')), 'C (Grogu en local, autre code) : alerte au lancement, avant de jouer');
 
   // Code invalide / inconnu
   await choisir(C.p, 'Mando'); await param(C.p);
@@ -56,13 +56,19 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
   await C.p.getByLabel("Code d'un autre appareil").fill('11111111-1111-4111-8111-111111111111');
   await C.p.getByRole('button', { name: 'Utiliser' }).click(); await C.p.waitForTimeout(600);
   ok(/Code inconnu/.test(await C.p.innerText('body')) && (await pseudo(C.p)) === 'Mando', 'Code inconnu refusé, pseudo inchangé');
-  // D : même situation que C, mais saisit son code directement depuis la fenêtre du pseudo
-  const D = await appareil(`try{localStorage.setItem('bpe-simulator-pseudo', JSON.stringify('Grogu'));localStorage.setItem('bpe-simulator-regles-vues','true')}catch(e){}`);
-  await D.p.waitForTimeout(800);
-  await D.p.getByRole('button', { name: "J'ai déjà un code joueur" }).click();
+  // D : nouvel appareil, « J'ai déjà joué » puis code de A → récupère le pseudo actuel sans passer par la fenêtre du pseudo
+  const D = await appareil();
+  ok((await D.p.getByRole('button', { name: 'Nouveau joueur' }).count()) === 1 && (await D.p.getByRole('button', { name: "J'ai déjà joué" }).count()) === 1, 'D (nouvel appareil) : choix « Nouveau joueur » / « J\'ai déjà joué »');
+  await D.p.getByRole('button', { name: "J'ai déjà joué" }).click();
   await D.p.getByLabel("Code d'un autre appareil").fill(codeA);
   await D.p.getByRole('button', { name: 'Utiliser' }).click(); await D.p.waitForTimeout(800);
-  ok((await pseudo(D.p)) === 'Baby Yoda' && (await D.p.locator('[aria-label="Ton pseudo"]').count()) === 0, 'D saisit son code dans la fenêtre du pseudo : pseudo « Baby Yoda », fenêtre fermée');
-  console.log('erreurs :', [...A.errs, ...B.errs, ...C.errs, ...D.errs]);
+  ok((await pseudo(D.p)) === 'Baby Yoda' && (await code(D.p)) === codeA && (await D.p.locator('[role=dialog]').count()) === 0, 'D saisit le code : pseudo « Baby Yoda », code de A, plus aucune fenêtre');
+  // E : nouvel appareil, « Nouveau joueur » → fenêtre du pseudo seule, nouveau code attribué
+  const E = await appareil();
+  await E.p.getByRole('button', { name: 'Nouveau joueur' }).click(); await E.p.waitForTimeout(300);
+  ok((await E.p.getByLabel('Pseudo', { exact: true }).count()) === 1 && !/code joueur/i.test(await E.p.locator('[aria-label="Ton pseudo"]').innerText()), 'E « Nouveau joueur » : fenêtre du pseudo seule, sans mention du code');
+  await choisir(E.p, 'Din');
+  ok((await code(E.p)) !== codeA && db("select pseudo from joueurs where joueur_id = '" + (await code(E.p)) + "'") === 'Din', 'E reçoit son propre code joueur, rattaché à « Din »');
+  console.log('erreurs :', [...A.errs, ...B.errs, ...C.errs, ...D.errs, ...E.errs]);
   await b.close();
 })();

@@ -11138,8 +11138,67 @@ if (!window.React || !window.ReactDOM) {
               ),
       );
     }
+    // Premier lancement sur un appareil : nouveau joueur (pseudo à créer) ou joueur qui revient (code joueur à saisir)
+    function Bienvenue({ onNouveau: nv }) {
+      let h = a.default.createElement,
+        [code, setCode] = (0, a.useState)(!1);
+      return h(
+        "div",
+        {
+          className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0B1B2B]/75 p-4",
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-label": "Bienvenue",
+        },
+        h(
+          "div",
+          { className: "jde-pop my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
+          h("div", { className: "text-3xl font-bold", style: { fontFamily: Lr } }, "Bienvenue !"),
+          code
+            ? h(
+                a.default.Fragment,
+                null,
+                h(CodeJoueur, { saisieSeule: !0 }),
+                h(
+                  "button",
+                  { type: "button", onClick: () => setCode(!1), className: "mt-3 text-[14px] underline", style: { fontFamily: tt, color: W } },
+                  "Retour",
+                ),
+              )
+            : h(
+                a.default.Fragment,
+                null,
+                h("p", { className: "mt-1 text-[15px] leading-snug text-[#334155]", style: { fontFamily: Yr } }, "As-tu d\xE9j\xE0 jou\xE9 \xE0 BPE Simulator sur un autre appareil ?"),
+                h(
+                  "div",
+                  { className: "mt-3 flex flex-col gap-2.5" },
+                  h(
+                    "button",
+                    {
+                      type: "button",
+                      autoFocus: !0,
+                      onClick: nv,
+                      className: "jde-btn border-[3px] px-4 py-2 text-lg font-semibold leading-tight",
+                      style: { background: "#F97316", color: W, borderColor: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr },
+                    },
+                    "Nouveau joueur",
+                  ),
+                  h(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: () => setCode(!0),
+                      className: "jde-btn border-[3px] px-4 py-2 text-lg font-semibold leading-tight",
+                      style: { background: "#BAE6FD", color: W, borderColor: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr },
+                    },
+                    "J'ai d\xE9j\xE0 jou\xE9",
+                  ),
+                ),
+              ),
+        ),
+      );
+    }
     function PsModal({ initial: t, onSave: r, alerte: al }) {
-      let [aCode, setACode] = (0, a.useState)(!1);
       let [i, o] = (0, a.useState)(t || ""),
         [vf, setVf] = (0, a.useState)(null),
         n = psNettoie(i);
@@ -11152,12 +11211,9 @@ if (!window.React || !window.ReactDOM) {
           "aria-label": "Ton pseudo",
         },
         a.default.createElement(
-          "div",
-          { className: "my-auto w-full max-w-md" },
-        a.default.createElement(
           "form",
           {
-            className: "jde-pop w-full border-4 bg-[#FFFBEB] p-4 text-center",
+            className: "jde-pop my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center",
             style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W },
             onSubmit: async (d) => {
               if ((d.preventDefault(), !n || vf === "verif")) return;
@@ -11180,7 +11236,7 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "p",
               { role: "alert", className: "mt-2 border-2 px-2 py-1 text-[14px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C", borderColor: "#B91C1C", background: "#FEE2E2" } },
-              `\xAB ${al} \xBB appartient \xE0 un autre joueur : ton score ne serait pas publi\xE9. Choisis un autre pseudo, ou saisis ton code joueur ci-dessous.`,
+              `\xAB ${al} \xBB appartient d\xE9j\xE0 \xE0 un autre joueur. Choisis un autre pseudo.`,
             ),
           a.default.createElement("input", {
             type: "text",
@@ -11216,25 +11272,6 @@ if (!window.React || !window.ReactDOM) {
               { role: "alert", className: "mt-2 text-[15px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C" } },
               `\xAB ${vf.pris} \xBB est d\xE9j\xE0 pris par un autre joueur. Choisis-en un autre.`,
             ),
-          sbOk() &&
-            !aCode &&
-            a.default.createElement(
-              "button",
-              {
-                type: "button",
-                onClick: () => setACode(!0),
-                className: "mt-3 text-[14px] underline",
-                style: { fontFamily: tt, color: W },
-              },
-              "J'ai d\xE9j\xE0 un code joueur",
-            ),
-        ),
-        aCode &&
-          a.default.createElement(
-            "div",
-            { className: "jde-pop border-4 bg-[#FFFBEB] px-3 pb-3", style: { borderColor: W, borderTop: 0, color: W } },
-            a.default.createElement(CodeJoueur, { saisieSeule: !0 }),
-          ),
         ),
       );
     }
@@ -11337,13 +11374,13 @@ if (!window.React || !window.ReactDOM) {
       return h(
         "div",
         { className: "mt-3 border-[3px] bg-white px-3 py-2 text-left", style: { borderColor: W } },
-        h("div", { className: "text-[15px] font-bold" }, ss ? "J'ai d\xE9j\xE0 un code joueur" : "Code joueur"),
+        h("div", { className: "text-[15px] font-bold" }, ss ? "Ton code joueur" : "Code joueur"),
         h(
           "p",
           { className: "text-[12.5px] leading-snug text-[#334155]", style: { fontFamily: Yr } },
           ss
-            ? "Colle le code affich\xE9 dans les Param\xE8tres de ton autre appareil : tu retrouves ton pseudo."
-            : "Pour garder ton pseudo sur un autre appareil : copie ce code, puis colle-le dans ses Param\xE8tres (ou dans sa fen\xEAtre de pseudo). Garde-le pour toi.",
+            ? "Colle le code joueur affich\xE9 dans les Param\xE8tres de ton autre appareil : tu retrouves ton pseudo."
+            : "Pour jouer sur un autre appareil avec le m\xEAme pseudo : copie ce code. Sur l'autre appareil, choisis \xAB J'ai d\xE9j\xE0 jou\xE9 \xBB au premier lancement, ou colle-le dans ses Param\xE8tres. Garde-le pour toi.",
         ),
         !ss &&
         h(
@@ -11583,10 +11620,11 @@ if (!window.React || !window.ReactDOM) {
           (Tr(Pk, f), Tr(PsAtt, st !== "ok"), setPsv(f), (psDemande = !0), setPsOuvert(!1), setPsAlerte(null));
         },
         [psAlerte, setPsAlerte] = (0, a.useState)(null),
+        [bienvenue, setBienvenue] = (0, a.useState)(() => !Ps() && sbOk()),
         [psInfo, setPsInfo] = (0, a.useState)(null),
         _ps = (0, a.useEffect)(() => {
           let fini = !1,
-            maj = () => (setPsv(Ps()), setPsAlerte(null), setPsOuvert(!Ps()));
+            maj = () => (setPsv(Ps()), setPsAlerte(null), setBienvenue(!1), setPsOuvert(!Ps()));
           (async () => {
             let r = await psSync();
             if (fini || !r) return;
@@ -11700,7 +11738,8 @@ if (!window.React || !window.ReactDOM) {
         "div",
         { className: "h-full w-full overflow-y-auto", ref: cOut },
         o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: "Retour" }),
-        !o && psOuvert && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte }),
+        !o && psOuvert && bienvenue && a.default.createElement(Bienvenue, { onNouveau: () => setBienvenue(!1) }),
+        !o && psOuvert && !bienvenue && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte }),
         psInfo &&
           a.default.createElement(
             "div",

@@ -11,6 +11,7 @@ const fs = require('fs');
   const clic = async (re) => p.getByRole('button', { name: re }).first().click();
   await shot('arrivee');
   const input = p.locator('input').first();
+  const nv = p.getByRole('button', { name: 'Nouveau joueur' }); if (await nv.count()) { await shot('bienvenue'); await nv.click(); await p.waitForTimeout(300); }
   if (await input.count()) { await input.fill('Nouveau'); await clic(/Valider/); await shot('apres_pseudo'); }
   await clic(/Commencer le projet|Nouvelle partie/); await p.waitForTimeout(1500); await shot('debut_partie');
   await clic(/Suivre le tutoriel/);
