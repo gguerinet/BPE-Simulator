@@ -2172,7 +2172,7 @@ if (!window.React || !window.ReactDOM) {
       Be = 40 * 0.017,
       impX = 1.4, // imprévus : impact doublé par rapport à la version à 28 clics/jour avant correction de Be
       // Fausses bonnes idées tirées au sort à chaque partie, puis mélangées aux vrais besoins (environ 20 % de la pioche)
-      nbPieges = 7,
+      nbPieges = 5,
       ai = 12,
       ei = 1 / Be,
       te = -2,
@@ -6006,7 +6006,7 @@ if (!window.React || !window.ReactDOM) {
       let r = (C) => vr.map((B, f) => (B[3] === C ? f : -1)).filter((B) => B >= 0),
         i = Er(r("reel")),
         o = Er(r("piege")),
-        // Pioche de 20 besoins : 7 fausses bonnes idées et 13 vrais besoins, tirés au sort à chaque partie,
+        // Pioche de 20 besoins : 5 fausses bonnes idées et 15 vrais besoins, tirés au sort à chaque partie,
         // le tout mélangé pour que les pièges soient répartis du début à la fin du projet
         gapDeck = Er([...i.slice(0, 20 - nbPieges), ...o.slice(0, nbPieges)]);
       return {
