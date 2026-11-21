@@ -2172,7 +2172,7 @@ if (!window.React || !window.ReactDOM) {
       Be = 40 * 0.017,
       impX = 1.4, // imprévus : impact doublé par rapport à la version à 28 clics/jour avant correction de Be
       // Fausses bonnes idées tirées au sort à chaque partie, puis mélangées aux vrais besoins (environ 20 % de la pioche)
-      nbPieges = 4,
+      nbPieges = 5,
       ai = 12,
       ei = 1 / Be,
       te = -2,
@@ -5257,8 +5257,15 @@ if (!window.React || !window.ReactDOM) {
               (N && S === 1 && H(F(V[N[1]] + 24), m, b * 1.8, "triangle", 0.035), x % 2 === 1 && Y(m, 0.02));
             }
           },
+          // Programmation de la musique en avance (0,25 s). Si le téléphone a pris du retard (onglet ralenti, calcul lourd),
+          // on saute les notes déjà passées au lieu de les jouer toutes d'un coup en retard : c'était une source de crépitements
           kt = () => {
-            if (t) for (; u < t.currentTime + 0.2; ) (nt(u), (u += b), d++);
+            if (!t) return;
+            if (u < t.currentTime + 0.02) {
+              let k = Math.ceil((t.currentTime + 0.05 - u) / b);
+              ((u += k * b), (d += k));
+            }
+            for (; u < t.currentTime + 0.25; ) (nt(u), (u += b), d++);
           };
         return {
           demarrer() {
@@ -5269,7 +5276,11 @@ if (!window.React || !window.ReactDOM) {
                 ((t = new m()),
                   (r = t.createGain()),
                   (r.gain.value = 0.55),
-                  r.connect(t.destination),
+                  // Limiteur en sortie : évite la saturation (crépitements) quand musique et bruitages s'additionnent
+                  (() => {
+                    let lim = t.createDynamicsCompressor();
+                    ((lim.threshold.value = -8), (lim.knee.value = 6), (lim.ratio.value = 12), (lim.attack.value = 0.003), (lim.release.value = 0.2), r.connect(lim), lim.connect(t.destination));
+                  })(),
                   (i = t.createGain()),
                   (o = t.createGain()),
                   (i.gain.value = k.musique),
@@ -5995,9 +6006,9 @@ if (!window.React || !window.ReactDOM) {
       let r = (C) => vr.map((B, f) => (B[3] === C ? f : -1)).filter((B) => B >= 0),
         i = Er(r("reel")),
         o = Er(r("piege")),
-        // Pioche des besoins : tous les vrais besoins, plus quelques fausses bonnes idées tirées au sort,
+        // Pioche de 20 besoins : 5 fausses bonnes idées et 15 vrais besoins, tirés au sort à chaque partie,
         // le tout mélangé pour que les pièges soient répartis du début à la fin du projet
-        gapDeck = Er([...i, ...o.slice(0, nbPieges)]);
+        gapDeck = Er([...i.slice(0, 20 - nbPieges), ...o.slice(0, nbPieges)]);
       return {
         hero: t,
         clicks: 0,
