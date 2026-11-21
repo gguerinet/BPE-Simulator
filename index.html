@@ -10890,6 +10890,43 @@ if (!window.React || !window.ReactDOM) {
           return "erreur";
         }
       },
+      // Code joueur : l'identifiant du joueur, à recopier sur un autre appareil pour y garder le même pseudo
+      PsAtt = "bpe-simulator-pseudo-attente",
+      uuidOk = (v) => /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(v),
+      // Pseudo actuel rattaché à un code joueur : texte, null s'il n'y en a pas, undefined si le serveur ne répond pas
+      psDuJoueur = async (j) => {
+        try {
+          if (!sbOk()) return;
+          let r = await fetch(sbBase() + "/rest/v1/rpc/pseudo_du_joueur", {
+            method: "POST",
+            headers: { ...sbH(), "Content-Type": "application/json" },
+            body: JSON.stringify({ j }),
+            cache: "no-store",
+          });
+          if (!r.ok) return;
+          let v = await r.json();
+          return typeof v == "string" && v ? v : null;
+        } catch {}
+      },
+      // Au lancement : le pseudo de ce navigateur est-il toujours le bon pour ce code joueur ?
+      // « adopte » : pseudo changé sur un autre appareil ; « pris » : pseudo réservé par quelqu'un d'autre
+      psSync = async () => {
+        if (!sbOk()) return null;
+        let loc = Ps();
+        if (loc && xr(PsAtt, !1)) {
+          // Pseudo choisi hors connexion : on l'envoie au serveur
+          let st = await psReserver(loc);
+          return st === "ok" ? (Tr(PsAtt, !1), null) : st === "pris" ? { pris: loc } : null;
+        }
+        let srv = await psDuJoueur(jid());
+        if (srv === void 0) return null;
+        if (srv && srv !== loc) return (Tr(Pk, srv), { adopte: srv });
+        if (!srv && loc) {
+          let st = await psReserver(loc);
+          return st === "pris" ? { pris: loc } : null;
+        }
+        return null;
+      },
       psReserver = async (p) => {
         try {
           if (sbOk()) {
@@ -11101,7 +11138,67 @@ if (!window.React || !window.ReactDOM) {
               ),
       );
     }
-    function PsModal({ initial: t, onSave: r }) {
+    // Premier lancement sur un appareil : nouveau joueur (pseudo à créer) ou joueur qui revient (code joueur à saisir)
+    function Bienvenue({ onNouveau: nv }) {
+      let h = a.default.createElement,
+        [code, setCode] = (0, a.useState)(!1);
+      return h(
+        "div",
+        {
+          className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0B1B2B]/75 p-4",
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-label": "Bienvenue",
+        },
+        h(
+          "div",
+          { className: "jde-pop my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
+          h("div", { className: "text-3xl font-bold", style: { fontFamily: Lr } }, "Bienvenue !"),
+          code
+            ? h(
+                a.default.Fragment,
+                null,
+                h(CodeJoueur, { saisieSeule: !0 }),
+                h(
+                  "button",
+                  { type: "button", onClick: () => setCode(!1), className: "mt-3 text-[14px] underline", style: { fontFamily: tt, color: W } },
+                  "Retour",
+                ),
+              )
+            : h(
+                a.default.Fragment,
+                null,
+                h("p", { className: "mt-1 text-[15px] leading-snug text-[#334155]", style: { fontFamily: Yr } }, "As-tu d\xE9j\xE0 jou\xE9 \xE0 BPE Simulator sur un autre appareil ?"),
+                h(
+                  "div",
+                  { className: "mt-3 flex flex-col gap-2.5" },
+                  h(
+                    "button",
+                    {
+                      type: "button",
+                      autoFocus: !0,
+                      onClick: nv,
+                      className: "jde-btn border-[3px] px-4 py-2 text-lg font-semibold leading-tight",
+                      style: { background: "#F97316", color: W, borderColor: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr },
+                    },
+                    "Nouveau joueur",
+                  ),
+                  h(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: () => setCode(!0),
+                      className: "jde-btn border-[3px] px-4 py-2 text-lg font-semibold leading-tight",
+                      style: { background: "#BAE6FD", color: W, borderColor: W, boxShadow: `4px 4px 0 ${W}`, fontFamily: Yr },
+                    },
+                    "J'ai d\xE9j\xE0 jou\xE9",
+                  ),
+                ),
+              ),
+        ),
+      );
+    }
+    function PsModal({ initial: t, onSave: r, alerte: al }) {
       let [i, o] = (0, a.useState)(t || ""),
         [vf, setVf] = (0, a.useState)(null),
         n = psNettoie(i);
@@ -11122,7 +11219,7 @@ if (!window.React || !window.ReactDOM) {
               if ((d.preventDefault(), !n || vf === "verif")) return;
               setVf("verif");
               let st = await psReserver(n);
-              st === "pris" ? (vt.buzzer(), setVf({ pris: n })) : (setVf(null), r(n));
+              st === "pris" ? (vt.buzzer(), setVf({ pris: n })) : (setVf(null), r(n, st));
             },
           },
           a.default.createElement(
@@ -11135,6 +11232,12 @@ if (!window.React || !window.ReactDOM) {
             { className: "mt-1 text-[15px] leading-snug text-[#334155]", style: { fontFamily: Yr } },
             "Il appara\xEEtra dans le classement en ligne, \xE0 c\xF4t\xE9 de ton score.",
           ),
+          al &&
+            a.default.createElement(
+              "p",
+              { role: "alert", className: "mt-2 border-2 px-2 py-1 text-[14px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C", borderColor: "#B91C1C", background: "#FEE2E2" } },
+              `\xAB ${al} \xBB appartient d\xE9j\xE0 \xE0 un autre joueur. Choisis un autre pseudo.`,
+            ),
           a.default.createElement("input", {
             type: "text",
             value: i,
@@ -11242,6 +11345,92 @@ if (!window.React || !window.ReactDOM) {
     }
     // Bouton « Paramètres » (engrenage) de l'écran d'accueil : réglages du son
     var sonAvantCoupe = null;
+    // Paramètres : code joueur à recopier sur un autre appareil, ou code d'un autre appareil à saisir ici
+    function CodeJoueur({ saisieSeule: ss }) {
+      let h = a.default.createElement,
+        [code] = (0, a.useState)(jid),
+        [copie, setCopie] = (0, a.useState)(!1),
+        [saisie, setSaisie] = (0, a.useState)(""),
+        [msg, setMsg] = (0, a.useState)(null),
+        copier = async () => {
+          try {
+            (await navigator.clipboard.writeText(code), setCopie(!0), setTimeout(() => setCopie(!1), 2e3));
+          } catch {
+            setMsg({ ko: !0, t: "Copie impossible : s\xE9lectionne le code et copie-le \xE0 la main." });
+          }
+        },
+        utiliser = async (e) => {
+          e.preventDefault();
+          let v = saisie.trim().toLowerCase();
+          if (!uuidOk(v)) return setMsg({ ko: !0, t: "Ce code n'a pas le bon format." });
+          if (v === jid()) return setMsg({ ko: !1, t: "C'est d\xE9j\xE0 le code de cet appareil." });
+          setMsg({ ko: !1, t: "V\xE9rification…" });
+          let srv = await psDuJoueur(v);
+          if (srv === void 0) return setMsg({ ko: !0, t: "Serveur injoignable : r\xE9essaie dans un instant." });
+          if (!srv) return setMsg({ ko: !0, t: "Code inconnu : aucun pseudo n'y est rattach\xE9." });
+          (Tr("bpe-simulator-joueur", v), Tr(Pk, srv), Tr(PsAtt, !1), window.dispatchEvent(new Event("bpe-pseudo")));
+          setMsg({ ko: !1, t: `Code reconnu : tu joues maintenant en \xAB ${srv} \xBB sur cet appareil.` });
+        };
+      return h(
+        "div",
+        { className: "mt-3 border-[3px] bg-white px-3 py-2 text-left", style: { borderColor: W } },
+        h("div", { className: "text-[15px] font-bold" }, ss ? "Ton code joueur" : "Code joueur"),
+        h(
+          "p",
+          { className: "text-[12.5px] leading-snug text-[#334155]", style: { fontFamily: Yr } },
+          ss
+            ? "Colle le code joueur affich\xE9 dans les Param\xE8tres de ton autre appareil : tu retrouves ton pseudo."
+            : "Pour jouer sur un autre appareil avec le m\xEAme pseudo : copie ce code. Sur l'autre appareil, choisis \xAB J'ai d\xE9j\xE0 jou\xE9 \xBB au premier lancement, ou colle-le dans ses Param\xE8tres. Garde-le pour toi.",
+        ),
+        !ss &&
+        h(
+          "div",
+          { className: "mt-1 flex items-center gap-2" },
+          h("code", { className: "min-w-0 flex-1 select-all break-all text-[12px] leading-tight", style: { fontFamily: tt } }, code),
+          h(
+            "button",
+            {
+              type: "button",
+              onClick: copier,
+              className: "shrink-0 border-2 px-2 py-1 text-[13px] font-bold",
+              style: { borderColor: W, color: W, background: "#BAE6FD" },
+            },
+            copie ? "Copi\xE9 !" : "Copier",
+          ),
+        ),
+        h(
+          "form",
+          { className: "mt-2 flex items-center gap-2", onSubmit: utiliser },
+          h("input", {
+            type: "text",
+            value: saisie,
+            onChange: (e) => (setSaisie(e.target.value), setMsg(null)),
+            placeholder: "Code d'un autre appareil",
+            "aria-label": "Code d'un autre appareil",
+            autoComplete: "off",
+            spellCheck: !1,
+            className: "min-w-0 flex-1 border-2 bg-white px-1.5 py-1 text-[12px]",
+            style: { borderColor: W, color: W, fontFamily: tt },
+          }),
+          h(
+            "button",
+            {
+              type: "submit",
+              disabled: !saisie.trim(),
+              className: "shrink-0 border-2 px-2 py-1 text-[13px] font-bold disabled:opacity-50",
+              style: { borderColor: W, color: W, background: "#F97316" },
+            },
+            "Utiliser",
+          ),
+        ),
+        msg &&
+          h(
+            "p",
+            { role: "status", className: "mt-1 text-[12.5px] font-bold leading-snug", style: { color: msg.ko ? "#B91C1C" : "#15803D" } },
+            msg.t,
+          ),
+      );
+    }
     function ParamBtn({ taille: t = 36, onRegles: oR }) {
       let [ouvert, setOuvert] = (0, a.useState)(!1),
         [vols, setVols] = (0, a.useState)(() => ({ ...vt.volumes })),
@@ -11266,7 +11455,9 @@ if (!window.React || !window.ReactDOM) {
       (0, a.useEffect)(() => {
         if (!ouvert) return;
         let k = (e) => {
-          (e.key === "Escape" || e.key === "Enter") && (e.preventDefault(), e.stopPropagation(), setOuvert(!1));
+          // Entrée dans un champ (code joueur) valide le champ au lieu de fermer les paramètres
+          (e.key === "Escape" || (e.key === "Enter" && !/^(INPUT|TEXTAREA|BUTTON)$/.test((e.target && e.target.tagName) || ""))) &&
+            (e.preventDefault(), e.stopPropagation(), setOuvert(!1));
         };
         return (window.addEventListener("keydown", k, !0), () => window.removeEventListener("keydown", k, !0));
       }, [ouvert]);
@@ -11329,6 +11520,7 @@ if (!window.React || !window.ReactDOM) {
                 "Param\xE8tres",
               ),
               h(SonCurseurs, { vols, onSet: regler, toucheM: !0 }),
+              sbOk() && h(CodeJoueur, null),
               h(
                 "div",
                 { className: "mt-3 flex flex-col gap-2.5" },
@@ -11424,9 +11616,25 @@ if (!window.React || !window.ReactDOM) {
             n(f),
             !f && !psDemande && !Ps() && ((psDemande = !0), setPsOuvert(!0)));
         },
-        psSave = (f) => {
-          (Tr(Pk, f), setPsv(f), (psDemande = !0), setPsOuvert(!1));
+        psSave = (f, st) => {
+          (Tr(Pk, f), Tr(PsAtt, st !== "ok"), setPsv(f), (psDemande = !0), setPsOuvert(!1), setPsAlerte(null));
         },
+        [psAlerte, setPsAlerte] = (0, a.useState)(null),
+        [bienvenue, setBienvenue] = (0, a.useState)(() => !Ps() && sbOk()),
+        [psInfo, setPsInfo] = (0, a.useState)(null),
+        _ps = (0, a.useEffect)(() => {
+          let fini = !1,
+            maj = () => (setPsv(Ps()), setPsAlerte(null), setBienvenue(!1), setPsOuvert(!Ps()));
+          (async () => {
+            let r = await psSync();
+            if (fini || !r) return;
+            r.adopte
+              ? (setPsv(r.adopte), setPsInfo(r.adopte), setTimeout(() => setPsInfo(null), 6e3))
+              : r.pris && (setPsAlerte(r.pris), setPsOuvert(!0));
+          })();
+          window.addEventListener("bpe-pseudo", maj);
+          return () => ((fini = !0), window.removeEventListener("bpe-pseudo", maj));
+        }, []),
         [u, p] = (0, a.useState)(() => (r && Ca.some((f) => f.id === r.heroId) ? r.heroId : Ca[0].id)),
         [h, s] = (0, a.useState)(null),
         _mm = (0, a.useEffect)(() => {
@@ -11530,7 +11738,19 @@ if (!window.React || !window.ReactDOM) {
         "div",
         { className: "h-full w-full overflow-y-auto", ref: cOut },
         o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: "Retour" }),
-        !o && psOuvert && a.default.createElement(PsModal, { initial: psv, onSave: psSave }),
+        !o && psOuvert && bienvenue && a.default.createElement(Bienvenue, { onNouveau: () => setBienvenue(!1) }),
+        !o && psOuvert && !bienvenue && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte }),
+        psInfo &&
+          a.default.createElement(
+            "div",
+            {
+              role: "status",
+              className: "fixed inset-x-0 top-2 z-50 mx-auto w-max border-[3px] px-3 py-1.5 text-center text-[14px] font-bold leading-snug",
+              style: { borderColor: W, boxShadow: `3px 3px 0 ${W}`, color: W, fontFamily: tt, background: "#DCFCE7", maxWidth: "92vw" },
+              onClick: () => setPsInfo(null),
+            },
+            `Pseudo mis \xE0 jour depuis ton code joueur : ${psInfo}`,
+          ),
         a.default.createElement(
           "div",
           {
