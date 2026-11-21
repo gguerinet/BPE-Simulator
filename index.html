@@ -10981,7 +10981,7 @@ if (!window.React || !window.ReactDOM) {
         }
       },
       topEnLigne = async () => {
-        if (sbOk()) return (await sbTop()).map((G) => ({ pseudo: psNettoie(G.pseudo), score: Math.round(Number(G.score) || 0) }));
+        if (sbOk()) return (await sbTop()).map((G) => ({ pseudo: psNettoie(G.pseudo), hero: G.hero, score: Math.round(Number(G.score) || 0) }));
         let c = await clInit();
         if (!c) throw new Error("indisponible");
         let q = await c.db.collection("scores").orderBy("score", "desc").limit(10).get();
@@ -12273,8 +12273,11 @@ if (!window.React || !window.ReactDOM) {
             try {
               let rows = await topEnLigne(),
                 ps = (Ps() || "").toLowerCase(),
-                rk = rows.filter((x) => x.score > t.score && x.pseudo.toLowerCase() !== ps).length + 1,
-                moi = rows.find((x) => x.pseudo.toLowerCase() === ps);
+                // Le classement garde le meilleur score de chaque joueur avec chaque personnage
+                hid = t.hero && t.hero.id,
+                lui = (x) => x.pseudo.toLowerCase() === ps && (!x.hero || x.hero === hid),
+                rk = rows.filter((x) => x.score > t.score && !lui(x)).length + 1,
+                moi = rows.find(lui);
               g || c({ rk, dans: rk <= 10, meilleur: moi && moi.score > t.score ? moi.score : 0, dernier: rows.length >= 10 ? rows[rows.length - 1].score : 0 });
             } catch {
               g || c("injoignable");
@@ -12297,7 +12300,7 @@ if (!window.React || !window.ReactDOM) {
               : e === "injoignable"
                 ? "Classement en ligne injoignable pour le moment."
                 : e.meilleur
-                  ? `Ton record en ligne reste ${et(e.meilleur)} pts.`
+                  ? `Ton record en ligne avec ce personnage reste ${et(e.meilleur)} pts.`
                   : e.dans
                     ? `${e.rk === 1 ? "1er" : e.rk + "\u1D49"} du classement en ligne !`
                     : `Hors du top 10 en ligne (le 10\u1D49 a ${et(e.dernier)} pts).`;
