@@ -10908,6 +10908,39 @@ if (!window.React || !window.ReactDOM) {
           return typeof v == "string" && v ? v : null;
         } catch {}
       },
+      // Records (10 meilleurs scores, tous personnages) : fusion de ceux de l'appareil et de ceux du serveur
+      recFusion = (...l) => {
+        let m = new Map();
+        for (let x of l.flat())
+          if (x && typeof x.score == "number") {
+            let { envoi, ...y } = x;
+            m.set(`${y.joue || ""}|${y.score}|${y.nom || ""}`, y);
+          }
+        return [...m.values()].sort((u, v) => v.score - u.score).slice(0, 10);
+      },
+      sbRpc = async (f, corps) => {
+        let r = await fetch(sbBase() + "/rest/v1/rpc/" + f, {
+          method: "POST",
+          headers: { ...sbH(), "Content-Type": "application/json" },
+          body: JSON.stringify(corps),
+          cache: "no-store",
+        });
+        return r.ok ? r.json() : void 0;
+      },
+      // Récupère les records du code joueur, les fusionne avec ceux de l'appareil, et renvoie le résultat au serveur
+      recSync = async () => {
+        try {
+          if (!sbOk()) return;
+          let j = jid(),
+            srv = await sbRpc("records_du_joueur", { j });
+          if (srv === void 0) return;
+          let loc = xr(le, []),
+            fus = recFusion(Array.isArray(srv) ? srv : [], Array.isArray(loc) ? loc : []),
+            cle = (l) => JSON.stringify(recFusion(Array.isArray(l) ? l : []));
+          cle(loc) !== JSON.stringify(fus) && (Tr(le, fus), window.dispatchEvent(new Event("bpe-records")));
+          cle(srv) !== JSON.stringify(fus) && (await sbRpc("enregistrer_records", { j, r: fus }));
+        } catch {}
+      },
       // Au lancement : le pseudo de ce navigateur est-il toujours le bon pour ce code joueur ?
       // « adopte » : pseudo changé sur un autre appareil ; « pris » : pseudo réservé par quelqu'un d'autre
       psSync = async () => {
@@ -11617,16 +11650,17 @@ if (!window.React || !window.ReactDOM) {
             !f && !psDemande && !Ps() && ((psDemande = !0), setPsOuvert(!0)));
         },
         psSave = (f, st) => {
-          (Tr(Pk, f), Tr(PsAtt, st !== "ok"), setPsv(f), (psDemande = !0), setPsOuvert(!1), setPsAlerte(null));
+          (Tr(Pk, f), Tr(PsAtt, st !== "ok"), setPsv(f), (psDemande = !0), setPsOuvert(!1), setPsAlerte(null), st === "ok" && recSync());
         },
         [psAlerte, setPsAlerte] = (0, a.useState)(null),
         [bienvenue, setBienvenue] = (0, a.useState)(() => !Ps() && sbOk()),
         [psInfo, setPsInfo] = (0, a.useState)(null),
         _ps = (0, a.useEffect)(() => {
           let fini = !1,
-            maj = () => (setPsv(Ps()), setPsAlerte(null), setBienvenue(!1), setPsOuvert(!Ps()));
+            maj = () => (setPsv(Ps()), setPsAlerte(null), setBienvenue(!1), setPsOuvert(!Ps()), recSync());
           (async () => {
             let r = await psSync();
+            recSync();
             if (fini || !r) return;
             r.adopte
               ? (setPsv(r.adopte), setPsInfo(r.adopte), setTimeout(() => setPsInfo(null), 6e3))
@@ -12987,6 +13021,10 @@ if (!window.React || !window.ReactDOM) {
         [h, s] = (0, a.useState)(0),
         [k, L] = (0, a.useState)(() => xr(fr, null)),
         [b, F] = (0, a.useState)(() => xr(le, [])),
+        _rec = (0, a.useEffect)(() => {
+          let f = () => F(xr(le, []));
+          return (window.addEventListener("bpe-records", f), () => window.removeEventListener("bpe-records", f));
+        }, []),
         w = Ca.find((f) => f.id === i),
         _clic = (0, a.useEffect)(() => {
           let f = (H) => {
@@ -13034,6 +13072,7 @@ if (!window.React || !window.ReactDOM) {
                 },
                 nt = [...xr(le, []), Y].sort((m, V) => V.score - m.score).slice(0, 10);
               (Tr(le, nt),
+                setTimeout(recSync, 4e3),
                 (Y.envoi = clEnvoyer({
                   pseudo: Ps() || "",
                   heroId: f.hero.id,

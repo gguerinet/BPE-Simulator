@@ -10,5 +10,6 @@ P -d bpe -f - < anti.sql
 P -d bpe -f - < advisor.sql
 P -d bpe -f - < pseudos.sql
 P -d bpe -f - < code-joueur.sql
+P -d bpe -f - < records.sql
 echo 'create policy "aucun accès direct" on public.parties for all to anon, authenticated using (false) with check (false);' | P -d bpe -f -
 echo "Base locale « bpe » prête"

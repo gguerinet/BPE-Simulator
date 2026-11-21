@@ -8,6 +8,8 @@ module.exports = (opts = {}) => async (route) => {
   try {
     if (u.pathname.endsWith('/rpc/commencer_partie')) return ok(sql(`select commencer_partie((${dq(body)}::json->>'j')::uuid)`));
     if (u.pathname.endsWith('/rpc/pseudo_du_joueur')) return route.fulfill({ status: 200, contentType: 'application/json', body: sql(`select to_json(pseudo_du_joueur((${dq(body)}::json->>'j')::uuid))`) || 'null' });
+    if (u.pathname.endsWith('/rpc/records_du_joueur')) return route.fulfill({ status: 200, contentType: 'application/json', body: sql(`select records_du_joueur((${dq(body)}::json->>'j')::uuid)`) || 'null' });
+    if (u.pathname.endsWith('/rpc/enregistrer_records')) return ok(sql(`select enregistrer_records((${dq(body)}::json->>'j')::uuid, (${dq(body)}::jsonb->'r'))`));
     if (u.pathname.endsWith('/rpc/reserver_pseudo')) return ok(sql(`select reserver_pseudo(${dq(body)}::json->>'p', (${dq(body)}::json->>'j')::uuid)`));
     if (u.pathname.endsWith('/classement')) return ok(sql(`select coalesce(json_agg(c), '[]') from (select pseudo, hero, score, created_at from classement order by score desc limit 10) c`) ? JSON.parse(sql(`select coalesce(json_agg(c), '[]') from (select pseudo, hero, score, created_at from classement order by score desc limit 10) c`)) : []);
     if (u.pathname.endsWith('/scores')) {
