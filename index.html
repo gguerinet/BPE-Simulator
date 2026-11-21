@@ -5257,8 +5257,15 @@ if (!window.React || !window.ReactDOM) {
               (N && S === 1 && H(F(V[N[1]] + 24), m, b * 1.8, "triangle", 0.035), x % 2 === 1 && Y(m, 0.02));
             }
           },
+          // Programmation de la musique en avance (0,25 s). Si le téléphone a pris du retard (onglet ralenti, calcul lourd),
+          // on saute les notes déjà passées au lieu de les jouer toutes d'un coup en retard : c'était une source de crépitements
           kt = () => {
-            if (t) for (; u < t.currentTime + 0.2; ) (nt(u), (u += b), d++);
+            if (!t) return;
+            if (u < t.currentTime + 0.02) {
+              let k = Math.ceil((t.currentTime + 0.05 - u) / b);
+              ((u += k * b), (d += k));
+            }
+            for (; u < t.currentTime + 0.25; ) (nt(u), (u += b), d++);
           };
         return {
           demarrer() {
@@ -5269,7 +5276,11 @@ if (!window.React || !window.ReactDOM) {
                 ((t = new m()),
                   (r = t.createGain()),
                   (r.gain.value = 0.55),
-                  r.connect(t.destination),
+                  // Limiteur en sortie : évite la saturation (crépitements) quand musique et bruitages s'additionnent
+                  (() => {
+                    let lim = t.createDynamicsCompressor();
+                    ((lim.threshold.value = -8), (lim.knee.value = 6), (lim.ratio.value = 12), (lim.attack.value = 0.003), (lim.release.value = 0.2), r.connect(lim), lim.connect(t.destination));
+                  })(),
                   (i = t.createGain()),
                   (o = t.createGain()),
                   (i.gain.value = k.musique),
