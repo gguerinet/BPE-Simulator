@@ -56,6 +56,13 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
   await C.p.getByLabel("Code d'un autre appareil").fill('11111111-1111-4111-8111-111111111111');
   await C.p.getByRole('button', { name: 'Utiliser' }).click(); await C.p.waitForTimeout(600);
   ok(/Code inconnu/.test(await C.p.innerText('body')) && (await pseudo(C.p)) === 'Mando', 'Code inconnu refusé, pseudo inchangé');
-  console.log('erreurs :', [...A.errs, ...B.errs, ...C.errs]);
+  // D : même situation que C, mais saisit son code directement depuis la fenêtre du pseudo
+  const D = await appareil(`try{localStorage.setItem('bpe-simulator-pseudo', JSON.stringify('Grogu'));localStorage.setItem('bpe-simulator-regles-vues','true')}catch(e){}`);
+  await D.p.waitForTimeout(800);
+  await D.p.getByRole('button', { name: "J'ai déjà un code joueur" }).click();
+  await D.p.getByLabel("Code d'un autre appareil").fill(codeA);
+  await D.p.getByRole('button', { name: 'Utiliser' }).click(); await D.p.waitForTimeout(800);
+  ok((await pseudo(D.p)) === 'Baby Yoda' && (await D.p.locator('[aria-label="Ton pseudo"]').count()) === 0, 'D saisit son code dans la fenêtre du pseudo : pseudo « Baby Yoda », fenêtre fermée');
+  console.log('erreurs :', [...A.errs, ...B.errs, ...C.errs, ...D.errs]);
   await b.close();
 })();

@@ -11139,6 +11139,7 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     function PsModal({ initial: t, onSave: r, alerte: al }) {
+      let [aCode, setACode] = (0, a.useState)(!1);
       let [i, o] = (0, a.useState)(t || ""),
         [vf, setVf] = (0, a.useState)(null),
         n = psNettoie(i);
@@ -11151,9 +11152,12 @@ if (!window.React || !window.ReactDOM) {
           "aria-label": "Ton pseudo",
         },
         a.default.createElement(
+          "div",
+          { className: "my-auto w-full max-w-md" },
+        a.default.createElement(
           "form",
           {
-            className: "jde-pop my-auto w-full max-w-md border-4 bg-[#FFFBEB] p-4 text-center",
+            className: "jde-pop w-full border-4 bg-[#FFFBEB] p-4 text-center",
             style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W },
             onSubmit: async (d) => {
               if ((d.preventDefault(), !n || vf === "verif")) return;
@@ -11175,8 +11179,8 @@ if (!window.React || !window.ReactDOM) {
           al &&
             a.default.createElement(
               "p",
-              { role: "alert", className: "mt-2 border-2 bg-[#FEE2E2] px-2 py-1 text-[14px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C", borderColor: "#B91C1C" } },
-              `\xAB ${al} \xBB appartient \xE0 un autre joueur : ton score ne serait pas publi\xE9. Choisis un autre pseudo, ou saisis ton code joueur dans les Param\xE8tres.`,
+              { role: "alert", className: "mt-2 border-2 px-2 py-1 text-[14px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C", borderColor: "#B91C1C", background: "#FEE2E2" } },
+              `\xAB ${al} \xBB appartient \xE0 un autre joueur : ton score ne serait pas publi\xE9. Choisis un autre pseudo, ou saisis ton code joueur ci-dessous.`,
             ),
           a.default.createElement("input", {
             type: "text",
@@ -11212,6 +11216,25 @@ if (!window.React || !window.ReactDOM) {
               { role: "alert", className: "mt-2 text-[15px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C" } },
               `\xAB ${vf.pris} \xBB est d\xE9j\xE0 pris par un autre joueur. Choisis-en un autre.`,
             ),
+          sbOk() &&
+            !aCode &&
+            a.default.createElement(
+              "button",
+              {
+                type: "button",
+                onClick: () => setACode(!0),
+                className: "mt-3 text-[14px] underline",
+                style: { fontFamily: tt, color: W },
+              },
+              "J'ai d\xE9j\xE0 un code joueur",
+            ),
+        ),
+        aCode &&
+          a.default.createElement(
+            "div",
+            { className: "jde-pop border-4 bg-[#FFFBEB] px-3 pb-3", style: { borderColor: W, borderTop: 0, color: W } },
+            a.default.createElement(CodeJoueur, { saisieSeule: !0 }),
+          ),
         ),
       );
     }
@@ -11286,7 +11309,7 @@ if (!window.React || !window.ReactDOM) {
     // Bouton « Paramètres » (engrenage) de l'écran d'accueil : réglages du son
     var sonAvantCoupe = null;
     // Paramètres : code joueur à recopier sur un autre appareil, ou code d'un autre appareil à saisir ici
-    function CodeJoueur() {
+    function CodeJoueur({ saisieSeule: ss }) {
       let h = a.default.createElement,
         [code] = (0, a.useState)(jid),
         [copie, setCopie] = (0, a.useState)(!1),
@@ -11314,12 +11337,15 @@ if (!window.React || !window.ReactDOM) {
       return h(
         "div",
         { className: "mt-3 border-[3px] bg-white px-3 py-2 text-left", style: { borderColor: W } },
-        h("div", { className: "text-[15px] font-bold" }, "Code joueur"),
+        h("div", { className: "text-[15px] font-bold" }, ss ? "J'ai d\xE9j\xE0 un code joueur" : "Code joueur"),
         h(
           "p",
           { className: "text-[12.5px] leading-snug text-[#334155]", style: { fontFamily: Yr } },
-          "Pour garder ton pseudo sur un autre appareil : copie ce code, puis colle-le dans ses Param\xE8tres. Garde-le pour toi.",
+          ss
+            ? "Colle le code affich\xE9 dans les Param\xE8tres de ton autre appareil : tu retrouves ton pseudo."
+            : "Pour garder ton pseudo sur un autre appareil : copie ce code, puis colle-le dans ses Param\xE8tres (ou dans sa fen\xEAtre de pseudo). Garde-le pour toi.",
         ),
+        !ss &&
         h(
           "div",
           { className: "mt-1 flex items-center gap-2" },
@@ -11329,8 +11355,8 @@ if (!window.React || !window.ReactDOM) {
             {
               type: "button",
               onClick: copier,
-              className: "shrink-0 border-2 bg-[#BAE6FD] px-2 py-1 text-[13px] font-bold",
-              style: { borderColor: W, color: W },
+              className: "shrink-0 border-2 px-2 py-1 text-[13px] font-bold",
+              style: { borderColor: W, color: W, background: "#BAE6FD" },
             },
             copie ? "Copi\xE9 !" : "Copier",
           ),
@@ -11354,8 +11380,8 @@ if (!window.React || !window.ReactDOM) {
             {
               type: "submit",
               disabled: !saisie.trim(),
-              className: "shrink-0 border-2 bg-[#F97316] px-2 py-1 text-[13px] font-bold disabled:opacity-50",
-              style: { borderColor: W, color: W },
+              className: "shrink-0 border-2 px-2 py-1 text-[13px] font-bold disabled:opacity-50",
+              style: { borderColor: W, color: W, background: "#F97316" },
             },
             "Utiliser",
           ),
@@ -11680,8 +11706,8 @@ if (!window.React || !window.ReactDOM) {
             "div",
             {
               role: "status",
-              className: "fixed inset-x-0 top-2 z-50 mx-auto w-max max-w-[92vw] border-[3px] bg-[#DCFCE7] px-3 py-1.5 text-center text-[14px] font-bold leading-snug",
-              style: { borderColor: W, boxShadow: `3px 3px 0 ${W}`, color: W, fontFamily: tt },
+              className: "fixed inset-x-0 top-2 z-50 mx-auto w-max border-[3px] px-3 py-1.5 text-center text-[14px] font-bold leading-snug",
+              style: { borderColor: W, boxShadow: `3px 3px 0 ${W}`, color: W, fontFamily: tt, background: "#DCFCE7", maxWidth: "92vw" },
               onClick: () => setPsInfo(null),
             },
             `Pseudo mis \xE0 jour depuis ton code joueur : ${psInfo}`,
