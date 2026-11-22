@@ -5257,7 +5257,8 @@ if (!window.React || !window.ReactDOM) {
               x === 0 && Math.floor(d / 8) % 2 === 0 && H(F(V[2] + 24), m, b * 6, "sine", 0.025);
             else {
               let N = f.find(([$]) => $ === d % 16);
-              (N && S === 1 && H(F(V[N[1]] + 24), m, b * 1.8, "triangle", 0.035), x % 2 === 1 && Y(m, 0.02));
+              // Plus de charleston (bruit blanc) en partie : il sonnait comme un crépitement sur téléphone
+              N && S === 1 && H(F(V[N[1]] + 24), m, b * 1.8, "triangle", 0.035);
             }
           },
           // Programmation de la musique en avance (0,25 s). Si le téléphone a pris du retard (onglet ralenti, calcul lourd),
