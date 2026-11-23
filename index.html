@@ -11805,7 +11805,7 @@ if (!window.React || !window.ReactDOM) {
         { className: "h-full w-full overflow-y-auto", ref: cOut },
         o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: "Retour" }),
         !o && psOuvert && bienvenue && a.default.createElement(Bienvenue, { onNouveau: () => (setBienvenue(!1), setViaBienvenue(!0)) }),
-        !o && psOuvert && !bienvenue && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte, onRetour: viaBienvenue ? () => (setViaBienvenue(!1), setBienvenue(!0)) : null }),
+        !o && psOuvert && !bienvenue && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte, onRetour: viaBienvenue ? () => (setViaBienvenue(!1), setBienvenue(!0)) : psv && !psAlerte ? () => setPsOuvert(!1) : null }),
         psInfo &&
           a.default.createElement(
             "div",
@@ -11844,8 +11844,8 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "div",
               { className: "flex shrink-0 items-center gap-2" },
-              a.default.createElement(ParamBtn, { taille: 34, onRegles: () => d(!0) }),
               a.default.createElement(FsBtn, { taille: 34 }),
+              a.default.createElement(ParamBtn, { taille: 34, onRegles: () => d(!0) }),
             ),
           ),
           a.default.createElement(
