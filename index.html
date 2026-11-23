@@ -5244,22 +5244,38 @@ if (!window.React || !window.ReactDOM) {
               x % 2 === 1 && Y(m, 0.018),
               x === 4 && Y(m, 0.035));
           },
+          // Musique de partie : « Pause café » jusqu'à 85 %, puis « Ticket urgent » (plus rapide encore dès 95 %).
+          // Même recette que l'accueil (basse triangle, contretemps, arpège carré discret, mélodie doublée à l'octave), sans bruit blanc ;
+          // la nuit, accords plus graves et tout en triangle
+          morc = 0,
+          MP = [
+            {
+              J: [[51, 55, 58], [48, 51, 55], [44, 48, 51], [46, 50, 53]],
+              N: [[48, 51, 55], [44, 48, 51], [41, 44, 48], [43, 46, 50]],
+              M: [75, 0, 0, 77, 79, 0, 0, 0, 82, 0, 79, 0, 77, 0, 0, 0, 75, 0, 72, 0, 75, 77, 0, 0, 74, 0, 0, 0, 0, 0, 0, 0,
+                79, 0, 0, 82, 84, 0, 82, 0, 80, 0, 79, 77, 75, 0, 0, 0, 77, 0, 79, 0, 82, 0, 79, 0, 75, 0, 0, 0, 0, 0, 0, 0],
+            },
+            {
+              J: [[57, 60, 64], [50, 53, 57], [52, 56, 59], [57, 60, 64]],
+              N: [[57, 60, 64], [53, 57, 60], [52, 56, 59], [45, 48, 52]],
+              M: [76, 76, 0, 76, 74, 0, 72, 0, 74, 74, 0, 74, 77, 0, 76, 0, 76, 76, 0, 76, 79, 0, 77, 76, 74, 0, 71, 0, 72, 0, 0, 0,
+                69, 72, 76, 0, 77, 76, 74, 0, 74, 77, 81, 0, 79, 77, 76, 0, 76, 0, 80, 0, 83, 0, 80, 76, 81, 0, 0, 0, 0, 0, 0, 0],
+            },
+          ],
+          tempo = () => (b = 60 / (mm ? L : tens ? 120 : morc ? 104 : 86) / 2),
           nt = (m) => {
             if (mm) return menuPas(m);
-            let V = (p ? C : w)[Math.floor(d / 8) % 4],
+            let P0 = MP[morc],
               x = d % 8,
-              S = Math.floor(d / 32) % 2;
-            if (
-              (x % 4 === 0 && H(F(V[0] - 12), m, b * 3.6, "triangle", p ? 0.09 : 0.11),
-              H(F(V[B[x]] + 12), m, b * 0.9, p ? "triangle" : "square", p ? 0.03 : 0.022),
-              p)
-            )
-              x === 0 && Math.floor(d / 8) % 2 === 0 && H(F(V[2] + 24), m, b * 6, "sine", 0.025);
-            else {
-              let N = f.find(([$]) => $ === d % 16);
-              // Plus de charleston (bruit blanc) en partie : il sonnait comme un crépitement sur téléphone
-              N && S === 1 && H(F(V[N[1]] + 24), m, b * 1.8, "triangle", 0.035);
-            }
+              V = (p ? P0.N : P0.J)[Math.floor(d / 8) % 4],
+              mel = P0.M[d % 64];
+            (x % 4 === 0 && H(F(V[0] - 12), m, b * 3.2, "triangle", 0.12),
+              x % 4 === 2 && H(F(V[0]), m, b * 1.2, "triangle", 0.06),
+              x % 2 === 1 && H(F(V[(x >> 1) % 3] + 12), m, b * 0.7, p ? "triangle" : "square", p ? 0.025 : 0.012),
+              mel &&
+                (p
+                  ? H(F(mel), m, b * 1.6, "triangle", 0.035)
+                  : (H(F(mel), m, b * 0.85, "square", 0.022), H(F(mel + 12), m + 0.01, b * 0.5, "triangle", 0.012))));
           },
           // Programmation de la musique en avance (0,25 s). Si le téléphone a pris du retard (onglet ralenti, calcul lourd),
           // on saute les notes déjà passées au lieu de les jouer toutes d'un coup en retard : c'était une source de crépitements
@@ -5336,7 +5352,10 @@ if (!window.React || !window.ReactDOM) {
             } catch {}
           },
           tension(m) {
-            m !== tens && ((tens = m), (b = 60 / (m ? 112 : L) / 2));
+            m !== tens && ((tens = m), tempo());
+          },
+          morceau(k) {
+            k !== morc && ((morc = k), (d = 0), tempo());
           },
           decharge() {
             if (!t || !h) return;
@@ -5407,7 +5426,9 @@ if (!window.React || !window.ReactDOM) {
           },
           menu(m) {
             m && (this.etouffer(!1), this.tension(!1), (p = !1));
+            m && (morc = 0);
             m !== mm && ((mm = m), (d = 0), h && (u = Math.max(u, (t ? t.currentTime : 0) + 0.05)));
+            tempo();
             m && this.demarrer();
           },
           survol() {
@@ -8428,7 +8449,7 @@ if (!window.React || !window.ReactDOM) {
               } else beat = 0;
               let bwNow = ir(xt);
               (bwAvant && !bwNow && !xt.golive && vt.decharge(), (bwAvant = bwNow));
-              (vt.etouffer(!!xt.paused), vt.tension(xt.pu >= 95e3 && !xt.golive));
+              (vt.etouffer(!!xt.paused), vt.morceau(xt.puMax >= 85e3 ? 1 : 0), vt.tension(xt.pu >= 95e3 && !xt.golive));
               (K2(c, xt, gt, e),
                 xt.dodoApres && !xt.cafeAnim && !xt.paused && ((xt.dodoApres = !1), Ue()),
                 // Filet de sécurité : à 100 % d'avancement, le go-live (ou le comité go/no-go) se déclenche même sans clic
