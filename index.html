@@ -11256,7 +11256,7 @@ if (!window.React || !window.ReactDOM) {
         ),
       );
     }
-    function PsModal({ initial: t, onSave: r, alerte: al }) {
+    function PsModal({ initial: t, onSave: r, alerte: al, onRetour: ret }) {
       let [i, o] = (0, a.useState)(t || ""),
         [vf, setVf] = (0, a.useState)(null),
         n = psNettoie(i);
@@ -11329,6 +11329,12 @@ if (!window.React || !window.ReactDOM) {
               "p",
               { role: "alert", className: "mt-2 text-[15px] font-bold leading-snug", style: { fontFamily: tt, color: "#B91C1C" } },
               `\xAB ${vf.pris} \xBB est d\xE9j\xE0 pris par un autre joueur. Choisis-en un autre.`,
+            ),
+          ret &&
+            a.default.createElement(
+              "button",
+              { type: "button", onClick: ret, className: "mt-3 text-[14px] underline", style: { fontFamily: tt, color: W } },
+              "Retour",
             ),
         ),
       );
@@ -11679,6 +11685,7 @@ if (!window.React || !window.ReactDOM) {
         },
         [psAlerte, setPsAlerte] = (0, a.useState)(null),
         [bienvenue, setBienvenue] = (0, a.useState)(() => !Ps() && sbOk()),
+        [viaBienvenue, setViaBienvenue] = (0, a.useState)(!1),
         [psInfo, setPsInfo] = (0, a.useState)(null),
         _ps = (0, a.useEffect)(() => {
           let fini = !1,
@@ -11797,8 +11804,8 @@ if (!window.React || !window.ReactDOM) {
         "div",
         { className: "h-full w-full overflow-y-auto", ref: cOut },
         o && a.default.createElement(Gi, { onClose: () => d(!1), detail: !0, bouton: "Retour" }),
-        !o && psOuvert && bienvenue && a.default.createElement(Bienvenue, { onNouveau: () => setBienvenue(!1) }),
-        !o && psOuvert && !bienvenue && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte }),
+        !o && psOuvert && bienvenue && a.default.createElement(Bienvenue, { onNouveau: () => (setBienvenue(!1), setViaBienvenue(!0)) }),
+        !o && psOuvert && !bienvenue && a.default.createElement(PsModal, { initial: psv, onSave: psSave, alerte: psAlerte, onRetour: viaBienvenue ? () => (setViaBienvenue(!1), setBienvenue(!0)) : null }),
         psInfo &&
           a.default.createElement(
             "div",
