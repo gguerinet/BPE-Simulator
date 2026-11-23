@@ -2155,8 +2155,8 @@ if (!window.React || !window.ReactDOM) {
         // Pas de gap avant 5 % d'avancement (la visite devient un ticket).
         { p: 0, inter: [1.5, 2.0], gap: 0.8, atelier: 0, regression: 0, imprevu: 0, bonne: 0 }, // ticket 20 %
         { p: 30, inter: [1.5, 2.0], gap: 0.3, atelier: 0.4, regression: 0.05, imprevu: 0.1, bonne: 0.05 }, // ticket 10 %
-        { p: 60, inter: [1.5, 2.0], gap: 0, atelier: 0.2, regression: 0.15, imprevu: 0.2, bonne: 0.15 }, // ticket 30 %
-        { p: 85, inter: [1.5, 2.0], gap: 0, atelier: 0, regression: 0.2, imprevu: 0.2, bonne: 0.1 }, // ticket 50 %
+        { p: 60, inter: [1.5, 2.0], gap: 0, atelier: 0.2, regression: 0.1, imprevu: 0.25, bonne: 0.15 }, // ticket 30 %
+        { p: 85, inter: [1.5, 2.0], gap: 0, atelier: 0, regression: 0.15, imprevu: 0.25, bonne: 0.1 }, // ticket 50 %
       ],
       ma = (t) => ya.reduce((r, i) => (t >= i.p ? i : r), ya[0]),
       // Horloge des visites : les jours de travail réellement cliqués (28 clics = 1 jour). Dormir, rentrer le week-end
