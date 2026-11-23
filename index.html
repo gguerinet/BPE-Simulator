@@ -3046,7 +3046,10 @@ if (!window.React || !window.ReactDOM) {
             }
         }
       },
-      A = (t, r, i = 0) => [170 + 22 * (t - r), 100 + 11 * (t + r) - i];
+      A = (t, r, i = 0) => [170 + 22 * (t - r), 100 + 11 * (t + r) - i],
+      // Vue miroir : la scène est retournée gauche-droite en CSS ; mx() convertit un x de scène en x affiché
+      MIROIR = !0,
+      mx = (x) => (MIROIR ? Lt - x : x);
     function K(t, r, i, o, n, d, u, p, h = {}) {
       let s = l(p.top),
         k = l(p.right),
@@ -3132,7 +3135,7 @@ if (!window.React || !window.ReactDOM) {
           "divalife".split("").forEach((i, o) => {
             for (let n = 0; n < 9; n++) r[n] += (o ? "." : "") + t[i][n];
           }),
-          r
+          MIROIR ? r.map((n) => [...n].reverse().join("")) : r
         );
       })();
     var zt = { i: 4.65, j: 0.06 },
@@ -6745,7 +6748,7 @@ if (!window.React || !window.ReactDOM) {
           if (g.width <= 0) return d(null);
           if (o.cible === "scene") {
             let M = [A(0, 0, pt), A(6, 0, pt), A(6, 0, 0), A(6, 6, 0), A(0, 6, 0), A(0, 6, pt)].map(([j, T]) => [
-                g.left + (j * g.width) / Lt,
+                g.left + (mx(j) * g.width) / Lt,
                 g.top + (T * g.height) / Ct,
               ]),
               j = M.map((T) => T[0]),
@@ -7400,7 +7403,7 @@ if (!window.React || !window.ReactDOM) {
         },
         Ea = (e, c) => {
           let g = f.current;
-          return [g.left + e * g.cs, g.top + c * g.cs];
+          return [g.left + mx(e) * g.cs, g.top + c * g.cs];
         },
         Ne = (e) => {
           ((e.seated = !0), (e.mood = "confiant"), (e.regard = 0));
@@ -8275,7 +8278,7 @@ if (!window.React || !window.ReactDOM) {
           if (M - g.lastClick < 1e3 / (g.inNight ? (T2slow ? nuitCadF : nuitCad) : T2slow ? On : Bi) - 2) return;
           ((g.lastClick = M), urgW(g) && (g.joursUrg = (g.joursUrg || 0) + 1 / or), g.dayClick++, vt.frappe());
           let G = f.current,
-            U = e ?? G.left + A(Pt.i, Pt.j)[0] * G.cs,
+            U = e ?? G.left + mx(A(Pt.i, Pt.j)[0]) * G.cs,
             J = c ?? G.top + 92 * G.cs,
             X = () => {
               (!g.inNight && g.dayClick >= Ha ? sn() : g.inNight && g.dayClick >= or && cn(),
@@ -8885,7 +8888,7 @@ if (!window.React || !window.ReactDOM) {
           !Z.golive &&
           a.default.createElement(
             "div",
-            { className: "pointer-events-none absolute inset-x-0 flex justify-center", style: { top: "56%", zIndex: 14 } },
+            { className: "pointer-events-none absolute inset-x-0 flex justify-center", style: { top: MIROIR ? "70%" : "56%", zIndex: 14 } },
             a.default.createElement(
               "div",
               {
@@ -9217,14 +9220,14 @@ if (!window.React || !window.ReactDOM) {
               width: Lt,
               height: Ct,
               className: "absolute",
-              style: { left: Wr, top: sa, width: Ir, height: qa },
+              style: { left: Wr, top: sa, width: Ir, height: qa, transform: MIROIR ? "scaleX(-1)" : void 0 },
             }),
             a.default.createElement("canvas", {
               ref: h,
               width: Lt,
               height: Ct,
               className: "absolute",
-              style: { left: Wr, top: sa, width: Ir, height: qa, opacity: Z.nf },
+              style: { left: Wr, top: sa, width: Ir, height: qa, opacity: Z.nf, transform: MIROIR ? "scaleX(-1)" : void 0 },
             }),
             a.default.createElement("canvas", {
               ref: s,
@@ -9232,7 +9235,7 @@ if (!window.React || !window.ReactDOM) {
               width: Lt,
               height: Ct,
               className: "absolute",
-              style: { left: Wr, top: sa, width: Ir, height: qa },
+              style: { left: Wr, top: sa, width: Ir, height: qa, transform: MIROIR ? "scaleX(-1)" : void 0 },
             }),
             a.default.createElement(
               "div",
@@ -9515,7 +9518,7 @@ if (!window.React || !window.ReactDOM) {
               !Z.busy &&
               !Z.fenetre &&
               (() => {
-                let e = Wr + Cn[0] * Pa,
+                let e = Wr + mx(Cn[0]) * Pa,
                   c = Math.max(Wr + 80, Math.min(e, Wr + Ir - 90));
                 return a.default.createElement(
                   "div",
