@@ -6716,8 +6716,8 @@ if (!window.React || !window.ReactDOM) {
         {
           cible: "dormir",
           titre: "Dormir",
-          texte: "Disponible la nuit, et le week-end : tu dors jusqu'\xE0 demain et tu r\xE9cup\xE8res de l'\xE9nergie. Touche D.",
-          texteTactile: "Disponible la nuit, et le week-end : tu dors jusqu'\xE0 demain et tu r\xE9cup\xE8res de l'\xE9nergie.",
+          texte: "Disponible la nuit (y compris le week-end au bureau) : tu dors jusqu'\xE0 demain et tu r\xE9cup\xE8res de l'\xE9nergie. Touche D.",
+          texteTactile: "Disponible la nuit (y compris le week-end au bureau) : tu dors jusqu'\xE0 demain et tu r\xE9cup\xE8res de l'\xE9nergie.",
         },
         {
           cible: "consultant",
@@ -8202,7 +8202,7 @@ if (!window.React || !window.ReactDOM) {
         Ze = () => {
           let e = n.current,
             c = Ie();
-          // Le week-end, une journée de repos au bureau rend 15 % (nuit comprise) ; la nuit, on récupère comme en semaine (jusqu'à +8 %)
+          // Dormir n'est possible que la nuit, y compris le week-end au bureau (jusqu'à +8 %)
           return er(e) && !e.inNight ? nr((we * c) / or) : nr(c * t2);
         },
         urgW = (e) => {
@@ -8216,8 +8216,8 @@ if (!window.React || !window.ReactDOM) {
         weAtt = (e) => Mr(wt(e)).getDay() === 5 && e.inNight && e.pu < 1e5 && e.weekendPropose !== wt(e) + 1,
         Ue = () => {
           let e = n.current,
-            c = !e.inNight && er(e);
-          if (e.paused || e.busy || e.golive || (!e.inNight && !c) || urgDodo(e) || weAtt(e)) return;
+            c = !1;
+          if (e.paused || e.busy || e.golive || !e.inNight || urgDodo(e) || weAtt(e)) return;
           if (e.cafeAnim) {
             ((e.dodoApres = !0), (e.holding = !1), d());
             return;
@@ -8371,7 +8371,7 @@ if (!window.React || !window.ReactDOM) {
             (e.dirty = !0),
             na(),
             e.nBurnout === 1 &&
-              Mt("Conseil : dors la nuit, et repose-toi le week-end !", "nuit", "", 5e3, { ligne: !0 }),
+              Mt("Conseil : dors la nuit, et rentre chez toi le week-end !", "nuit", "", 5e3, { ligne: !0 }),
             Xt(),
             d());
         },
@@ -8730,7 +8730,8 @@ if (!window.React || !window.ReactDOM) {
         fn = Math.ceil(G2(Z)),
         Ln = !!Z.busy,
         Je = er(Z),
-        Or = Je && !Z.inNight,
+        // Le week-end au bureau, on ne dort que la nuit (comme en semaine) : pas de journée de repos le samedi ni le dimanche
+        Or = !1,
         Mn = Math.ceil(Z.energy / 10),
         jr = Z.energy < xe,
         mn = Tt.coutBW(t, Z),
@@ -9850,7 +9851,7 @@ if (!window.React || !window.ReactDOM) {
                   ? `Week-end d'urgence pour ${Z.weUrgSoc || "une autre soci\xE9t\xE9"} : dormir n'est possible que les nuits de samedi et de dimanche.`
                   : Or
                   ? `Week-end : dormir jusqu'\xE0 demain (jusqu'\xE0 +${we}\u00A0% d'\xE9nergie pour une journ\xE9e enti\xE8re, nuit comprise). Touche D.`
-                  : `La nuit (ou le week-end) : dormir jusqu'\xE0 demain (+${je}\u00A0% d'\xE9nergie au plus). Touche D.`,
+                  : `La nuit : dormir jusqu'\xE0 demain (+${je}\u00A0% d'\xE9nergie au plus). Touche D.`,
                 className:
                   "relative flex min-h-[60px] flex-col items-center justify-center gap-0.5 px-1 py-1.5",
               },
@@ -10422,7 +10423,7 @@ if (!window.React || !window.ReactDOM) {
             ["Fatigue", `sous 20 %, tu ralentis ; sous 10 %, tu piques du nez. À 0 %, c'est l'arrêt maladie : ${Qr} jours perdus, retour avec ${ve} % d'énergie.`],
             ["Dormir", `la nuit, jusqu'à +${je} %.`],
             ["Café", `+${pe} % (+${2 * pe} % pour Gabriel), une tasse tous les ${Kr(ke)} jours.`],
-            ["Le week-end", `rentrer chez toi rend +${Wf} % d'énergie mais coûte 2 jours. Rester au bureau te fait avancer (un jour de repos sur place rend +${we} %), mais retire 20 % d'énergie maximale le lundi, et ça se cumule jusqu'au prochain week-end à la maison. Choisis ton camp : avoir une vie ou rendre ton PMO Divalife heureux !`],
+            ["Le week-end", `rentrer chez toi rend +${Wf} % d'énergie mais coûte 2 jours. Rester au bureau te fait avancer (sur place, tu ne dors que la nuit, +${je} % au plus), mais retire 20 % d'énergie maximale le lundi, et ça se cumule jusqu'au prochain week-end à la maison. Choisis ton camp : avoir une vie ou rendre ton PMO Divalife heureux !`],
           ],
         ],
         [
@@ -10514,7 +10515,7 @@ if (!window.React || !window.ReactDOM) {
             ["A", "#86EFAC", "Rentrer", [["e", `+${Wf} %`], ["a", "−2 jours", 1]], "ton énergie est basse"],
             ["B", "#FDE68A", "Rester", [["e", "clic ×2", 1], ["e", "max −20 % lundi", 1]], "tu veux avancer ; la fatigue se cumule jusqu'au prochain week-end à la maison"],
           ],
-          note: `Un jour de repos au bureau rend +${we} % d'énergie.`,
+          note: `Au bureau, pas de journée de repos : tu ne dors que la nuit (+${je} % au plus).`,
         },
       };
     function InfoFen({ k, fond = "#FFFBEB", encre = W, style: st, enLigne: el = !1 }) {
