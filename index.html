@@ -12171,14 +12171,22 @@ if (!window.React || !window.ReactDOM) {
         "div",
         { className: "jde-pop flex flex-col items-center gap-1 border-b-4 bg-[#FEF3C7] px-3 py-2", style: { borderColor: W, color: W }, role: "status" },
         liste.length > 0 && h("span", { className: "text-base font-bold sm:text-lg", style: { fontFamily: Lr } }, liste.length > 1 ? "Nouveaux succ\xE8s !" : "Nouveau succ\xE8s !"),
-        liste.map((d) =>
+        // Succès rangés par rareté (bronze, argent, or, platine), alignés à gauche dans un bloc centré
+        liste.length > 0 &&
           h(
-            "span",
-            { key: d.id, className: "flex items-center gap-1.5 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
-            h(SucIcone, { t: d.t, id: d.ic || d.id, taille: 24 }),
-            d.nom,
+            "div",
+            { className: "flex flex-col items-start gap-1" },
+            [...liste]
+              .sort((x, y) => SUC_RANG[x.t] - SUC_RANG[y.t])
+              .map((d) =>
+                h(
+                  "span",
+                  { key: d.id, className: "flex items-center gap-2 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
+                  h(SucIcone, { t: d.t, id: d.ic || d.id, taille: 24 }),
+                  d.nom,
+                ),
+              ),
           ),
-        ),
         pc > 0 && h("span", { className: "mt-1 flex items-center gap-1 text-[14px] font-bold sm:text-base", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), `+${et(pc)} pi\xE8ces`),
         liste.length > 0 && h("span", { className: "text-[13px] font-bold sm:text-sm", style: { fontFamily: Yr, color: "#92400E" } }, "→ r\xE9compenses \xE0 r\xE9clamer dans Succ\xE8s"),
       );
