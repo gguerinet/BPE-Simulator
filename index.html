@@ -3632,24 +3632,25 @@ if (!window.React || !window.ReactDOM) {
             (g.set(x, Math.round(cy - h1 - e), l("#86EFAC")), g.set(x, Math.round(cy - h1 + e) - 1, l("#86EFAC")));
           }
         },
-        tirelire: (g, ci, cj, z) => {
-          // Tirelire cochon rose : corps ovale éclairé, groin, oreilles, pattes, fente pour les pièces, queue en tire-bouchon
-          let [cx, cy] = A(ci, cj, z + 6.5),
-            RX = 7.5,
-            RY = 5.5,
-            rose = ["#BE4B7A", "#DB6A98", "#F28DB5", "#F9B4CF", "#FDE2EC"];
-          for (let [dx, dy] of [[-4, 4], [-1, 5], [3, 4], [5, 3]]) g.rect(Math.round(cx + dx), Math.round(cy + dy), 2, 2, l("#C2567F"));
-          for (let y = Math.floor(cy - RY); y <= Math.ceil(cy + RY); y++)
+        ventilateur: (g, ci, cj, z) => {
+          // Ventilateur de bureau : socle rond, pied, grille ronde chromée vue de trois quarts, trois pales bleues, moyeu
+          (decoCyl(g, ci, cj, 0.1, z, z + 1.2, "#4B5563", { top: "#6B7280" }), decoCyl(g, ci, cj, 0.018, z + 1.2, z + 7, "#9CA3AF", { top: !1, hi: 1.4 }));
+          let [cx, cy] = A(ci, cj, z + 13),
+            R = 6.5,
+            RX = R * 0.82;
+          for (let y = Math.floor(cy - R); y <= Math.ceil(cy + R); y++)
             for (let x = Math.floor(cx - RX); x <= Math.ceil(cx + RX); x++) {
               let u = (x + 0.5 - cx) / RX,
-                v = (cy - y - 0.5) / RY;
-              u * u + v * v <= 1 && g.set(x, y, l(rose[Math.max(0, Math.min(4, Math.floor(decoLum(u, v) * 5)))]));
+                v = (y + 0.5 - cy) / R,
+                d = Math.hypot(u, v);
+              if (d > 1) continue;
+              let ang = Math.atan2(v, u),
+                pale = Math.cos(3 * (ang - 0.4)) > 0.35 && d > 0.22 && d < 0.88,
+                rayon = Math.abs(Math.sin(4 * ang)) < 0.12 && d > 0.3,
+                c = d > 0.86 ? (u + v < 0 ? "#E5E7EB" : "#9CA3AF") : d < 0.22 ? "#374151" : pale ? (u - v > 0 ? "#60A5FA" : "#3B82F6") : rayon ? "#CBD5E1" : null;
+              c && g.set(x, y, l(c));
             }
-          // groin à gauche (vers la pièce), oreilles, oeil, fente
-          (g.rect(Math.round(cx - RX - 1), Math.round(cy - 1), 3, 3, l("#E4789F")), decoPx(g, cx - RX - 0.5, cy, "#9D2F5C"), decoPx(g, cx - RX + 0.5, cy + 1, "#9D2F5C"));
-          for (let [dx, dy] of [[-4, -5], [-3, -6], [0, -6], [1, -7]]) decoPx(g, cx + dx, cy + dy, "#DB6A98");
-          (decoPx(g, cx - 4, cy - 2, "#3F1D2B"), g.rect(Math.round(cx - 1), Math.round(cy - RY), 4, 1, l("#7A2A4D")));
-          for (let [dx, dy] of [[RX, -1], [RX + 1, -2], [RX + 1, -3], [RX, -3]]) decoPx(g, cx + dx, cy + dy, "#DB6A98");
+          (decoPx(g, cx, cy, "#9CA3AF"), g.rect(Math.round(cx) - 1, Math.round(cy + R), 2, 1, l("#6B7280")));
         },
         maquette: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
@@ -3674,17 +3675,23 @@ if (!window.React || !window.ReactDOM) {
           decoFace(g, "L", ci + 0.2, cj - 0.1, cj + 0.06, z + 2, z + 6.5, (h, s, w, H) => (h < 1 || h >= w - 1 || s < 1 || s >= H - 1 ? "#94A3B8" : s > 2 && s < 3 && h > 2 && h < w - 2 ? "#334155" : "#F8FAFC"));
           decoFace(g, "R", cj + 0.16, ci - 0.2, ci + 0.2, z + 3, z + 4.5, (h) => (Math.abs(h - 8.8) < 2.5 ? "#4A2E18" : null));
         },
-        extincteur: (g, ci, cj, z) => {
-          // Extincteur rouge : corps cylindrique, épaule, col et poignée gris, manomètre, étiquette blanche
-          (decoCyl(g, ci, cj, 0.09, z, z + 14, "#DC2626", { top: !1, hi: 1.35 }), decoCyl(g, ci, cj, 0.091, z + 6, z + 9.5, "#F8FAFC", { top: !1, hi: 1.05 }));
-          for (let q = 0; q < 3; q++) decoCyl(g, ci, cj, 0.085 - q * 0.02, z + 14 + q * 0.7, z + 14.7 + q * 0.7, "#DC2626", { top: !1, hi: 1.3 });
-          decoCyl(g, ci, cj, 0.025, z + 16, z + 17.5, "#4B5563", { top: "#9CA3AF" });
-          let [hx, hy] = A(ci, cj, z + 17.5),
-            rx = Math.round(22 * Math.SQRT2 * 0.09);
-          (g.rect(hx - 3, hy - 1, 6, 1, l("#6B7280")), g.rect(hx + 1, hy - 2, 3, 1, l("#9CA3AF")));
-          (g.rect(hx + 1, hy + 1, 2, 2, l("#E5E7EB")), decoPx(g, hx + 2, hy + 1, "#16A34A"));
-          let [ex, ey] = A(ci + 0.05, cj + 0.05, z + 7.8);
-          g.rect(ex - 2, ey, 4, 1, l("#DC2626"));
+        foot: (g, ci, cj, z) => {
+          // Ballon de foot : sphère blanche éclairée, pentagones noirs, coutures grises
+          let [cx, cy] = A(ci, cj, z + 6),
+            R = 6.2;
+          for (let y = Math.floor(cy - R); y <= Math.ceil(cy + R); y++)
+            for (let x = Math.floor(cx - R); x <= Math.ceil(cx + R); x++) {
+              let u = (x + 0.5 - cx) / R,
+                v = (cy - y - 0.5) / R;
+              if (u * u + v * v > 1) continue;
+              let w = Math.sqrt(1 - u * u - v * v),
+                t = decoLum(u, v),
+                // pentagones : directions d'un icosaèdre projetées sur la sphère
+                pts = [[0.1, 0.12, 0.99], ...[0, 1, 2, 3, 4].map((q) => [0.89 * Math.cos(q * 1.2566 + 0.3), 0.89 * Math.sin(q * 1.2566 + 0.3), 0.45])],
+                pent = pts.some(([a, b, c]) => u * a + v * b + w * c > 0.955),
+                couture = !pent && pts.some(([a, b, c]) => Math.abs(u * a + v * b + w * c - 0.8) < 0.035);
+              g.set(x, y, l(pent ? (t > 0.6 ? "#374151" : "#111827") : couture ? "#94A3B8" : t > 0.55 ? "#FFFFFF" : t > 0.38 ? "#F1F5F9" : t > 0.22 ? "#D9DEE5" : "#AEB8C4"));
+            }
         },
         poubelle: (g, ci, cj, z) => {
           (decoCyl(g, ci, cj, 0.17, z, z + 1.5, "#374151", { top: !1 }),
@@ -4136,7 +4143,7 @@ if (!window.React || !window.ReactDOM) {
       DECO = [
         { id: "classeur", nom: "Haut du classeur", defaut: "Peluche de Yoda", items: [
           { id: "plante", t: "bronze", prix: 100, nom: "Plante verte", d: "Elle survit \xE0 tous les go-live." },
-          { id: "tirelire", t: "bronze", prix: 300, nom: "Tirelire cochon", d: "Pour les \xE9conomies sur le budget consultant." },
+          { id: "ventilateur", t: "bronze", prix: 300, nom: "Ventilateur", d: "Pour les nuits de recette en plein \xE9t\xE9." },
           { id: "frigorigene", t: "argent", prix: 400, nom: "Bouteille SMD hors \xE9preuve", d: "Ogive verte, robinet bleu : le c\u0153ur du m\xE9tier." },
           { id: "maquette", t: "or", prix: 1500, nom: "Maquette de bouteille chrom\xE9e", d: "Sur socle en bois, comme au si\xE8ge." },
           { id: "cloche", t: "platine", prix: 5e3, nom: "Bouteille en or sous cloche", d: "La pi\xE8ce de collection du Comex." },
@@ -4157,7 +4164,7 @@ if (!window.React || !window.ReactDOM) {
         ] },
         { id: "sous", nom: "Sous le bureau", defaut: "Poubelle", items: [
           { id: "carton", t: "bronze", prix: 100, nom: "Carton d'archives", d: "\xAB JDE ancienne version \xBB, ne pas jeter." },
-          { id: "extincteur", t: "bronze", prix: 300, nom: "Extincteur de bureau", d: "Pour les incidents de production." },
+          { id: "foot", t: "bronze", prix: 300, nom: "Ballon de foot", d: "Pour le match du vendredi contre l'IT." },
           { id: "poubelle", t: "argent", prix: 400, nom: "Bouteille recycl\xE9e en poubelle", d: "Le recyclage maison." },
           { id: "coffre", t: "or", prix: 1500, nom: "Coffre des mots de passe", d: "Le seul endroit s\xFBr du b\xE2timent." },
           { id: "frigo", t: "platine", prix: 4e3, nom: "Mini-frigo r\xE9tro", d: "Toujours une boisson fra\xEEche pour la nuit." },
@@ -11726,7 +11733,7 @@ if (!window.React || !window.ReactDOM) {
             let a0 = { ...(x.deco.achats || {}) },
               p0 = { ...(x.deco.pose || {}) };
             // Le chat a été remplacé par la palette de bouteilles (même prix) : l'achat est conservé
-            for (let [v, n] of [["chat", "palette"], ["mug", "frigorigene"], ["chantier", "frigorigene"], ["radio", "frigorigene"], ["bidon", "frigorigene"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["crayons", "milka"], ["fontaine", "flipper"], ["sablier", "trophee"], ["chariot", "cones"]]) {
+            for (let [v, n] of [["chat", "palette"], ["mug", "frigorigene"], ["chantier", "frigorigene"], ["radio", "frigorigene"], ["bidon", "frigorigene"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["crayons", "milka"], ["fontaine", "flipper"], ["tirelire", "ventilateur"], ["extincteur", "foot"], ["sablier", "trophee"], ["chariot", "cones"]]) {
               a0[v] && (a0[n] = 1);
               for (let k in p0) p0[k] === v && (p0[k] = n);
             }
