@@ -3688,21 +3688,28 @@ if (!window.React || !window.ReactDOM) {
             (g.ellipse(x, y, 2.6 * k, 2.6 * k, l("#1F2937")), g.ellipse(x, y, 1.1 * k, 1.1 * k, l("#6B7280")));
           }
         },
-        chat: (g, ci, cj, z, k = 1) => {
-          decoBox(g, ci - 0.22 * k, ci + 0.22 * k, cj - 0.16 * k, cj + 0.16 * k, z, z + 6 * k, "#C08A52");
-          decoFace(g, "R", cj + 0.16 * k, ci - 0.22 * k, ci + 0.22 * k, z + 2 * k, z + 3.2 * k, (h, s, w) => (Math.abs(h - w / 2) < 3 * k ? "#4A2E18" : null));
-          let [cx, cy] = A(ci, cj, z + 6 * k),
-            fur = (p, u, h, s) => {
-              let kk = -h * 0.4 - s * 0.9,
-                raie = (Math.round((p - u * 0.4) / k) % 3 + 3) % 3 === 0;
-              return l(kk > 0.45 ? "#FCD34D" : kk < -0.4 ? "#C2410C" : raie ? "#D97706" : "#F59E0B");
-            },
-            P = (dx, dy, c) => g.rect(Math.round(cx + dx * k), Math.round(cy + dy * k), k, k, l(c));
-          (g.ellipse(cx + 2 * k, cy - 3 * k, 7 * k, 3.6 * k, fur), g.ellipse(cx - 5 * k, cy - 4.5 * k, 3.4 * k, 3 * k, fur));
-          for (let [dx, dy] of [[-7, -8], [-7, -9], [-6, -8], [-3, -8], [-3, -9], [-4, -8]]) P(dx, dy, "#EA8A0C");
-          for (let [dx, dy] of [[-6, -5], [-5, -5], [-3, -5], [-2, -5]]) P(dx, dy, "#5A3214");
-          P(-4, -3, "#F472B6");
-          for (let q = 0; q < 6; q++) P(8 - q * 0.5, q === 5 ? -2 : -1, "#D97706");
+        palette: (g, ci, cj, z, k = 1) => {
+          // Palette en bois (3 planches sur 3 traverses), 4 bouteilles cerclées d'un feuillard, étiquette Divalife
+          for (let b of [cj - 0.2, cj - 0.02, cj + 0.16]) decoBox(g, ci - 0.24 * k, ci + 0.24 * k, cj + (b - cj) * k, cj + (b - cj + 0.05) * k, z, z + 2 * k, "#A8743F");
+          for (let a of [ci - 0.24, ci - 0.08, ci + 0.08]) decoBox(g, ci + (a - ci) * k, ci + (a - ci + 0.15) * k, cj - 0.22 * k, cj + 0.22 * k, z + 2 * k, z + 3 * k, "#C79A62", { topF: 1.15 });
+          let cols = ["#4F86B8", "#8C96A3", "#4F86B8", "#16A34A"];
+          [[-0.11, -0.11], [-0.11, 0.11], [0.11, -0.11], [0.11, 0.11]].forEach(([di, dj], n) => {
+            let bi = ci + di * k,
+              bj = cj + dj * k;
+            (decoCyl(g, bi, bj, 0.095 * k, z + 3 * k, z + 15 * k, cols[n], { top: !1, hi: 1.3 }),
+              decoCyl(g, bi, bj, 0.07 * k, z + 15 * k, z + 16.5 * k, cols[n], { top: !1 }),
+              decoDisc(g, bi, bj, 0.07 * k, z + 16.5 * k, ct(l(cols[n]), 1.2)),
+              decoCyl(g, bi, bj, 0.028 * k, z + 16.5 * k, z + 18.5 * k, "#374151", { top: "#6B7280" }));
+          });
+          // feuillard noir autour des bouteilles
+          for (let h of [6, 12]) {
+            let ep = 0.21 * k;
+            (decoFace(g, "R", cj + ep, ci - ep, ci + ep, z + h * k, z + (h + 0.9) * k, () => "#1F2937"),
+              decoFace(g, "L", ci + ep, cj - ep, cj + ep, z + h * k, z + (h + 0.9) * k, () => "#111827"));
+          }
+          // étiquette jaune sur la bouteille de devant
+          let [ex, ey] = A(ci + 0.11 * k, cj + 0.11 * k, z + 9 * k);
+          (g.rect(ex - 2 * k, ey - k, 4 * k, 2 * k, l("#FACC15")), g.rect(ex - k, ey, 2 * k, Math.max(1, k / 2), l("#1F2937")));
         },
         transpalette: (g, ci, cj, z, k = 1) => {
           for (let b of [cj - 0.11 * k, cj + 0.07 * k]) decoBox(g, ci - 0.12 * k, ci + 0.32 * k, b, b + 0.05 * k, z + 0.5 * k, z + 2 * k, "#D97706", { topF: 1.25 });
@@ -3994,7 +4001,7 @@ if (!window.React || !window.ReactDOM) {
         ] },
         { id: "devant", nom: "Sol, devant le bureau", defaut: "Ballon", items: [
           { id: "chariot", t: "bronze", prix: 150, nom: "Chariot \xE0 bouteilles", d: "Le classique de l'entrep\xF4t." },
-          { id: "chat", t: "argent", prix: 600, nom: "Chat qui dort sur un carton", d: "Il surveille le projet, les yeux ferm\xE9s." },
+          { id: "palette", t: "argent", prix: 600, nom: "Palette de bouteilles", d: "Livraison du jour, cercl\xE9e et pr\xEAte \xE0 partir." },
           { id: "transpalette", t: "or", prix: 2e3, nom: "Transpalette miniature", d: "T\xE9l\xE9command\xE9, pour les livraisons urgentes." },
           { id: "elevateur", t: "platine", prix: 5e3, nom: "Chariot \xE9l\xE9vateur dor\xE9", d: "Employ\xE9 du mois, pour toujours." },
         ] },
@@ -11520,8 +11527,10 @@ if (!window.React || !window.ReactDOM) {
               isFinite(v) && v > 0 && (cumul[k] = Math.min(1e9, Math.floor(v)));
             }
           if (x.deco && typeof x.deco == "object") {
-            let a0 = x.deco.achats || {},
-              p0 = x.deco.pose || {};
+            let a0 = { ...(x.deco.achats || {}) },
+              p0 = { ...(x.deco.pose || {}) };
+            // Le chat a été remplacé par la palette de bouteilles (même prix) : l'achat est conservé
+            (a0.chat && (a0.palette = 1), p0.devant === "chat" && (p0.devant = "palette"));
             for (let e of DECO)
               for (let it of e.items) a0[it.id] && (deco.achats[it.id] = 1);
             for (let e of DECO) typeof p0[e.id] == "string" && (p0[e.id] === "" || e.items.some((it) => it.id === p0[e.id])) && (deco.pose[e.id] = p0[e.id]);
