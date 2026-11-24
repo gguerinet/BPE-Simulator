@@ -6238,6 +6238,10 @@ if (!window.React || !window.ReactDOM) {
       "transit",
       "partieId",
       "vrV",
+      // Succès : cafés bus, week-ends passés au bureau, week-ends d'urgence acceptés
+      "nCafes",
+      "nWeBureau",
+      "nUrg",
     ];
     function ye(t) {
       let r = t.transit;
@@ -7870,6 +7874,7 @@ if (!window.React || !window.ReactDOM) {
               let X = wt(c),
                 rt = (6 - Mr(X).getDay() + 7) % 7 || 7;
               ((c.weUrgence = X + rt),
+                (c.nUrg = (c.nUrg || 0) + 1),
                 (c.weUrgSoc = g.cible),
                 M && ((M.mood = "happy"), (M.react = { sym: "happy", until: j + 1400 })),
                 Mt("Week-end prochain sacrifi\xE9", "ko", "", 3500, {
@@ -8118,6 +8123,9 @@ if (!window.React || !window.ReactDOM) {
                 joursUrg: e.joursUrg || 0,
                 nReposWE: e.nReposWE || 0,
                 weekendsMaison: e.weekendsMaison || 0,
+                nCafes: e.nCafes || 0,
+                nWeBureau: e.nWeBureau || 0,
+                nUrg: e.nUrg || 0,
                 burnout: e.d.burnout || 0,
               });
             }, 5200));
@@ -8163,7 +8171,8 @@ if (!window.React || !window.ReactDOM) {
           }
           let vsr = Mr(wt(c)).getDay() === 5;
           if (((c.weekendPropose = vsr ? wt(c) + 1 : Mi(wt(c))), (c.dirty = !0), na(), !e)) {
-            ((c.busy = null),
+            ((c.nWeBureau = (c.nWeBureau || 0) + 1),
+              (c.busy = null),
               mr(null),
               Mt("Week-end au bureau", "nuit", "", 3500, {
                 ligne: !0,
@@ -8387,6 +8396,7 @@ if (!window.React || !window.ReactDOM) {
           if (Math.round(gainReel) < 1) return;
           (e.cafeAnim && !e.cafeAnim.fx && cafeBoire(e),
             e.coffeeCount++,
+            (e.nCafes = (e.nCafes || 0) + 1),
             (e.coffeeReadyDay = _t(e) + ke),
             (e.cafeAnim = { e: 0, last: null, montant: c, fx: !1, gainReel: gainReel }),
             (e.cafeAttente = gainReel),
@@ -10956,6 +10966,7 @@ if (!window.React || !window.ReactDOM) {
       },
       // Récupère les records du code joueur, les fusionne avec ceux de l'appareil, et renvoie le résultat au serveur
       recSync = async () => {
+        sucSync();
         try {
           if (!sbOk()) return;
           let j = jid(),
@@ -10966,6 +10977,91 @@ if (!window.React || !window.ReactDOM) {
             cle = (l) => JSON.stringify(recFusion(Array.isArray(l) ? l : []));
           cle(loc) !== JSON.stringify(fus) && (Tr(le, fus), window.dispatchEvent(new Event("bpe-records")));
           cle(srv) !== JSON.stringify(fus) && (await sbRpc("enregistrer_records", { j, r: fus }));
+        } catch {}
+      },
+      // Succès : 20 défis en 3 volets, rareté (bronze, argent, or, platine) réglée d'après des parties simulées
+      SUK = "bpe-simulator-succes-v1",
+      SUC_VOL = ["R\xE9sultat du projet", "Style de jeu", "M\xE9tier et collection"],
+      SUC = [
+        { id: "golive", v: 0, t: "bronze", nom: "Premier go-live", c: "Finir une partie.", ok: (f) => !0 },
+        { id: "comex", v: 0, t: "argent", nom: "F\xE9licitations du Comex", c: "D\xE9crocher la m\xE9daille d'or (8 000 points).", ok: (f, s) => s >= 8e3 },
+        { id: "legende", v: 0, t: "platine", nom: "Dans la l\xE9gende", c: "D\xE9crocher la m\xE9daille de platine (9 000 points).", ok: (f, s) => s >= 9e3 },
+        { id: "heure", v: 0, t: "or", nom: "Pile \xE0 l'heure", c: "Go-live au plus tard \xE0 J+85.", ok: (f) => f.total <= 85 },
+        { id: "zerodefaut", v: 0, t: "platine", nom: "Z\xE9ro d\xE9faut", c: "Finir avec au moins 85 % de qualit\xE9.", ok: (f) => f.qualite >= 85 },
+        { id: "kamikaze", v: 0, t: "or", nom: "Kamikaze", c: "R\xE9ussir un GO avec moins de 50 % de qualit\xE9.", ok: (f) => f.gonogoChoix === "go-ok" && f.qualite < 50 },
+        { id: "zeroeuro", v: 1, t: "argent", nom: "Z\xE9ro euro", c: "M\xE9daille d'or sans payer une seule mission b.workchoc.", ok: (f, s) => !f.cout && s >= 8e3 },
+        { id: "famille", v: 1, t: "argent", nom: "Vie de famille", c: "M\xE9daille d'or en rentrant chez toi tous les week-ends.", ok: (f, s) => s >= 8e3 && !f.nWeBureau && !f.nUrg && f.weekendsMaison > 0 },
+        { id: "corps", v: 1, t: "argent", nom: "Corps et \xE2me", c: "M\xE9daille de bronze sans jamais rentrer chez toi le week-end.", ok: (f, s) => s >= 5e3 && !f.weekendsMaison },
+        { id: "sanscafe", v: 1, t: "argent", nom: "Sans caf\xE9", c: "M\xE9daille d'argent sans boire un seul caf\xE9.", ok: (f, s) => s >= 7e3 && !f.nCafes },
+        { id: "noctambule", v: 1, t: "argent", nom: "Noctambule", c: "Travailler 50 nuits dans une partie.", ok: (f) => (f.nightsWorked || 0) >= 50 },
+        { id: "sage", v: 1, t: "argent", nom: "Le sage", c: "Choisir NO-GO et finir avec 8 500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
+        { id: "rescape", v: 1, t: "or", nom: "Rescap\xE9", c: "M\xE9daille d'argent malgr\xE9 un arr\xEAt maladie.", ok: (f, s) => s >= 7e3 && f.nBurnout > 0 },
+        { id: "mercenaire", v: 1, t: "or", nom: "Mercenaire", c: "M\xE9daille de bronze apr\xE8s un week-end d'urgence pour une autre soci\xE9t\xE9.", ok: (f, s) => s >= 5e3 && f.nUrg > 0 },
+        { id: "delegateur", v: 2, t: "bronze", nom: "D\xE9l\xE9gateur", c: "Passer 5 tickets \xE0 la TMA dans une partie.", ok: (f) => (f.nTicketsTMA || 0) >= 5 },
+        { id: "denicheur", v: 2, t: "argent", nom: "D\xE9nicheur", c: "D\xE9jouer toutes les fausses bonnes id\xE9es d'une partie (au moins 3).", ok: (f) => f.nPieges >= 3 && f.piegesEvites >= f.nPieges },
+        { id: "formateur", v: 2, t: "or", nom: "Formateur", c: "Suivre 8 ateliers PMO dans une partie.", ok: (f) => (f.nAteliers || 0) >= 8 },
+        { id: "cambouis", v: 2, t: "or", nom: "Mains dans le cambouis", c: "Traiter toi-m\xEAme 12 tickets dans une partie.", ok: (f) => (f.nTickets || 0) - (f.nTicketsTMA || 0) >= 12 },
+        { id: "equipe", v: 2, t: "bronze", nom: "L'\xE9quipe au complet", c: "Finir une partie avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].f) },
+        { id: "orpartout", v: 2, t: "platine", nom: "Or partout", c: "M\xE9daille d'or avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].o) },
+      ],
+      sucNet = (x) => {
+        let ok = {},
+          heros = {};
+        if (x && typeof x == "object") {
+          if (x.ok && typeof x.ok == "object")
+            for (let d of SUC) typeof x.ok[d.id] == "string" && (ok[d.id] = x.ok[d.id].slice(0, 30));
+          if (x.heros && typeof x.heros == "object")
+            for (let k of ["francois", "gabriel", "hugues", "samuel"]) {
+              let v = x.heros[k];
+              v && typeof v == "object" && (heros[k] = { f: v.f ? 1 : 0, o: v.o ? 1 : 0 });
+            }
+        }
+        return { ok, heros };
+      },
+      sucLit = () => sucNet(xr(SUK, null)),
+      // Fusion de deux états : chaque succès garde sa date la plus ancienne
+      sucFus = (...l) => {
+        let r = { ok: {}, heros: {} };
+        for (let x of l.map(sucNet)) {
+          for (let [k, v] of Object.entries(x.ok)) (!r.ok[k] || v < r.ok[k]) && (r.ok[k] = v);
+          for (let [k, v] of Object.entries(x.heros)) {
+            let a0 = r.heros[k] || { f: 0, o: 0 };
+            r.heros[k] = { f: a0.f || v.f ? 1 : 0, o: a0.o || v.o ? 1 : 0 };
+          }
+        }
+        return r;
+      },
+      sucCle = (x) => {
+        let y = sucNet(x);
+        return JSON.stringify([SUC.map((d) => y.ok[d.id] || ""), ["francois", "gabriel", "hugues", "samuel"].map((k) => (y.heros[k] ? y.heros[k].f + "" + y.heros[k].o : "00"))]);
+      },
+      // Fin de partie : succès débloqués par cette partie (liste des définitions, dans l'ordre)
+      sucFin = (f, sc) => {
+        try {
+          let st = sucLit(),
+            hid = f.hero && f.hero.id,
+            nv = [];
+          hid && (st.heros[hid] = { f: 1, o: (st.heros[hid] && st.heros[hid].o) || sc >= 8e3 ? 1 : 0 });
+          for (let d of SUC)
+            if (!st.ok[d.id])
+              try {
+                d.ok(f, sc, st.heros) && ((st.ok[d.id] = new Date().toISOString()), nv.push(d));
+              } catch {}
+          return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), nv);
+        } catch {
+          return [];
+        }
+      },
+      sucSync = async () => {
+        try {
+          if (!sbOk()) return;
+          let j = jid(),
+            srv = await sbRpc("succes_du_joueur", { j });
+          if (srv === void 0) return;
+          let loc = xr(SUK, null),
+            fus = sucFus(srv, loc);
+          sucCle(loc) !== sucCle(fus) && (Tr(SUK, fus), window.dispatchEvent(new Event("bpe-succes")));
+          sucCle(srv) !== sucCle(fus) && (await sbRpc("enregistrer_succes", { j, s: fus }));
         } catch {}
       },
       // Au lancement : le pseudo de ce navigateur est-il toujours le bon pour ce code joueur ?
@@ -11196,6 +11292,128 @@ if (!window.React || !window.ReactDOM) {
                   ),
                 ),
               ),
+      );
+    }
+    // Succès : icône de rareté (médaille bronze, argent, or ou platine), grisée tant que le succès n'est pas obtenu
+    var SUC_T = { bronze: ["Bronze", "#D08A4A"], argent: ["Argent", "#CBD5E1"], or: ["Or", "#FACC15"], platine: ["Platine", "#9FD8EA"] };
+    function SucIcone({ t, ok = !0, scale: sc = 1 }) {
+      return a.default.createElement(
+        "span",
+        { className: "inline-flex shrink-0", "aria-hidden": "true", style: ok ? null : { filter: "grayscale(0.6)", opacity: 0.5 } },
+        a.default.createElement(D2, { kind: t, scale: sc }),
+      );
+    }
+    function useSucces() {
+      let [st, setSt] = (0, a.useState)(() => sucLit());
+      (0, a.useEffect)(() => {
+        let m = () => setSt(sucLit());
+        return (window.addEventListener("bpe-succes", m), () => window.removeEventListener("bpe-succes", m));
+      }, []);
+      return st;
+    }
+    // Fin de partie : bandeau des succès débloqués par cette partie
+    function SucBandeau({ liste }) {
+      let h = a.default.createElement;
+      return h(
+        "div",
+        { className: "jde-pop flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b-4 bg-[#FEF3C7] px-3 py-1.5", style: { borderColor: W, color: W }, role: "status" },
+        h("span", { className: "text-base font-bold sm:text-lg", style: { fontFamily: Lr } }, liste.length > 1 ? "Nouveaux succ\xE8s !" : "Nouveau succ\xE8s !"),
+        liste.map((d) =>
+          h(
+            "span",
+            { key: d.id, className: "flex items-center gap-1.5 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
+            h(SucIcone, { t: d.t }),
+            d.nom,
+          ),
+        ),
+      );
+    }
+    // Accueil : grille des 20 succès, par volet
+    function SucGrille({ onClose: fermer }) {
+      let h = a.default.createElement,
+        st = useSucces(),
+        n = SUC.filter((d) => st.ok[d.id]).length;
+      (0, a.useEffect)(() => {
+        let k = (e) => e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), fermer());
+        return (window.addEventListener("keydown", k, !0), () => window.removeEventListener("keydown", k, !0));
+      }, []);
+      return h(
+        "div",
+        {
+          className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0B1B2B]/75 p-3",
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-label": "Succ\xE8s",
+          onClick: (e) => e.target === e.currentTarget && fermer(),
+        },
+        h(
+          "div",
+          { className: "jde-pop my-auto w-full max-w-2xl border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
+          h(
+            "div",
+            { className: "flex items-center justify-between gap-2" },
+            h("div", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, `Succ\xE8s ${n}/${SUC.length}`),
+            h(
+              "button",
+              { type: "button", autoFocus: !0, onClick: fermer, className: "jde-btn border-[3px] px-3 py-0.5 text-base font-semibold", style: { background: "#FACC15", color: W, borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr } },
+              "Fermer",
+            ),
+          ),
+          h(
+            "div",
+            { className: "mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[13px]", style: { fontFamily: Yr } },
+            Object.entries(SUC_T).map(([k, [nm]]) => h("span", { key: k, className: "flex items-center gap-1" }, h(SucIcone, { t: k, scale: 0.5 }), nm)),
+            h("span", { className: "opacity-70" }, "\xB7 du plus courant au plus rare"),
+          ),
+          SUC_VOL.map((vol, vi) =>
+            h(
+              "section",
+              { key: vi, className: "mt-3" },
+              h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, vol),
+              h(
+                "ul",
+                { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
+                SUC.filter((d) => d.v === vi).map((d) => {
+                  let ok = st.ok[d.id];
+                  return h(
+                    "li",
+                    {
+                      key: d.id,
+                      className: "flex items-center gap-2 border-2 px-2 py-1",
+                      style: { borderColor: ok ? W : "#94A3B8", background: ok ? "#FFFFFF" : "#F1F5F9" },
+                      "aria-label": `${d.nom}, ${SUC_T[d.t][0]}, ${ok ? "obtenu" : "pas encore obtenu"} : ${d.c}`,
+                    },
+                    h(SucIcone, { t: d.t, ok: !!ok }),
+                    h(
+                      "span",
+                      { className: "min-w-0 leading-tight" },
+                      h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: ok ? W : "#64748B" } }, d.nom),
+                      h("span", { className: "block text-[13px]", style: { fontFamily: Yr, color: ok ? "#334155" : "#64748B" } }, d.c),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    // Accueil : bouton « Succès n/20 » qui ouvre la grille
+    function SucBtn() {
+      let h = a.default.createElement,
+        st = useSucces(),
+        [ouv, setOuv] = (0, a.useState)(!1),
+        n = SUC.filter((d) => st.ok[d.id]).length;
+      return h(
+        a.default.Fragment,
+        null,
+        h(
+          mt,
+          { bg: "#FACC15", fg: W, onClick: () => setOuv(!0), title: "Voir les succ\xE8s", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" },
+          h(SucIcone, { t: "or", scale: 0.75 }),
+          `Succ\xE8s ${n}/${SUC.length}`,
+        ),
+        ouv && h(SucGrille, { onClose: () => setOuv(!1) }),
       );
     }
     // Premier lancement sur un appareil : nouveau joueur (pseudo à créer) ou joueur qui revient (code joueur à saisir)
@@ -12047,6 +12265,7 @@ if (!window.React || !window.ReactDOM) {
                 w ? (nvConf ? "Effacer la partie en cours ?" : "Nouvelle partie") : "Commencer le projet",
               ),
             ),
+            a.default.createElement(SucBtn, null),
             a.default.createElement(Lbd, { records: i, pseudo: psv }),
             a.default.createElement(
               "p",
@@ -12479,6 +12698,7 @@ if (!window.React || !window.ReactDOM) {
               "Divalife \xB7 confidentiel",
             ),
           ),
+          rev && t.succes && t.succes.length > 0 && a.default.createElement(SucBandeau, { liste: t.succes }),
           a.default.createElement(
             "div",
             {
@@ -13122,8 +13342,9 @@ if (!window.React || !window.ReactDOM) {
                   cout: f.cout,
                   gonogo: f.gonogoChoix,
                 })));
-              let kt = nt.indexOf(Y) + 1 || nt.length + 1;
-              (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi }), r("report"));
+              let kt = nt.indexOf(Y) + 1 || nt.length + 1,
+                sucNv = sucFin(f, H);
+              (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi, succes: sucNv }), r("report"));
             },
             onMenu: () => {
               (L(xr(fr, null)), r("select"));
