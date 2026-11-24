@@ -3548,7 +3548,125 @@ if (!window.React || !window.ReactDOM) {
       r.rect(Math.floor(b[0]) - 1, Math.floor(b[1]) - 1, 3, 2, l("#16161A"));
     }
 
+    // Décor du bureau : objets achetés avec les pièces, un objet posé par emplacement (sinon l'objet d'origine)
+    var DECO_SPR = {"plante": {"rows": ["....g..G..g....", "...gGg.Gg.Gg...", "..gGdGgGGdGg...", "...GgdGGgGdG.g.", ".gGGdGgdGGgGGg.", "..gGGgGGdGGgG..", "...dGgGdGgGd...", "....OOOOOOO....", "....OtttttO....", "....OPPpPPO....", "....OPPpPPO....", ".....OPpPO.....", ".....OPPPO.....", ".....OOOOO....."], "pal": {"O": "#1F1A17", "G": "#3F8F3A", "g": "#7BC96F", "d": "#2C6B2A", "P": "#C2683A", "p": "#E08A55", "t": "#5A3A22"}}, "mug": {"rows": ["...OOOOOOO.....", "..OWWWWWWWO....", "..OwwwwwwwO....", "..OWWWWWWWOOO..", "..OWRRWBBWO.O..", "..OWRWWBWWO.O..", "..OWRRWBBWO.O..", "..OWWWWWWWOOO..", "..OWWWWWWWO....", "..OwWWWWWwO....", "...OOOOOOO....."], "pal": {"O": "#1F1A17", "W": "#F8FAFC", "w": "#CBD5E1", "R": "#DC2626", "B": "#0096DC"}}, "maquette": {"rows": ["......OOO......", ".....OKKKO.....", "......OKO......", ".....OOOOO.....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OccccKO....", "..OOOOOOOOOOO..", "..ObbbbbbbbbO..", "..OBBBBBBBBBO..", "..OOOOOOOOOOO.."], "pal": {"O": "#1F1A17", "C": "#E5E7EB", "c": "#9CA3AF", "h": "#FFFFFF", "K": "#6B7280", "B": "#7A4E10", "b": "#B7791F"}}, "cloche": {"rows": ["....OOOOOOO....", "...OvvhvvvvO...", "..OvhvvGvvvvO..", "..OvhvOdOvvvO..", "..OhvOGgGOvvO..", "..OhvOGgGOvvO..", "..OvvOGgGOvvO..", "..OvvOGgGOvvO..", "..OvvOGgGOvvO..", "..OvvOdddOvvO..", ".OOOOOOOOOOOOO.", ".ObbbbbbbbbbbO.", ".OBBBBBBBBBBBO.", ".OOOOOOOOOOOOO."], "pal": {"O": "#1F1A17", "V": "#BFE9F5", "v": "#E6F7FC", "h": "#FFFFFF", "G": "#F6C343", "g": "#FFE59A", "d": "#B7791F", "B": "#24546B", "b": "#4F8BA6"}}, "carton": {"rows": [".OOOOOOOOOOO.", "OkkkkkkkkkkkO", "OkkkkkkkkkkkO", "OOOOOOOOOOOOO", "OKKKKKKKKKKdO", "OKOOOOOOOKKdO", "OKOWWWWWOKKdO", "OKOWTTTWOKKdO", "OKOWWWWWOKKdO", "OKOOOOOOOKKdO", "OKKKKKKKKKKdO", "OKKKKKKKKKKdO", "Odddddddddddd", "OOOOOOOOOOOOO"], "pal": {"O": "#1F1A17", "K": "#C08A52", "k": "#DDB07A", "d": "#8A5A30", "W": "#F8FAFC", "T": "#334155"}}, "poubelle": {"rows": ["...OOOOOOO...", "..OKKkkKKKO..", "..OOOOOOOOO..", ".OgGGGGGGGdO.", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGYYYYYYGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", ".OddddddddddO", "..OOOOOOOOO.."], "pal": {"O": "#1F1A17", "G": "#5B8DB8", "g": "#8DB8DC", "d": "#2E5A80", "K": "#374151", "k": "#6B7280", "Y": "#FACC15"}}, "coffre": {"rows": ["OOOOOOOOOOOOO", "OhssssssssssO", "OsSSSSSSSSSdO", "OsSOOOOOOOSdO", "OsSOdyyYdOSdO", "OsSOyOOOYOSdO", "OsSOyOYOYOSdO", "OsSOYOOOYOSdO", "OsSOdYYYdOSdO", "OsSOOOOOOOSdO", "OsSSSSSSSSSdO", "OdddddddddddO", "OOOOOOOOOOOOO", ".OO.......OO."], "pal": {"O": "#1F1A17", "S": "#4B5563", "s": "#6B7280", "d": "#1F2937", "Y": "#F6C343", "y": "#FFE59A", "h": "#9CA3AF"}}, "frigo": {"rows": [".OOOOOOOOOOO.", "OrrrrrrrrrrdO", "OrRRRRRRRRRdO", "OrRWWWWWWRRdO", "OrRRRRRRRRRdO", "OOOOOOOOOOOOO", "OrRRRRRRRRCdO", "OrRRRRRRRRCdO", "OrRRBBBRRRCdO", "OrRRRRRRRRRdO", "OrRRRRRRRRRdO", "Odddddddddddd", "OOOOOOOOOOOOO", ".Oc.......cO."], "pal": {"O": "#1F1A17", "R": "#DC2626", "r": "#F87171", "d": "#991B1B", "C": "#E5E7EB", "c": "#9CA3AF", "W": "#FFFFFF", "B": "#9FD8EA"}}, "chariot": {"rows": ["OOO...............", "OkO...OOOO........", "OkO..OgGdO........", "OkO..OOOOOO.......", "OkO.OgGGGdO.......", "OkO.OgYYGdO.......", "OkO.OgGGGdO.......", "OkO.OgGGGdO.......", "OkO.OgGGGdO.......", "OkO.OgGGGdO.......", "OkOOOOOOOOOO......", "OkkkkkkkkkkO......", "OOOOOOOOOOOO......", ".OKKO..OKKO.......", ".OKKO..OKKO.......", "..OO....OO........"], "pal": {"O": "#1F1A17", "R": "#B91C1C", "r": "#EF4444", "G": "#5B8DB8", "g": "#8DB8DC", "d": "#2E5A80", "K": "#374151", "k": "#9CA3AF", "Y": "#FACC15"}}, "chat": {"rows": ["..................", "..O.O.............", ".OCOCO............", ".OCCCCOOOOOOO.....", ".OCOCCCcCCcCCO....", ".OCnCCCCcCCcCCO...", "..OOCCCCCCCCCCOO..", "...OOOOOOOOOOOOCO.", "..OOOOOOOOOOOOOOO.", "..OkkkkkkkkkkkkdO.", "..OKKKKKKKKKKKKdO.", "..OKKKKOOOOKKKKdO.", "..OKKKKKKKKKKKKdO.", "..Odddddddddddddd.", "..OOOOOOOOOOOOOOO."], "pal": {"O": "#1F1A17", "K": "#C08A52", "k": "#DDB07A", "d": "#8A5A30", "C": "#F59E0B", "c": "#FCD34D", "w": "#FFFFFF", "n": "#F472B6"}}, "transpalette": {"rows": ["OO................", "OKO...............", ".OKO..............", "..OKO.............", "...OKO............", "....OKO...........", ".....OKO..........", "....OOOOO.........", "....OyYYdOOOOOOOOO", "....OYYYdyyyyyyyyO", "....OddddddddddddO", "....OOOOOOOOOOOOOO", ".....OkO......OkO.", "......O........O.."], "pal": {"O": "#1F1A17", "Y": "#F59E0B", "y": "#FCD34D", "d": "#B45309", "K": "#374151", "k": "#6B7280", "R": "#DC2626"}}, "elevateur": {"rows": ["..OOOOOOOO....O...", "..OK.....O....OO..", "..OK.....O....OkO.", "..OK.....O....OkO.", "..OK.....O....OkO.", ".OOOOOOOOOO...OkO.", ".OgGGGGGGGdO..OkO.", ".OgGBBBGGGdOOOOkO.", ".OgGBWBGGGdGGGOkO.", ".OgGGGGGGGdGGGOkOO", ".OddddddddddddOkkO", ".OOOOOOOOOOOOOOOOO", "..OKKO.....OKKO...", "..OKKO.....OKKO...", "...OO.......OO...."], "pal": {"O": "#1F1A17", "G": "#F6C343", "g": "#FFE59A", "d": "#B7791F", "K": "#374151", "k": "#6B7280", "B": "#9FD8EA", "W": "#FFFFFF"}}, "horloge": {"rows": ["...OOOOOO...", "..OWWWWWWO..", ".OWWWKWWWWO.", "OWKWWKWWWKWO", "OWWWWKWWWWWO", "OWWWWKKKKWWO", "OWWWWWWWWWWO", "OWKWWWWWWKWO", ".OWWWWRWWWO.", "..OWWKWWWO..", "...OOOOOO..."], "pal": {"O": "#1F1A17", "W": "#F8FAFC", "w": "#CBD5E1", "K": "#111827", "R": "#DC2626"}}, "calendrier": {"rows": ["..O....O....", "OOOOOOOOOOOO", "ORRRRRRRRRRO", "ORRRRRRRRRRO", "OWWWWWWWWWWO", "OWkWkWkWkWWO", "OWWWWWWWWWWO", "OWkWkWkWkWWO", "OWWWWWWWRWWO", "OWkWkWkRkRWO", "OWWWWWWWRWWO", "OWkWkWkWkWWO", "OWWWWWWWWWWO", "OOOOOOOOOOOO"], "pal": {"O": "#1F1A17", "W": "#F8FAFC", "R": "#DC2626", "r": "#FCA5A5", "K": "#475569", "k": "#CBD5E1"}}, "manometre": {"rows": ["...OOOOOO...", "..ObbbbbbO..", ".ObWWWWWWBO.", "ObWGWWWWRWBO", "ObWWWWWWWWBO", "ObWWWWWRWWBO", "ObWWWWRWWWBO", "ObWWWKWWWWBO", ".ObWWWWWWBO.", "..OBBBBBBO..", "...OOOOOO...", ".....OBO....", ".....OBO....", "....OOOOO..."], "pal": {"O": "#1F1A17", "B": "#B7791F", "b": "#F6C343", "W": "#FDF6E3", "K": "#111827", "R": "#DC2626", "G": "#16A34A"}}, "casque": {"rows": ["OOOOOOOOOOOO", "OGGGGGGGGGGO", "OGbvvvvvvbGO", "OGvvOOOOvvGO", "OGvOyYYYOvGO", "OGOyYYWYYOGO", "OGOYYYYYYOGO", "OOddddddddOO", "OGbvvvvvvbGO", "OGvvBvBvBvGO", "OGbvvvvvvbGO", "OGGGGGGGGGGO", "OOOOOOOOOOOO"], "pal": {"O": "#1F1A17", "G": "#F6C343", "B": "#24546B", "b": "#9FD8EA", "v": "#E6F7FC", "Y": "#FACC15", "y": "#FDE68A", "d": "#B45309", "W": "#FFFFFF"}}},
+      DECO_MUR = {
+        planning: (h, s) => {
+          if (h < 2 || h >= 34.3 || s < 1 || s >= 33) return null;
+          if (h < 3 || h >= 33.3 || s < 2 || s >= 32) return "#64748B";
+          if (s < 7) return Math.floor(s) === 4 && h > 6 && h < 22 ? "#F8FAFC" : "#334155";
+          let gx = Math.floor(h - 3) % 6,
+            gy = Math.floor(s - 7) % 5;
+          if (gx === 0 || gy === 0) return "#CBD5E1";
+          let k = (Math.floor((h - 3) / 6) * 7 + Math.floor((s - 7) / 5) * 3) % 5;
+          return k === 0 ? "#60A5FA" : k === 1 ? "#F59E0B" : k === 2 ? "#34D399" : "#F8FAFC";
+        },
+        securite: (h, s) => {
+          if (h < 7 || h >= 29.3 || s < 1 || s >= 33) return null;
+          if (h < 8 || h >= 28.3 || s < 2 || s >= 32) return "#1F1A17";
+          let c = 18.15,
+            hw = (s - 6) * 0.62,
+            dx = Math.abs(h - c);
+          if (s >= 6 && s < 21 && dx <= hw) {
+            if (dx > hw - 1.6 || s >= 19.5) return "#DC2626";
+            return s > 11 && dx < (s - 10) * 0.33 ? (dx < (s - 12) * 0.15 ? "#FACC15" : "#F97316") : "#FFFFFF";
+          }
+          if ((Math.floor(s) === 24 || Math.floor(s) === 27) && h > 11 && h < 25) return "#1F1A17";
+          if (Math.floor(s) === 29 && h > 13 && h < 23) return "#1F1A17";
+          return "#FACC15";
+        },
+        kpi: (h, s) => {
+          if (h < 1 || h >= 35.3 || s < 1 || s >= 33) return null;
+          if (h < 2 || h >= 34.3 || s < 2 || s >= 32) return "#111827";
+          if (Math.floor(s) === 4 && h > 4 && h < 18) return "#A78BFA";
+          let x = Math.floor(h) - 4,
+            hb = [7, 11, 9, 15, 19][Math.floor(x / 6)];
+          if (x >= 0 && x < 30 && x % 6 < 4 && s >= 30 - hb && s < 30) return x % 6 === 0 ? "#67E8F9" : "#22D3EE";
+          let ly = 24 - (h - 4) * 0.55;
+          if (h > 4 && h < 33 && Math.abs(s - ly) < 0.8) return "#F472B6";
+          return Math.floor(s) === 30 && h > 3 && h < 33 ? "#475569" : "#0F172A";
+        },
+        depot: (h, s) => {
+          if (h < 1 || h >= 35.3 || s < 1 || s >= 33) return null;
+          if (h < 2 || h >= 34.3 || s < 2 || s >= 32) return "#7A4E10";
+          if (h < 3.5 || h >= 32.8 || s < 3.5 || s >= 30.5) return (Math.floor(h + s) % 4 === 0) ? "#FFE59A" : "#F6C343";
+          if (s < 12) return s < 8 ? "#BAE6FD" : "#E0F2FE";
+          if (s < 15) return Math.abs(h - 18) < (15 - s) * 4 + 6 ? "#94A3B8" : "#E0F2FE";
+          if (s >= 28) return "#64748B";
+          let bx = (Math.floor(h) - 4) % 4,
+            row = Math.floor((s - 15) / 6.5),
+            sy = (s - 15) - row * 6.5;
+          if (bx === 3 || sy > 5.5) return "#CBD5E1";
+          if (sy < 1.2) return bx === 1 ? "#475569" : "#CBD5E1";
+          return row % 2 ? (bx === 0 ? "#2563EB" : "#3B82F6") : bx === 0 ? "#9CA3AF" : "#D1D5DB";
+        },
+      },
+      DECO = [
+        { id: "classeur", nom: "Haut du classeur", defaut: "Peluche de Yoda", items: [
+          { id: "plante", t: "bronze", prix: 100, nom: "Plante verte", d: "Elle survit \xE0 tous les go-live." },
+          { id: "mug", t: "argent", prix: 400, nom: "Mug \xAB J'peux pas, j'ai go-live \xBB", d: "Contenance : trois r\xE9unions." },
+          { id: "maquette", t: "or", prix: 1500, nom: "Maquette de bouteille chrom\xE9e", d: "Sur socle en bois, comme au si\xE8ge." },
+          { id: "cloche", t: "platine", prix: 5e3, nom: "Bouteille en or sous cloche", d: "La pi\xE8ce de collection du Comex." },
+        ] },
+        { id: "mur", nom: "Grand mur", defaut: "Affiche Divalife", items: [
+          { id: "planning", t: "bronze", prix: 150, nom: "Planning des tourn\xE9es", d: "Les livraisons de la semaine, au feutre." },
+          { id: "securite", t: "argent", prix: 500, nom: "Affiche s\xE9curit\xE9", d: "\xAB Gaz sous pression : on ne rigole pas. \xBB" },
+          { id: "kpi", t: "or", prix: 2e3, nom: "Tableau des KPI en n\xE9on", d: "Les ventes brillent, m\xEAme la nuit." },
+          { id: "depot", t: "platine", prix: 5e3, nom: "Le d\xE9p\xF4t, cadre dor\xE9", d: "Vue en coupe d'un d\xE9p\xF4t de bouteilles." },
+        ] },
+        { id: "murPetit", nom: "Petit mur", defaut: "Cible de fl\xE9chettes", items: [
+          { id: "horloge", t: "bronze", prix: 100, nom: "Horloge", d: "Elle avance de cinq minutes, expr\xE8s." },
+          { id: "calendrier", t: "argent", prix: 400, nom: "Calendrier du go-live", d: "Le jour J entour\xE9 en rouge." },
+          { id: "manometre", t: "or", prix: 1500, nom: "Manom\xE8tre en laiton", d: "La pression du projet, en direct." },
+          { id: "casque", t: "platine", prix: 4e3, nom: "Casque d\xE9dicac\xE9 sous verre", d: "Sign\xE9 par tout le Comex." },
+        ] },
+        { id: "sous", nom: "Sous le bureau", defaut: "Poubelle", items: [
+          { id: "carton", t: "bronze", prix: 100, nom: "Carton d'archives", d: "\xAB JDE ancienne version \xBB, ne pas jeter." },
+          { id: "poubelle", t: "argent", prix: 400, nom: "Bouteille recycl\xE9e en poubelle", d: "Le recyclage maison." },
+          { id: "coffre", t: "or", prix: 1500, nom: "Coffre des mots de passe", d: "Le seul endroit s\xFBr du b\xE2timent." },
+          { id: "frigo", t: "platine", prix: 4e3, nom: "Mini-frigo r\xE9tro", d: "Toujours une boisson fra\xEEche pour la nuit." },
+        ] },
+        { id: "devant", nom: "Sol, devant le bureau", defaut: "Ballon", items: [
+          { id: "chariot", t: "bronze", prix: 150, nom: "Chariot \xE0 bouteilles", d: "Le classique de l'entrep\xF4t." },
+          { id: "chat", t: "argent", prix: 600, nom: "Chat qui dort sur un carton", d: "Il surveille le projet, les yeux ferm\xE9s." },
+          { id: "transpalette", t: "or", prix: 2e3, nom: "Transpalette miniature", d: "T\xE9l\xE9command\xE9, pour les livraisons urgentes." },
+          { id: "elevateur", t: "platine", prix: 5e3, nom: "Chariot \xE9l\xE9vateur dor\xE9", d: "Employ\xE9 du mois, pour toujours." },
+        ] },
+      ],
+      decoItem = (id) => DECO.flatMap((e) => e.items).find((x) => x.id === id),
+      // Objets posés (lus au lancement d'une partie)
+      decoPose = () => {
+        try {
+          let d = sucLit().deco,
+            o = {};
+          for (let e of DECO) d.pose[e.id] && d.achats[d.pose[e.id]] && e.items.some((x) => x.id === d.pose[e.id]) && (o[e.id] = d.pose[e.id]);
+          return o;
+        } catch {
+          return {};
+        }
+      },
+      // Dessine un objet (lignes de pixels) posé en (cx, base)
+      decoDessine = (r, id, cx, by) => {
+        let sp = DECO_SPR[id];
+        if (!sp) return;
+        let w = sp.rows[0].length,
+          x0 = Math.round(cx - w / 2),
+          y0 = Math.round(by) - sp.rows.length;
+        sp.rows.forEach((row, ry) => [...row].forEach((ch, rx) => ch !== "." && r.set(x0 + rx, y0 + ry, l(sp.pal[ch]))));
+      },
+      // Objet du petit mur : centré dans la zone de la cible (12 x 21)
+      decoMurPetit = (id) => {
+        let sp = DECO_SPR[id],
+          oy = Math.floor((21 - sp.rows.length) / 2);
+        return (h, s) => {
+          let x = Math.floor(h),
+            y = Math.floor(s) - oy,
+            ch = y >= 0 && y < sp.rows.length ? sp.rows[y][x] : void 0;
+          return ch && ch !== "." ? l(sp.pal[ch]) : null;
+        };
+      };
     function gi(t) {
+      let dp = decoPose();
       let r = new Wt(Lt, Ct);
       ja(r, 0, 6, 0, 6, 0, (h, s, k, L) => {
         let b = ra(k, L),
@@ -3628,7 +3746,10 @@ if (!window.React || !window.ReactDOM) {
               : hi((h * 44) / n, s * 0.75 + 2, k);
         };
       ($t(r, "L", 0, Ft.j0, Ft.j1, Ft.z0, Ft.z1, (h, s) => p(h, s, t)),
-        $t(r, "R", 0, 1.4, 3.05, 35, 69, (h, s, k, L) => {
+        $t(r, "R", 0, 1.4, 3.05, 35, 69, dp.mur ? (h, s) => {
+          let c = DECO_MUR[dp.mur](h, s);
+          return c ? l(c) : null;
+        } : (h, s, k, L) => {
           if (h < 1.2 || h >= 36.3 - 1.2 || s < 2.2 || s >= 33)
             return s < 1.4 && h > 3 && h < 36.3 - 3 ? l("#9CA3AF") : l("#BFC5CC");
           if (s < 3.2 && h > 4 && h < 7) return l("#1F2937");
@@ -3645,7 +3766,7 @@ if (!window.React || !window.ReactDOM) {
           let F = Math.abs((h - s * 1.2) % 14) < 1.2 && h > 6 && h < 36.3 - 6;
           return l(F ? "#FFFFFF" : "#F3F5F7");
         }),
-        $t(r, "R", 0, 3.22, 3.78, 41, 62, (h, s) => {
+        $t(r, "R", 0, 3.22, 3.78, 41, 62, dp.murPetit ? decoMurPetit(dp.murPetit) : (h, s) => {
           let k = (h - 6.16) / 5.9,
             L = (s - 10.5) / 9.8,
             b = Math.sqrt(k * k + L * L);
@@ -3716,8 +3837,9 @@ if (!window.React || !window.ReactDOM) {
         let s = A(0.5, 0.29, h + 3.5);
         r.rect(s[0] - 1, s[1], 3, 1, l("#E5E7EB"));
       }
-      // Peluche Bébé Yoda (boule d'argent) posée sur le classeur, à la place de la plante
-      {
+      // Peluche Bébé Yoda (boule d'argent) posée sur le classeur, à la place de la plante (ou l'objet de décor choisi)
+      if (dp.classeur) decoDessine(r, dp.classeur, 170, 74);
+      else {
         let rows = [
           "....OOOOOOO....",
           "OO.OGGGgGGGO.OO",
@@ -3911,8 +4033,12 @@ if (!window.React || !window.ReactDOM) {
       return r;
     }
     function ki(t) {
-      let r = new Wt(Lt, Ct);
-      {
+      let r = new Wt(Lt, Ct),
+        dp = decoPose();
+      if (dp.sous) {
+        let [x, y] = A(2.18, 4.74, 0);
+        decoDessine(r, dp.sous, x, y + 3);
+      } else {
         // poubelle ronde évasée : corps crème (3/4 haut) sur socle noir (1/4 bas), rebord évasé noir
         let ci = 2.18,
           cj = 4.74,
@@ -3960,7 +4086,10 @@ if (!window.React || !window.ReactDOM) {
           r.set(x, y, l(c));
         }
       }
-      {
+      if (dp.devant) {
+        let [x, y] = A(he.i, he.j, 0);
+        decoDessine(r, dp.devant, x, y + 2);
+      } else {
         let [i, o] = A(he.i, he.j, 0),
           n = he.r;
         r.ellipse(i + 1, o - 0.5, n + 0.5, n * 0.38, [12, 14, 20, 120]);
@@ -3985,8 +4114,11 @@ if (!window.React || !window.ReactDOM) {
       return (t && r.tintNight(), r);
     }
     var va = null;
+    var vaDeco = null;
     function Le() {
-      if (va) return va;
+      let dk = JSON.stringify(decoPose());
+      if (va && dk === vaDeco) return va;
+      vaDeco = dk;
       let t = (r, i) => {
         let o = [];
         for (let n = 0; n < Lt * Ct; n++) (r.d[n * 4 + 3] || i.d[n * 4 + 3]) && o.push(n);
@@ -11024,7 +11156,8 @@ if (!window.React || !window.ReactDOM) {
       sucNet = (x) => {
         let ok = {},
           heros = {},
-          cumul = {};
+          cumul = {},
+          deco = { achats: {}, pose: {} };
         if (x && typeof x == "object") {
           if (x.ok && typeof x.ok == "object")
             for (let k of sucCles()) typeof x.ok[k] == "string" && (ok[k] = x.ok[k].slice(0, 30));
@@ -11038,8 +11171,15 @@ if (!window.React || !window.ReactDOM) {
               let v = Number(x.cumul[k]);
               isFinite(v) && v > 0 && (cumul[k] = Math.min(1e9, Math.floor(v)));
             }
+          if (x.deco && typeof x.deco == "object") {
+            let a0 = x.deco.achats || {},
+              p0 = x.deco.pose || {};
+            for (let e of DECO)
+              for (let it of e.items) a0[it.id] && (deco.achats[it.id] = 1);
+            for (let e of DECO) typeof p0[e.id] == "string" && (p0[e.id] === "" || e.items.some((it) => it.id === p0[e.id])) && (deco.pose[e.id] = p0[e.id]);
+          }
         }
-        return { ok, heros, cumul };
+        return { ok, heros, cumul, deco };
       },
       sucLit = () => sucNet(xr(SUK, null)),
       // Pièces disponibles : succès et paliers obtenus + gains des parties (les achats de décor viendront en déduction)
@@ -11049,10 +11189,15 @@ if (!window.React || !window.ReactDOM) {
         for (let c of SUC_CAR) c.p.forEach((x, i) => st.ok[sucPalId(c, i)] && (n += SUC_GAIN[SUC_TIERS[i]]));
         return n;
       },
+      // Solde : pièces gagnées moins les objets de décor achetés
+      sucSolde = (st) => sucPieces(st) - Object.keys(st.deco.achats).reduce((n, id) => n + ((decoItem(id) || {}).prix || 0), 0),
       // Fusion de deux états : chaque succès garde sa date la plus ancienne, chaque compteur sa plus grande valeur
       sucFus = (...l) => {
-        let r = { ok: {}, heros: {}, cumul: {} };
+        let r = { ok: {}, heros: {}, cumul: {}, deco: { achats: {}, pose: {} } };
         for (let x of l.map(sucNet)) {
+          // Objets achetés : jamais perdus ; objet posé : celui du dernier état qui en indique un
+          Object.assign(r.deco.achats, x.deco.achats);
+          Object.assign(r.deco.pose, x.deco.pose);
           for (let [k, v] of Object.entries(x.ok)) (!r.ok[k] || v < r.ok[k]) && (r.ok[k] = v);
           for (let [k, v] of Object.entries(x.heros)) {
             let a0 = r.heros[k] || { f: 0, o: 0 };
@@ -11068,6 +11213,8 @@ if (!window.React || !window.ReactDOM) {
           sucCles().map((k) => y.ok[k] || ""),
           ["francois", "gabriel", "hugues", "samuel"].map((k) => (y.heros[k] ? y.heros[k].f + "" + y.heros[k].o : "00")),
           [...SUC_CAR.map((c) => c.id), "pieces"].map((k) => y.cumul[k] || 0),
+          Object.keys(y.deco.achats).sort(),
+          DECO.map((e) => y.deco.pose[e.id] || ""),
         ]);
       },
       // Fin de partie : succès et paliers débloqués par cette partie, et pièces gagnées
@@ -11443,7 +11590,7 @@ if (!window.React || !window.ReactDOM) {
               "div",
               { className: "flex flex-wrap items-baseline gap-x-3" },
               h("span", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, `Succ\xE8s ${n}/${nbSuccesMax()}`),
-              h("span", { className: "flex items-center gap-1 text-lg font-bold", style: { fontFamily: Yr, color: "#92400E" }, title: "Pi\xE8ces gagn\xE9es" }, h(Piece, { taille: 18 }), et(sucPieces(st))),
+              h("span", { className: "flex items-center gap-1 text-lg font-bold", style: { fontFamily: Yr, color: "#92400E" }, title: "Pi\xE8ces gagn\xE9es" }, h(Piece, { taille: 18 }), et(sucSolde(st))),
             ),
             h(
               "button",
@@ -11562,9 +11709,138 @@ if (!window.React || !window.ReactDOM) {
           { bg: "#FACC15", fg: W, onClick: () => setOuv(!0), title: "Voir les succ\xE8s", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" },
           h(SucIcone, { t: "or", id: "comex", taille: 24 }),
           `Succ\xE8s ${n}/${nbSuccesMax()}`,
-          h("span", { className: "flex items-center gap-1", style: { borderLeft: `2px solid ${W}`, paddingLeft: 8 } }, h(Piece, { taille: 18 }), et(sucPieces(st))),
+          h("span", { className: "flex items-center gap-1", style: { borderLeft: `2px solid ${W}`, paddingLeft: 8 } }, h(Piece, { taille: 18 }), et(sucSolde(st))),
         ),
         ouv && h(SucGrille, { onClose: () => setOuv(!1) }),
+      );
+    }
+    // Décor : aperçu en pixels d'un objet (dessin de la boutique)
+    function DecoApercu({ id, zoom: z = 3 }) {
+      let ref = (0, a.useRef)(null),
+        sp = DECO_SPR[id],
+        mf = DECO_MUR[id],
+        w = sp ? sp.rows[0].length : 36,
+        hh = sp ? sp.rows.length : 34;
+      (0, a.useEffect)(() => {
+        let c = ref.current;
+        if (!c) return;
+        let g = c.getContext("2d");
+        g.clearRect(0, 0, w, hh);
+        for (let y = 0; y < hh; y++)
+          for (let x = 0; x < w; x++) {
+            let col = sp ? (sp.rows[y][x] !== "." ? sp.pal[sp.rows[y][x]] : null) : mf(x + 0.5, y + 0.5);
+            col && ((g.fillStyle = col), g.fillRect(x, y, 1, 1));
+          }
+      }, [id]);
+      return a.default.createElement("canvas", { ref, width: w, height: hh, "aria-hidden": "true", style: { width: w * z, height: hh * z, imageRendering: "pixelated" } });
+    }
+    // Boutique : un emplacement par ligne, l'objet d'origine puis 4 objets du plus courant au plus rare
+    function DecoBoutique({ onClose: fermer }) {
+      let h = a.default.createElement,
+        st = useSucces(),
+        solde = sucSolde(st),
+        maj = (f) => {
+          let x = sucLit();
+          (f(x), Tr(SUK, x), window.dispatchEvent(new Event("bpe-succes")), sucSync());
+        },
+        acheter = (e, it) =>
+          sucSolde(sucLit()) >= it.prix && (vt.caisse && vt.caisse(), maj((x) => ((x.deco.achats[it.id] = 1), (x.deco.pose[e.id] = it.id)))),
+        poser = (e, id) => maj((x) => (x.deco.pose[e.id] = id));
+      (0, a.useEffect)(() => {
+        let k = (ev) => ev.key === "Escape" && (ev.preventDefault(), ev.stopPropagation(), fermer());
+        return (window.addEventListener("keydown", k, !0), () => window.removeEventListener("keydown", k, !0));
+      }, []);
+      let carte = (e, it) => {
+        let pose = it ? (st.deco.pose[e.id] || "") === it.id : !st.deco.pose[e.id],
+          achete = !it || st.deco.achats[it.id],
+          peut = it && !achete && solde >= it.prix,
+          col = it ? SUC_T[it.t][1] : "#94A3B8";
+        return h(
+          "li",
+          {
+            key: it ? it.id : "defaut",
+            className: "flex flex-col items-center gap-1 border-[3px] text-center",
+            style: { padding: 6, borderColor: pose ? W : col, background: pose ? "#FEF3C7" : "#FFFFFF", boxShadow: pose ? `3px 3px 0 ${W}` : "none" },
+          },
+          h(
+            "div",
+            { className: "flex items-end justify-center", style: { height: 72, width: "100%", background: "#E7DFCF" } },
+            it ? h(DecoApercu, { id: it.id, zoom: DECO_MUR[it.id] ? 2 : 4 }) : h("span", { className: "text-[12px] text-[#64748B]", style: { fontFamily: Yr, alignSelf: "center" } }, "D'origine"),
+          ),
+          h(
+            "span",
+            { className: "flex items-center gap-1 text-[12px] font-bold", style: { color: it ? "#334155" : "#64748B" } },
+            it && h(SucIcone, { t: it.t, taille: 12 }),
+            it ? SUC_T[it.t][0] : "Gratuit",
+          ),
+          h("span", { className: "text-[13px] font-bold leading-tight", style: { fontFamily: Yr } }, it ? it.nom : e.defaut),
+          it && h("span", { className: "text-[12px] leading-tight text-[#475569]", style: { fontFamily: Yr } }, it.d),
+          h(
+            "button",
+            {
+              type: "button",
+              disabled: pose || (!achete && !peut),
+              onClick: () => (achete ? poser(e, it ? it.id : "") : acheter(e, it)),
+              className: "jde-btn mt-auto flex w-full items-center justify-center gap-1 border-2 px-1 py-0.5 text-[13px] font-semibold disabled:cursor-not-allowed",
+              style: {
+                fontFamily: Yr,
+                borderColor: W,
+                color: W,
+                background: pose ? "#BBF7D0" : achete ? "#BAE6FD" : peut ? "#FACC15" : "#E2E8F0",
+                opacity: !pose && !achete && !peut ? 0.7 : 1,
+              },
+            },
+            pose ? "Pos\xE9 ✓" : achete ? "Poser" : [h(Piece, { key: "p", taille: 13 }), et(it.prix)],
+          ),
+        );
+      };
+      return h(
+        "div",
+        {
+          className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0B1B2B]/75 p-3",
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-label": "D\xE9cor du bureau",
+          onClick: (ev) => ev.target === ev.currentTarget && fermer(),
+        },
+        h(
+          "div",
+          { className: "jde-pop my-auto w-full max-w-4xl border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
+          h(
+            "div",
+            { className: "flex items-center justify-between gap-2" },
+            h(
+              "div",
+              { className: "flex flex-wrap items-baseline gap-x-3" },
+              h("span", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, "D\xE9cor du bureau"),
+              h("span", { className: "flex items-center gap-1 text-lg font-bold", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), et(solde)),
+            ),
+            h(
+              "button",
+              { type: "button", autoFocus: !0, onClick: fermer, className: "jde-btn border-[3px] px-3 py-0.5 text-base font-semibold", style: { background: "#FACC15", color: W, borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr } },
+              "Fermer",
+            ),
+          ),
+          h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Les pi\xE8ces se gagnent avec les succ\xE8s et \xE0 chaque partie finie. Un objet achet\xE9 est gard\xE9 pour toujours ; il appara\xEEt dans le bureau d\xE8s la prochaine partie."),
+          DECO.map((e) =>
+            h(
+              "section",
+              { key: e.id, className: "mt-3" },
+              h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, e.nom),
+              h("ul", { className: "mt-1.5 grid gap-1.5", style: { gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" } }, carte(e, null), e.items.map((it) => carte(e, it))),
+            ),
+          ),
+        ),
+      );
+    }
+    function DecoBtn() {
+      let h = a.default.createElement,
+        [ouv, setOuv] = (0, a.useState)(!1);
+      return h(
+        a.default.Fragment,
+        null,
+        h(mt, { bg: "#BAE6FD", fg: W, onClick: () => setOuv(!0), title: "Acheter et poser des objets dans le bureau", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" }, h(SucIcone, { t: "platine", id: "cloche", taille: 24 }), "D\xE9cor"),
+        ouv && h(DecoBoutique, { onClose: () => setOuv(!1) }),
       );
     }
     // Premier lancement sur un appareil : nouveau joueur (pseudo à créer) ou joueur qui revient (code joueur à saisir)
@@ -12416,7 +12692,7 @@ if (!window.React || !window.ReactDOM) {
                 w ? (nvConf ? "Effacer la partie en cours ?" : "Nouvelle partie") : "Commencer le projet",
               ),
             ),
-            a.default.createElement(SucBtn, null),
+            a.default.createElement("div", { className: "flex flex-wrap items-center justify-center gap-2.5" }, a.default.createElement(SucBtn, null), a.default.createElement(DecoBtn, null)),
             a.default.createElement(Lbd, { records: i, pseudo: psv }),
             a.default.createElement(
               "p",
