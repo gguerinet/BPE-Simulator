@@ -12116,12 +12116,17 @@ if (!window.React || !window.ReactDOM) {
                       {
                         type: "button",
                         onClick: () => sucReclamer(att.map((x) => x[0])),
-                        className: "jde-btn jde-appel flex shrink-0 items-center gap-1 border-2 px-2 py-0.5 text-[13px] font-bold",
+                        className: "jde-btn jde-appel flex shrink-0 flex-col items-center border-2 px-2 py-0.5 text-[13px] font-bold leading-tight",
                         style: { fontFamily: Yr, borderColor: W, background: "#FACC15", color: W, boxShadow: `2px 2px 0 ${W}` },
                       },
-                      "R\xE9clamer +",
+                      "R\xE9clamer",
+                      h(
+                        "span",
+                        { className: "flex items-center gap-1" },
+                        "+",
                       et(att.reduce((n, x) => n + x[1], 0)),
-                      h(Piece, { taille: 13 }),
+                        h(Piece, { taille: 13 }),
+                      ),
                     ),
                 );
               }),
@@ -12160,12 +12165,17 @@ if (!window.React || !window.ReactDOM) {
                       {
                         type: "button",
                         onClick: () => sucReclamer([d.id]),
-                        className: "jde-btn jde-appel flex shrink-0 items-center gap-1 border-2 px-2 py-0.5 text-[13px] font-bold",
+                        className: "jde-btn jde-appel flex shrink-0 flex-col items-center border-2 px-2 py-0.5 text-[13px] font-bold leading-tight",
                         style: { fontFamily: Yr, borderColor: W, background: "#FACC15", color: W, boxShadow: `2px 2px 0 ${W}` },
                       },
-                      "R\xE9clamer +",
+                      "R\xE9clamer",
+                      h(
+                        "span",
+                        { className: "flex items-center gap-1" },
+                        "+",
                       et(SUC_GAIN[d.t]),
-                      h(Piece, { taille: 13 }),
+                        h(Piece, { taille: 13 }),
+                      ),
                     ),
                   );
                 }),
