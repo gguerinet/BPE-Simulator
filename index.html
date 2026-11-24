@@ -12337,7 +12337,11 @@ if (!window.React || !window.ReactDOM) {
           { className: "jde-pop my-auto w-full max-w-4xl border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
           h(
             "div",
-            { className: "flex items-center justify-between gap-2" },
+            {
+              className: "flex items-center justify-between gap-2",
+              // En-tête fixé en haut pendant le défilement : « Fermer » reste à portée de main
+              style: { position: "sticky", top: 0, zIndex: 3, background: "#FFFBEB", paddingTop: 6, paddingBottom: 6, marginTop: -6, borderBottom: `3px solid ${W}` },
+            },
             h(
               "div",
               { className: "flex flex-wrap items-baseline gap-x-3" },
@@ -12350,7 +12354,7 @@ if (!window.React || !window.ReactDOM) {
               "Fermer",
             ),
           ),
-          h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Les pi\xE8ces se gagnent avec les succ\xE8s et \xE0 chaque partie finie. Un objet achet\xE9 est gard\xE9 pour toujours ; il appara\xEEt dans le bureau d\xE8s la prochaine partie."),
+          h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Les pi\xE8ces se gagnent avec les succ\xE8s et \xE0 chaque partie finie."),
           DECO.map((e) =>
             h(
               "section",
