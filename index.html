@@ -12191,7 +12191,8 @@ if (!window.React || !window.ReactDOM) {
             fg: W,
             onClick: () => setOuv(!0),
             title: att ? `Succ\xE8s : ${att} r\xE9compense${att > 1 ? "s" : ""} \xE0 r\xE9clamer` : "Voir les succ\xE8s",
-            className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" + (att ? " jde-appel" : ""),
+            className: "flex items-center gap-2 px-3 text-base sm:text-lg" + (att ? " jde-appel" : ""),
+            style: { height: 44 },
           },
           h(SucIcone, { t: "or", id: "comex", taille: 24 }),
           "Succ\xE8s",
@@ -12366,7 +12367,7 @@ if (!window.React || !window.ReactDOM) {
       return h(
         a.default.Fragment,
         null,
-        h(mt, { bg: "#BAE6FD", fg: W, onClick: () => setOuv(!0), title: "Boutique : acheter et poser des objets dans le bureau", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" }, h(IconeBureau, null), "Boutique"),
+        h(mt, { bg: "#BAE6FD", fg: W, onClick: () => setOuv(!0), title: "Boutique : acheter et poser des objets dans le bureau", className: "flex items-center gap-2 px-3 text-base sm:text-lg", style: { height: 44 } }, h(IconeBureau, null), "Boutique"),
         ouv && h(DecoBoutique, { onClose: () => setOuv(!1) }),
       );
     }
