@@ -10989,14 +10989,14 @@ if (!window.React || !window.ReactDOM) {
         { id: "heure", v: 0, t: "or", nom: "Pile \xE0 l'heure", c: "Go-live au plus tard \xE0 J+85.", ok: (f) => f.total <= 85 },
         { id: "zerodefaut", v: 0, t: "platine", nom: "Z\xE9ro d\xE9faut", c: "Finir avec au moins 85 % de qualit\xE9.", ok: (f) => f.qualite >= 85 },
         { id: "kamikaze", v: 0, t: "or", nom: "Kamikaze", c: "R\xE9ussir un GO avec moins de 50 % de qualit\xE9.", ok: (f) => f.gonogoChoix === "go-ok" && f.qualite < 50 },
-        { id: "zeroeuro", v: 1, t: "argent", nom: "Z\xE9ro euro", c: "M\xE9daille d'or sans payer une seule mission b.workchoc.", ok: (f, s) => !f.cout && s >= 8e3 },
-        { id: "famille", v: 1, t: "argent", nom: "Vie de famille", c: "M\xE9daille d'or en rentrant chez toi tous les week-ends.", ok: (f, s) => s >= 8e3 && !f.nWeBureau && !f.nUrg && f.weekendsMaison > 0 },
-        { id: "corps", v: 1, t: "argent", nom: "Corps et \xE2me", c: "M\xE9daille de bronze sans jamais rentrer chez toi le week-end.", ok: (f, s) => s >= 5e3 && !f.weekendsMaison },
-        { id: "sanscafe", v: 1, t: "argent", nom: "Sans caf\xE9", c: "M\xE9daille d'argent sans boire un seul caf\xE9.", ok: (f, s) => s >= 7e3 && !f.nCafes },
-        { id: "noctambule", v: 1, t: "argent", nom: "Noctambule", c: "Travailler 50 nuits dans une partie.", ok: (f) => (f.nightsWorked || 0) >= 50 },
-        { id: "sage", v: 1, t: "argent", nom: "Le sage", c: "Choisir NO-GO et finir avec 8 500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
-        { id: "rescape", v: 1, t: "or", nom: "Rescap\xE9", c: "M\xE9daille d'argent malgr\xE9 un arr\xEAt maladie.", ok: (f, s) => s >= 7e3 && f.nBurnout > 0 },
-        { id: "mercenaire", v: 1, t: "or", nom: "Mercenaire", c: "M\xE9daille de bronze apr\xE8s un week-end d'urgence pour une autre soci\xE9t\xE9.", ok: (f, s) => s >= 5e3 && f.nUrg > 0 },
+        { id: "zeroeuro", v: 1, t: "argent", nom: "Z\xE9ro euro", c: "Ne payer aucune mission b.workchoc.", ok: (f) => !f.cout },
+        { id: "famille", v: 1, t: "argent", nom: "Vie de famille", c: "Rentrer chez toi tous les week-ends.", ok: (f) => !f.nWeBureau && !f.nUrg && f.weekendsMaison > 0 },
+        { id: "corps", v: 1, t: "or", nom: "Corps et \xE2me", c: "Ne jamais rentrer chez toi le week-end.", ok: (f) => !f.weekendsMaison },
+        { id: "sanscafe", v: 1, t: "argent", nom: "Sans caf\xE9", c: "Ne boire aucun caf\xE9.", ok: (f) => !f.nCafes },
+        { id: "noctambule", v: 1, t: "argent", nom: "Noctambule", c: "Travailler 50 nuits.", ok: (f) => (f.nightsWorked || 0) >= 50 },
+        { id: "sage", v: 1, t: "argent", nom: "Le sage", c: "Choisir NO-GO et finir avec 8\u00A0500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
+        { id: "rescape", v: 1, t: "or", nom: "Rescap\xE9", c: "Revenir d'un arr\xEAt maladie.", ok: (f) => f.nBurnout > 0 },
+        { id: "mercenaire", v: 1, t: "platine", nom: "Mercenaire", c: "Accepter un week-end d'urgence pour une autre soci\xE9t\xE9.", ok: (f) => f.nUrg > 0 },
         { id: "delegateur", v: 2, t: "bronze", nom: "D\xE9l\xE9gateur", c: "Passer 5 tickets \xE0 la TMA dans une partie.", ok: (f) => (f.nTicketsTMA || 0) >= 5 },
         { id: "denicheur", v: 2, t: "argent", nom: "D\xE9nicheur", c: "D\xE9jouer toutes les fausses bonnes id\xE9es d'une partie (au moins 3).", ok: (f) => f.nPieges >= 3 && f.piegesEvites >= f.nPieges },
         { id: "formateur", v: 2, t: "or", nom: "Formateur", c: "Suivre 8 ateliers PMO dans une partie.", ok: (f) => (f.nAteliers || 0) >= 8 },
@@ -11045,7 +11045,7 @@ if (!window.React || !window.ReactDOM) {
           for (let d of SUC)
             if (!st.ok[d.id])
               try {
-                d.ok(f, sc, st.heros) && ((st.ok[d.id] = new Date().toISOString()), nv.push(d));
+                d.ok(f, sc, st.heros) && (d.v !== 1 || sc >= 7e3) && ((st.ok[d.id] = new Date().toISOString()), nv.push(d));
               } catch {}
           return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), nv);
         } catch {
@@ -11397,6 +11397,7 @@ if (!window.React || !window.ReactDOM) {
               "section",
               { key: vi, className: "mt-3" },
               h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, vol),
+              vi === 1 && h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Chacun se gagne en finissant avec au moins la m\xE9daille d'argent (7\u00A0000 points)."),
               h(
                 "ul",
                 { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
