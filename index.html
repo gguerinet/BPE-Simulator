@@ -3676,21 +3676,50 @@ if (!window.React || !window.ReactDOM) {
           decoFace(g, "R", cj + 0.16, ci - 0.2, ci + 0.2, z + 3, z + 4.5, (h) => (Math.abs(h - 8.8) < 2.5 ? "#4A2E18" : null));
         },
         foot: (g, ci, cj, z) => {
-          // Ballon de foot : sphère blanche éclairée, pentagones noirs, coutures grises
-          let [cx, cy] = A(ci, cj, z + 6),
-            R = 6.2;
+          // Ballon de foot : vraie géométrie de l'icosaèdre tronqué (12 pentagones noirs, 20 hexagones blancs),
+          // chaque pixel prend la face la plus proche, coutures là où deux faces se touchent ; ombrage de sphère
+          let [cx, cy] = A(ci, cj, z + 7),
+            R = 7.2,
+            P = 1.618,
+            nrm = ([x, y, w]) => {
+              let n = Math.hypot(x, y, w);
+              return [x / n, y / n, w / n];
+            },
+            sg = [1, -1],
+            pen = [],
+            hex = [];
+          for (let a of sg) for (let b of sg) pen.push([0, a, b * P], [a, b * P, 0], [a * P, 0, b]);
+          for (let a of sg) for (let b of sg) {
+            for (let c of sg) hex.push([a, b, c]);
+            hex.push([0, a / P, b * P], [a / P, b * P, 0], [a * P, 0, b / P]);
+          }
+          // rotation : un pentagone face au joueur, légèrement incliné
+          let rot = ([x, y, w]) => {
+              let t = Math.atan2(1, P),
+                y2 = y * Math.cos(t) - w * Math.sin(t),
+                w2 = y * Math.sin(t) + w * Math.cos(t),
+                q = 0.35,
+                x3 = x * Math.cos(q) - y2 * Math.sin(q),
+                y3 = x * Math.sin(q) + y2 * Math.cos(q);
+              return nrm([x3, y3, w2]);
+            },
+            faces = [...pen.map((v) => [rot(v), 1]), ...hex.map((v) => [rot(v), 0])];
           for (let y = Math.floor(cy - R); y <= Math.ceil(cy + R); y++)
             for (let x = Math.floor(cx - R); x <= Math.ceil(cx + R); x++) {
               let u = (x + 0.5 - cx) / R,
                 v = (cy - y - 0.5) / R;
               if (u * u + v * v > 1) continue;
               let w = Math.sqrt(1 - u * u - v * v),
-                t = decoLum(u, v),
-                // pentagones : directions d'un icosaèdre projetées sur la sphère
-                pts = [[0.1, 0.12, 0.99], ...[0, 1, 2, 3, 4].map((q) => [0.89 * Math.cos(q * 1.2566 + 0.3), 0.89 * Math.sin(q * 1.2566 + 0.3), 0.45])],
-                pent = pts.some(([a, b, c]) => u * a + v * b + w * c > 0.955),
-                couture = !pent && pts.some(([a, b, c]) => Math.abs(u * a + v * b + w * c - 0.8) < 0.035);
-              g.set(x, y, l(pent ? (t > 0.6 ? "#374151" : "#111827") : couture ? "#94A3B8" : t > 0.55 ? "#FFFFFF" : t > 0.38 ? "#F1F5F9" : t > 0.22 ? "#D9DEE5" : "#AEB8C4"));
+                best = -2,
+                second = -2,
+                noir = 0;
+              for (let [[fx, fy, fw], pn] of faces) {
+                let d = u * fx + v * fy + w * fw;
+                d > best ? ((second = best), (best = d), (noir = pn)) : d > second && (second = d);
+              }
+              let t = decoLum(u, v),
+                couture = best - second < 0.035;
+              g.set(x, y, l(noir ? (t > 0.65 ? "#4B5563" : t > 0.4 ? "#1F2937" : "#0B0F19") : couture ? (t > 0.5 ? "#AEB8C4" : "#8A96A6") : t > 0.6 ? "#FFFFFF" : t > 0.42 ? "#F1F4F8" : t > 0.27 ? "#D9DFE7" : "#B4BECA"));
             }
         },
         poubelle: (g, ci, cj, z) => {
