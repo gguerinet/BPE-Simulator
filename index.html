@@ -3549,56 +3549,355 @@ if (!window.React || !window.ReactDOM) {
     }
 
     // Décor du bureau : objets achetés avec les pièces, un objet posé par emplacement (sinon l'objet d'origine)
-    var DECO_SPR = {"plante": {"rows": ["....g..G..g....", "...gGg.Gg.Gg...", "..gGdGgGGdGg...", "...GgdGGgGdG.g.", ".gGGdGgdGGgGGg.", "..gGGgGGdGGgG..", "...dGgGdGgGd...", "....OOOOOOO....", "....OtttttO....", "....OPPpPPO....", "....OPPpPPO....", ".....OPpPO.....", ".....OPPPO.....", ".....OOOOO....."], "pal": {"O": "#1F1A17", "G": "#3F8F3A", "g": "#7BC96F", "d": "#2C6B2A", "P": "#C2683A", "p": "#E08A55", "t": "#5A3A22"}}, "mug": {"rows": ["...OOOOOOO.....", "..OWWWWWWWO....", "..OwwwwwwwO....", "..OWWWWWWWOOO..", "..OWRRWBBWO.O..", "..OWRWWBWWO.O..", "..OWRRWBBWO.O..", "..OWWWWWWWOOO..", "..OWWWWWWWO....", "..OwWWWWWwO....", "...OOOOOOO....."], "pal": {"O": "#1F1A17", "W": "#F8FAFC", "w": "#CBD5E1", "R": "#DC2626", "B": "#0096DC"}}, "maquette": {"rows": ["......OOO......", ".....OKKKO.....", "......OKO......", ".....OOOOO.....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OChCCcO....", "....OccccKO....", "..OOOOOOOOOOO..", "..ObbbbbbbbbO..", "..OBBBBBBBBBO..", "..OOOOOOOOOOO.."], "pal": {"O": "#1F1A17", "C": "#E5E7EB", "c": "#9CA3AF", "h": "#FFFFFF", "K": "#6B7280", "B": "#7A4E10", "b": "#B7791F"}}, "cloche": {"rows": ["....OOOOOOO....", "...OvvhvvvvO...", "..OvhvvGvvvvO..", "..OvhvOdOvvvO..", "..OhvOGgGOvvO..", "..OhvOGgGOvvO..", "..OvvOGgGOvvO..", "..OvvOGgGOvvO..", "..OvvOGgGOvvO..", "..OvvOdddOvvO..", ".OOOOOOOOOOOOO.", ".ObbbbbbbbbbbO.", ".OBBBBBBBBBBBO.", ".OOOOOOOOOOOOO."], "pal": {"O": "#1F1A17", "V": "#BFE9F5", "v": "#E6F7FC", "h": "#FFFFFF", "G": "#F6C343", "g": "#FFE59A", "d": "#B7791F", "B": "#24546B", "b": "#4F8BA6"}}, "carton": {"rows": [".OOOOOOOOOOO.", "OkkkkkkkkkkkO", "OkkkkkkkkkkkO", "OOOOOOOOOOOOO", "OKKKKKKKKKKdO", "OKOOOOOOOKKdO", "OKOWWWWWOKKdO", "OKOWTTTWOKKdO", "OKOWWWWWOKKdO", "OKOOOOOOOKKdO", "OKKKKKKKKKKdO", "OKKKKKKKKKKdO", "Odddddddddddd", "OOOOOOOOOOOOO"], "pal": {"O": "#1F1A17", "K": "#C08A52", "k": "#DDB07A", "d": "#8A5A30", "W": "#F8FAFC", "T": "#334155"}}, "poubelle": {"rows": ["...OOOOOOO...", "..OKKkkKKKO..", "..OOOOOOOOO..", ".OgGGGGGGGdO.", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGYYYYYYGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", "OgGGGGGGGGGdO", ".OddddddddddO", "..OOOOOOOOO.."], "pal": {"O": "#1F1A17", "G": "#5B8DB8", "g": "#8DB8DC", "d": "#2E5A80", "K": "#374151", "k": "#6B7280", "Y": "#FACC15"}}, "coffre": {"rows": ["OOOOOOOOOOOOO", "OhssssssssssO", "OsSSSSSSSSSdO", "OsSOOOOOOOSdO", "OsSOdyyYdOSdO", "OsSOyOOOYOSdO", "OsSOyOYOYOSdO", "OsSOYOOOYOSdO", "OsSOdYYYdOSdO", "OsSOOOOOOOSdO", "OsSSSSSSSSSdO", "OdddddddddddO", "OOOOOOOOOOOOO", ".OO.......OO."], "pal": {"O": "#1F1A17", "S": "#4B5563", "s": "#6B7280", "d": "#1F2937", "Y": "#F6C343", "y": "#FFE59A", "h": "#9CA3AF"}}, "frigo": {"rows": [".OOOOOOOOOOO.", "OrrrrrrrrrrdO", "OrRRRRRRRRRdO", "OrRWWWWWWRRdO", "OrRRRRRRRRRdO", "OOOOOOOOOOOOO", "OrRRRRRRRRCdO", "OrRRRRRRRRCdO", "OrRRBBBRRRCdO", "OrRRRRRRRRRdO", "OrRRRRRRRRRdO", "Odddddddddddd", "OOOOOOOOOOOOO", ".Oc.......cO."], "pal": {"O": "#1F1A17", "R": "#DC2626", "r": "#F87171", "d": "#991B1B", "C": "#E5E7EB", "c": "#9CA3AF", "W": "#FFFFFF", "B": "#9FD8EA"}}, "chariot": {"rows": ["OOO...............", "OkO...OOOO........", "OkO..OgGdO........", "OkO..OOOOOO.......", "OkO.OgGGGdO.......", "OkO.OgYYGdO.......", "OkO.OgGGGdO.......", "OkO.OgGGGdO.......", "OkO.OgGGGdO.......", "OkO.OgGGGdO.......", "OkOOOOOOOOOO......", "OkkkkkkkkkkO......", "OOOOOOOOOOOO......", ".OKKO..OKKO.......", ".OKKO..OKKO.......", "..OO....OO........"], "pal": {"O": "#1F1A17", "R": "#B91C1C", "r": "#EF4444", "G": "#5B8DB8", "g": "#8DB8DC", "d": "#2E5A80", "K": "#374151", "k": "#9CA3AF", "Y": "#FACC15"}}, "chat": {"rows": ["..................", "..O.O.............", ".OCOCO............", ".OCCCCOOOOOOO.....", ".OCOCCCcCCcCCO....", ".OCnCCCCcCCcCCO...", "..OOCCCCCCCCCCOO..", "...OOOOOOOOOOOOCO.", "..OOOOOOOOOOOOOOO.", "..OkkkkkkkkkkkkdO.", "..OKKKKKKKKKKKKdO.", "..OKKKKOOOOKKKKdO.", "..OKKKKKKKKKKKKdO.", "..Odddddddddddddd.", "..OOOOOOOOOOOOOOO."], "pal": {"O": "#1F1A17", "K": "#C08A52", "k": "#DDB07A", "d": "#8A5A30", "C": "#F59E0B", "c": "#FCD34D", "w": "#FFFFFF", "n": "#F472B6"}}, "transpalette": {"rows": ["OO................", "OKO...............", ".OKO..............", "..OKO.............", "...OKO............", "....OKO...........", ".....OKO..........", "....OOOOO.........", "....OyYYdOOOOOOOOO", "....OYYYdyyyyyyyyO", "....OddddddddddddO", "....OOOOOOOOOOOOOO", ".....OkO......OkO.", "......O........O.."], "pal": {"O": "#1F1A17", "Y": "#F59E0B", "y": "#FCD34D", "d": "#B45309", "K": "#374151", "k": "#6B7280", "R": "#DC2626"}}, "elevateur": {"rows": ["..OOOOOOOO....O...", "..OK.....O....OO..", "..OK.....O....OkO.", "..OK.....O....OkO.", "..OK.....O....OkO.", ".OOOOOOOOOO...OkO.", ".OgGGGGGGGdO..OkO.", ".OgGBBBGGGdOOOOkO.", ".OgGBWBGGGdGGGOkO.", ".OgGGGGGGGdGGGOkOO", ".OddddddddddddOkkO", ".OOOOOOOOOOOOOOOOO", "..OKKO.....OKKO...", "..OKKO.....OKKO...", "...OO.......OO...."], "pal": {"O": "#1F1A17", "G": "#F6C343", "g": "#FFE59A", "d": "#B7791F", "K": "#374151", "k": "#6B7280", "B": "#9FD8EA", "W": "#FFFFFF"}}, "horloge": {"rows": ["...OOOOOO...", "..OWWWWWWO..", ".OWWWKWWWWO.", "OWKWWKWWWKWO", "OWWWWKWWWWWO", "OWWWWKKKKWWO", "OWWWWWWWWWWO", "OWKWWWWWWKWO", ".OWWWWRWWWO.", "..OWWKWWWO..", "...OOOOOO..."], "pal": {"O": "#1F1A17", "W": "#F8FAFC", "w": "#CBD5E1", "K": "#111827", "R": "#DC2626"}}, "calendrier": {"rows": ["..O....O....", "OOOOOOOOOOOO", "ORRRRRRRRRRO", "ORRRRRRRRRRO", "OWWWWWWWWWWO", "OWkWkWkWkWWO", "OWWWWWWWWWWO", "OWkWkWkWkWWO", "OWWWWWWWRWWO", "OWkWkWkRkRWO", "OWWWWWWWRWWO", "OWkWkWkWkWWO", "OWWWWWWWWWWO", "OOOOOOOOOOOO"], "pal": {"O": "#1F1A17", "W": "#F8FAFC", "R": "#DC2626", "r": "#FCA5A5", "K": "#475569", "k": "#CBD5E1"}}, "manometre": {"rows": ["...OOOOOO...", "..ObbbbbbO..", ".ObWWWWWWBO.", "ObWGWWWWRWBO", "ObWWWWWWWWBO", "ObWWWWWRWWBO", "ObWWWWRWWWBO", "ObWWWKWWWWBO", ".ObWWWWWWBO.", "..OBBBBBBO..", "...OOOOOO...", ".....OBO....", ".....OBO....", "....OOOOO..."], "pal": {"O": "#1F1A17", "B": "#B7791F", "b": "#F6C343", "W": "#FDF6E3", "K": "#111827", "R": "#DC2626", "G": "#16A34A"}}, "casque": {"rows": ["OOOOOOOOOOOO", "OGGGGGGGGGGO", "OGbvvvvvvbGO", "OGvvOOOOvvGO", "OGvOyYYYOvGO", "OGOyYYWYYOGO", "OGOYYYYYYOGO", "OOddddddddOO", "OGbvvvvvvbGO", "OGvvBvBvBvGO", "OGbvvvvvvbGO", "OGGGGGGGGGGO", "OOOOOOOOOOOO"], "pal": {"O": "#1F1A17", "G": "#F6C343", "B": "#24546B", "b": "#9FD8EA", "v": "#E6F7FC", "Y": "#FACC15", "y": "#FDE68A", "d": "#B45309", "W": "#FFFFFF"}}},
+    // Objets en volume (classeur, sol) : dessinés en isométrie comme le reste du bureau (lumière venant de la droite),
+    // dans un calque à part, puis posés avec un contour assombri et une ombre au sol
+    var decoCyl = (g, ci, cj, R, z0, z1, base, o = {}) => {
+        let [cx, cy] = A(ci, cj, 0),
+          rx = 22 * Math.SQRT2 * R,
+          ry = 11 * Math.SQRT2 * R,
+          c = l(base),
+          hi = o.hi || 1.22;
+        for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+          let u = (x + 0.5 - cx) / rx;
+          if (Math.abs(u) > 1) continue;
+          let e = ry * Math.sqrt(1 - u * u),
+            f = u < -0.6 ? 0.68 : u < -0.15 ? 0.84 : u < 0.25 ? 1 : u < 0.55 ? hi : 1.04;
+          for (let y = Math.round(cy - z1 + e); y < Math.round(cy - z0 + e); y++) g.set(x, y, ct(c, f));
+        }
+        o.top !== !1 && decoDisc(g, ci, cj, R, z1, o.top || ct(c, 1.15));
+      },
+      decoDisc = (g, ci, cj, R, z, col) => {
+        let [cx, cy] = A(ci, cj, 0),
+          rx = 22 * Math.SQRT2 * R,
+          ry = 11 * Math.SQRT2 * R;
+        g.ellipse(cx, cy - z, rx, ry, typeof col == "string" ? l(col) : col);
+      },
+      decoBox = (g, i0, i1, j0, j1, z0, z1, base, o = {}) => {
+        let c = l(base),
+          hx = (v) => "#" + v.map((x) => x.toString(16).padStart(2, "0")).join("");
+        K(g, i0, i1, j0, j1, z0, z1, { top: hx(ct(c, o.topF || 1.18)), right: hx(c), left: hx(ct(c, 0.72)), out: "#000000" }, { noOutline: !0, noHi: o.noHi });
+      },
+      // Face avant gauche (plan j fixe) ou avant droite (plan i fixe) d'une boîte : motif en coordonnées (h, s depuis le haut)
+      decoFace = (g, cote, fixe, a0, a1, z0, z1, fn) =>
+        $t(g, cote, fixe, a0, a1, z0, z1, (h, s) => {
+          let c = fn(h, z1 - z0 - s, (a1 - a0) * 22, z1 - z0);
+          return c ? (typeof c == "string" ? l(c) : c) : null;
+        }),
+      decoPx = (g, x, y, c) => g.set(x, y, typeof c == "string" ? l(c) : c),
+      DECO_ISO = {
+        // --- Haut du classeur (centre 0.29, 0.29 ; dessus à z = 34)
+        plante: (g, ci, cj, z) => {
+          (decoCyl(g, ci, cj, 0.12, z, z + 6, "#C2683A", { top: !1 }), decoCyl(g, ci, cj, 0.14, z + 5, z + 7, "#A9552C", { top: "#B4602F" }), decoDisc(g, ci, cj, 0.115, z + 7, "#4A2E1A"));
+          let [cx, cy] = A(ci, cj, z + 7),
+            f = (p, u, h, s) => {
+              let k = -h * 0.5 - s * 0.85;
+              return l(k > 0.35 ? "#8FD46F" : k < -0.35 ? "#2C6B2A" : "#4E9E43");
+            };
+          for (let [dx, dy, rx, ry] of [[-6, -2, 3.2, 1.6], [6, -3, 3.2, 1.6], [-4, -6, 2.6, 2.6], [4, -7, 2.6, 2.4], [0, -4, 3, 2.2], [-1, -10, 2.4, 2.6], [2, -12, 2, 2.2], [-3, -13, 1.6, 1.8]])
+            g.ellipse(cx + dx, cy + dy, rx, ry, f);
+          for (let [dx, dy] of [[-1, -5], [3, -9], [-4, -8], [1, -13]]) decoPx(g, cx + dx, cy + dy, "#BFEAA3");
+        },
+        mug: (g, ci, cj, z) => {
+          decoCyl(g, ci, cj, 0.11, z, z + 9, "#E8EDF2", { top: !1, hi: 1.08 });
+          decoCyl(g, ci, cj, 0.111, z + 3, z + 5.5, "#0096DC", { top: !1 });
+          (decoDisc(g, ci, cj, 0.11, z + 9, "#F8FAFC"), decoDisc(g, ci, cj, 0.085, z + 9, "#6B4226"), decoDisc(g, ci + 0.02, cj - 0.02, 0.04, z + 9, "#8A5A36"));
+          let [cx, cy] = A(ci, cj, z),
+            x = Math.round(cx + 22 * Math.SQRT2 * 0.11);
+          for (let y = -7; y <= -2; y++) decoPx(g, x + 2, cy + y, y === -7 || y === -2 ? "#CBD5E1" : "#AEB8C4");
+          (decoPx(g, x, cy - 7, "#CBD5E1"), decoPx(g, x + 1, cy - 7, "#CBD5E1"), decoPx(g, x, cy - 2, "#AEB8C4"), decoPx(g, x + 1, cy - 2, "#AEB8C4"));
+          for (let [dx, dy] of [[-1, -13], [0, -14], [1, -15], [0, -16], [-1, -17]]) decoPx(g, cx + dx, cy + dy, [255, 255, 255, 110]);
+        },
+        maquette: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
+          decoFace(g, "L", ci + 0.17, cj - 0.08, cj + 0.08, z + 0.5, z + 2, () => "#F6C343");
+          (decoCyl(g, ci, cj, 0.085, z + 2.5, z + 14, "#C9CED6", { top: !1, hi: 1.4 }),
+            decoCyl(g, ci, cj, 0.086, z + 9, z + 10.5, "#16A34A", { top: !1 }),
+            decoCyl(g, ci, cj, 0.065, z + 14, z + 15.5, "#B6BCC5", { top: "#D9DEE5" }),
+            decoCyl(g, ci, cj, 0.03, z + 15.5, z + 18, "#4B5563", { top: "#6B7280" }));
+          let [cx, cy] = A(ci, cj, z + 18.5);
+          (g.rect(cx - 3, cy, 7, 1, l("#374151")), decoPx(g, cx, cy - 1, "#374151"));
+        },
+        cloche: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.18, ci + 0.18, cj - 0.18, cj + 0.18, z, z + 2.5, "#1E3A5F");
+          (decoCyl(g, ci, cj, 0.18, z + 2.3, z + 2.8, "#F6C343", { top: "#2A4A73" }),
+            decoCyl(g, ci, cj, 0.065, z + 2.8, z + 11, "#F6C343", { top: !1, hi: 1.45 }),
+            decoCyl(g, ci, cj, 0.05, z + 11, z + 12.5, "#E0A82E", { top: "#FFE59A" }),
+            decoCyl(g, ci, cj, 0.022, z + 12.5, z + 14.5, "#B7791F", { top: "#F6C343" }));
+        },
+        // --- Sous le bureau (centre 2.18, 4.74)
+        carton: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.19, ci + 0.19, cj - 0.15, cj + 0.15, z, z + 9, "#C08A52");
+          decoBox(g, ci - 0.2, ci + 0.2, cj - 0.16, cj + 0.16, z + 8, z + 10, "#CF9A60");
+          decoFace(g, "L", ci + 0.2, cj - 0.1, cj + 0.06, z + 2, z + 6.5, (h, s, w, H) => (h < 1 || h >= w - 1 || s < 1 || s >= H - 1 ? "#94A3B8" : s > 2 && s < 3 && h > 2 && h < w - 2 ? "#334155" : "#F8FAFC"));
+          decoFace(g, "R", cj + 0.16, ci - 0.2, ci + 0.2, z + 3, z + 4.5, (h) => (Math.abs(h - 8.8) < 2.5 ? "#4A2E18" : null));
+        },
+        poubelle: (g, ci, cj, z) => {
+          (decoCyl(g, ci, cj, 0.17, z, z + 1.5, "#374151", { top: !1 }),
+            decoCyl(g, ci, cj, 0.165, z + 1.5, z + 11, "#4F86B8", { top: !1, hi: 1.3 }),
+            decoCyl(g, ci, cj, 0.166, z + 7, z + 8.3, "#FACC15", { top: !1 }),
+            decoCyl(g, ci, cj, 0.13, z + 11, z + 12.5, "#4579A8", { top: "#3E6E99" }),
+            decoDisc(g, ci, cj, 0.105, z + 12.5, "#111827"));
+          let [cx, cy] = A(ci, cj, z + 4);
+          decoPx(g, cx - 1, cy, "#FFFFFF");
+          decoPx(g, cx + 1, cy, "#FFFFFF");
+          decoPx(g, cx, cy + 1, "#FFFFFF");
+        },
+        coffre: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.18, ci + 0.18, cj - 0.15, cj + 0.15, z + 1, z + 12, "#5B6472", { topF: 1.3 });
+          decoFace(g, "R", cj + 0.15, ci - 0.18, ci + 0.18, z + 2, z + 11, (h, s, w, H) => {
+            if (h < 1 || h >= w - 1 || s < 1 || s >= H - 1) return "#3B424D";
+            let dx = h - w * 0.45,
+              dy = s - H / 2,
+              d = Math.sqrt(dx * dx + dy * dy * 1.3);
+            if (d < 1.1) return "#7A4E10";
+            if (d < 2.3) return dx + dy < 0 ? "#FFE59A" : "#D99A1E";
+            if (d < 2.9) return "#2B3038";
+            if (h > w - 3.2 && h < w - 2 && s > 2.5 && s < H - 2.5) return "#E5E7EB";
+            return "#4B5361";
+          });
+          for (let [a, b] of [[ci - 0.15, cj + 0.12], [ci + 0.15, cj + 0.12], [ci + 0.15, cj - 0.12]]) {
+            let [x, y] = A(a, b, z);
+            g.rect(x - 1, y - 1, 2, 2, l("#1F2937"));
+          }
+        },
+        frigo: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.17, ci + 0.17, cj - 0.15, cj + 0.15, z + 1.5, z + 14, "#D72F2F", { topF: 1.15 });
+          decoFace(g, "R", cj + 0.15, ci - 0.17, ci + 0.17, z + 1.5, z + 14, (h, s, w, H) => {
+            if (s > 3.6 && s < 4.6) return "#7F1D1D";
+            if (h > 1.5 && h < 2.6 && ((s > 1 && s < 3.2) || (s > 5.5 && s < 10))) return "#E5E7EB";
+            if (s > H - 3 && s < H - 2 && h > w / 2 - 2.5 && h < w / 2 + 2.5) return "#F8FAFC";
+            return null;
+          });
+          decoFace(g, "L", ci + 0.17, cj - 0.15, cj + 0.15, z + 2, z + 13.5, (h, s, w) => (h < 1.2 ? "#F87171" : null));
+          for (let [a, b] of [[ci - 0.14, cj + 0.12], [ci + 0.14, cj + 0.12], [ci + 0.14, cj - 0.12]]) {
+            let [x, y] = A(a, b, z);
+            g.rect(x, y - 2, 1, 2, l("#9CA3AF"));
+          }
+        },
+        // --- Sol devant le bureau (centre 5.45, 5.45)
+        chariot: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.14, ci + 0.12, cj - 0.14, cj + 0.14, z + 1, z + 2.2, "#4B5563");
+          for (let b of [cj - 0.15, cj + 0.15]) decoBox(g, ci - 0.19, ci - 0.15, b - 0.025, b + 0.025, z + 1, z + 21, "#B91C1C");
+          decoBox(g, ci - 0.19, ci - 0.15, cj - 0.17, cj + 0.17, z + 19.5, z + 21, "#B91C1C");
+          (decoCyl(g, ci, cj, 0.1, z + 2.2, z + 14, "#8C96A3", { top: !1, hi: 1.3 }),
+            decoCyl(g, ci, cj, 0.101, z + 10.5, z + 12, "#F59E0B", { top: !1 }),
+            decoCyl(g, ci, cj, 0.075, z + 14, z + 15.5, "#7C8693", { top: "#A3ACB8" }),
+            decoCyl(g, ci, cj, 0.03, z + 15.5, z + 18, "#374151", { top: "#4B5563" }));
+          for (let b of [cj - 0.18, cj + 0.18]) {
+            let [x, y] = A(ci - 0.1, b, 2.5);
+            g.ellipse(x, y, 2.6, 2.6, l("#1F2937"));
+            decoPx(g, x, y - 1, "#6B7280");
+          }
+        },
+        chat: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.22, ci + 0.22, cj - 0.16, cj + 0.16, z, z + 6, "#C08A52");
+          decoFace(g, "R", cj + 0.16, ci - 0.22, ci + 0.22, z + 2, z + 3.2, (h, s, w) => (Math.abs(h - w / 2) < 3 ? "#4A2E18" : null));
+          let [cx, cy] = A(ci, cj, z + 6),
+            fur = (p, u, h, s) => {
+              let k = -h * 0.4 - s * 0.9,
+                raie = (Math.round(p - u * 0.4) % 3 + 3) % 3 === 0;
+              return l(k > 0.45 ? "#FCD34D" : k < -0.4 ? "#C2410C" : raie ? "#D97706" : "#F59E0B");
+            };
+          (g.ellipse(cx + 2, cy - 3, 7, 3.6, fur), g.ellipse(cx - 5, cy - 4.5, 3.4, 3, fur));
+          for (let [dx, dy] of [[-7, -8], [-7, -9], [-6, -8], [-3, -8], [-3, -9], [-4, -8]]) decoPx(g, cx + dx, cy + dy, "#EA8A0C");
+          (decoPx(g, cx - 6, cy - 5, "#5A3214"), decoPx(g, cx - 5, cy - 5, "#5A3214"), decoPx(g, cx - 3, cy - 5, "#5A3214"), decoPx(g, cx - 2, cy - 5, "#5A3214"), decoPx(g, cx - 4, cy - 3, "#F472B6"));
+          for (let k = 0; k < 6; k++) decoPx(g, cx + 8 - k * 0.5, cy - 1 + (k > 3 ? 0 : 0) + (k === 5 ? -1 : 0), "#D97706");
+        },
+        transpalette: (g, ci, cj, z) => {
+          for (let b of [cj - 0.11, cj + 0.07]) decoBox(g, ci - 0.12, ci + 0.32, b, b + 0.05, z + 0.5, z + 2, "#D97706", { topF: 1.25 });
+          decoBox(g, ci - 0.24, ci - 0.08, cj - 0.14, cj + 0.14, z + 0.5, z + 6, "#F59E0B", { topF: 1.2 });
+          decoBox(g, ci - 0.21, ci - 0.11, cj - 0.06, cj + 0.06, z + 6, z + 8, "#374151");
+          let [x0, y0] = A(ci - 0.16, cj, 8),
+            [x1, y1] = A(ci - 0.36, cj, 19);
+          (g.line(x0, y0, x1, y1, l("#1F2937")), g.line(x0 + 1, y0, x1 + 1, y1, l("#4B5563")), g.rect(x1 - 2, y1 - 1, 5, 2, l("#DC2626")));
+          for (let [a, b] of [[ci + 0.3, cj - 0.085], [ci + 0.3, cj + 0.095], [ci - 0.16, cj]]) {
+            let [x, y] = A(a, b, 0.8);
+            g.rect(x - 1, y - 1, 2, 2, l("#111827"));
+          }
+        },
+        elevateur: (g, ci, cj, z) => {
+          decoBox(g, ci - 0.22, ci + 0.14, cj - 0.15, cj + 0.15, z + 2, z + 8, "#E8AE2A", { topF: 1.22 });
+          decoBox(g, ci - 0.24, ci - 0.14, cj - 0.15, cj + 0.15, z + 2, z + 10, "#C98E16");
+          decoBox(g, ci - 0.08, ci + 0.04, cj - 0.07, cj + 0.07, z + 8, z + 10.5, "#1F2937");
+          for (let [a, b] of [[ci - 0.16, cj - 0.13], [ci - 0.16, cj + 0.13], [ci + 0.1, cj - 0.13], [ci + 0.1, cj + 0.13]]) {
+            let [x, y] = A(a, b, z + 8),
+              [x2, y2] = A(a, b, z + 19);
+            g.line(x, y, x2, y2, l("#B7791F"));
+          }
+          decoBox(g, ci - 0.18, ci + 0.12, cj - 0.15, cj + 0.15, z + 19, z + 20, "#F6C343", { topF: 1.3 });
+          for (let b of [cj - 0.12, cj + 0.1]) decoBox(g, ci + 0.15, ci + 0.19, b, b + 0.02, z + 1, z + 22, "#6B7280");
+          for (let b of [cj - 0.1, cj + 0.07]) decoBox(g, ci + 0.19, ci + 0.4, b, b + 0.03, z + 1, z + 1.8, "#9CA3AF");
+          for (let [a, b] of [[ci - 0.15, cj + 0.16], [ci + 0.08, cj + 0.16], [ci + 0.08, cj - 0.16]]) {
+            let [x, y] = A(a, b, 2.5);
+            (g.ellipse(x, y, 2.5, 2.5, l("#111827")), decoPx(g, x, y - 1, "#6B7280"));
+          }
+          for (let [a, b, h] of [[ci, cj + 0.15, 6], [ci + 0.14, cj - 0.05, 5], [ci - 0.1, cj, 20.2]]) {
+            let [x, y] = A(a, b, h);
+            decoPx(g, x, y, "#FFFFFF");
+          }
+        },
+      },
+      DECO_POS = { classeur: [0.29, 0.29, 34], sous: [2.18, 4.74, 0], devant: [5.45, 5.45, 0] },
+      // Pose un objet en volume : ombre au sol, puis l'objet avec un contour assombri (et la cloche de verre par-dessus)
+      decoPoser = (r, id, slot) => {
+        let [ci, cj, z] = DECO_POS[slot],
+          g = new Wt(Lt, Ct);
+        if (slot !== "classeur") {
+          let [x, y] = A(ci, cj, 0);
+          r.ellipse(x + 1, y, 12, 4.5, [12, 14, 20, 110]);
+        }
+        (DECO_ISO[id](g, ci, cj, z), r.stamp(g, 0, 0, [0, 0, 0], !1, !0));
+        if (id === "cloche") {
+          let [cx, cy] = A(ci, cj, 0),
+            rx = 22 * Math.SQRT2 * 0.15,
+            ry = 11 * Math.SQRT2 * 0.15;
+          for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+            let u = (x + 0.5 - cx) / rx;
+            if (Math.abs(u) > 1) continue;
+            let e = ry * Math.sqrt(1 - u * u),
+              haut = Math.round(cy - z - 13 - 4 * Math.sqrt(1 - u * u)),
+              bas = Math.round(cy - z - 2.8 + e);
+            for (let y = haut; y < bas; y++) {
+              let bord = y === haut || Math.abs(u) > 0.86,
+                reflet = u > -0.62 && u < -0.42 && y > haut + 2 && y < bas - 3;
+              r.set(x, y, reflet ? [255, 255, 255, 170] : bord ? [200, 236, 248, 190] : [190, 230, 245, 60]);
+            }
+          }
+        }
+      },
+      // Objets muraux : fonctions (h depuis la gauche, s depuis le haut) -> couleur
       DECO_MUR = {
         planning: (h, s) => {
-          if (h < 2 || h >= 34.3 || s < 1 || s >= 33) return null;
-          if (h < 3 || h >= 33.3 || s < 2 || s >= 32) return "#64748B";
-          if (s < 7) return Math.floor(s) === 4 && h > 6 && h < 22 ? "#F8FAFC" : "#334155";
-          let gx = Math.floor(h - 3) % 6,
-            gy = Math.floor(s - 7) % 5;
-          if (gx === 0 || gy === 0) return "#CBD5E1";
-          let k = (Math.floor((h - 3) / 6) * 7 + Math.floor((s - 7) / 5) * 3) % 5;
-          return k === 0 ? "#60A5FA" : k === 1 ? "#F59E0B" : k === 2 ? "#34D399" : "#F8FAFC";
+          if (h < 1.5 || h >= 34.8 || s < 1 || s >= 31) return s >= 31 && s < 33 && h > 4 && h < 32 ? (s < 32 ? "#B6BCC5" : "#6B7280") : null;
+          if (h < 2.5 || h >= 33.8 || s < 2 || s >= 30) return h + s < 12 ? "#E5E7EB" : "#9CA3AF";
+          if (s < 6) return s > 3 && s < 4 && h > 5 && h < 20 ? "#1E3A8A" : "#F8FAFC";
+          let cx = Math.floor((h - 3) / 6),
+            cy = Math.floor((s - 6) / 6),
+            px = (h - 3) % 6,
+            py = (s - 6) % 6,
+            k = (cx * 5 + cy * 3) % 7;
+          if (Math.abs(py) < 0.5 && s > 6.5) return "#CBD5E1";
+          if (k < 4 && px > 1 && px < 5 && py > 1 && py < 5) {
+            let c = ["#FDE68A", "#93C5FD", "#86EFAC", "#FDA4AF"][k];
+            return px > 4 || py > 4 ? "#94A3B8" : py < 2 ? (k === 0 ? "#FACC15" : k === 1 ? "#60A5FA" : k === 2 ? "#4ADE80" : "#FB7185") : c;
+          }
+          return "#FFFFFF";
         },
         securite: (h, s) => {
-          if (h < 7 || h >= 29.3 || s < 1 || s >= 33) return null;
-          if (h < 8 || h >= 28.3 || s < 2 || s >= 32) return "#1F1A17";
-          let c = 18.15,
-            hw = (s - 6) * 0.62,
+          if (h < 7.5 || h >= 29 || s < 1 || s >= 32) return h >= 29 && h < 30 && s > 2 && s < 33 ? [0, 0, 0, 60] : s >= 32 && s < 33 && h > 8.5 && h < 30 ? [0, 0, 0, 60] : null;
+          if ((Math.abs(h - 9) < 0.6 || Math.abs(h - 27.5) < 0.6) && Math.abs(s - 2.5) < 0.6) return "#9CA3AF";
+          if (h < 8.5 || h >= 28 || s < 2 || s >= 31) return "#111827";
+          if (s < 7) return s > 3.5 && s < 5.5 && h > 11 && h < 25 && Math.floor(h) % 3 !== 0 ? "#FFFFFF" : "#111827";
+          let c = 18.25,
+            hw = (s - 9) * 0.62,
             dx = Math.abs(h - c);
-          if (s >= 6 && s < 21 && dx <= hw) {
-            if (dx > hw - 1.6 || s >= 19.5) return "#DC2626";
-            return s > 11 && dx < (s - 10) * 0.33 ? (dx < (s - 12) * 0.15 ? "#FACC15" : "#F97316") : "#FFFFFF";
+          if (s >= 9 && s < 23 && dx <= hw) {
+            if (dx > hw - 1.7 || s >= 21.5) return "#DC2626";
+            if (s > 13 && dx < (s - 12.5) * 0.36 && s < 21) return dx < (s - 14) * 0.18 ? "#FDE047" : "#F97316";
+            return "#FFFFFF";
           }
-          if ((Math.floor(s) === 24 || Math.floor(s) === 27) && h > 11 && h < 25) return "#1F1A17";
-          if (Math.floor(s) === 29 && h > 13 && h < 23) return "#1F1A17";
-          return "#FACC15";
+          if ((Math.floor(s) === 25 || Math.floor(s) === 28) && h > 11 && h < 25.5) return "#1F2937";
+          return s > 23 ? "#FCD34D" : "#FACC15";
         },
         kpi: (h, s) => {
-          if (h < 1 || h >= 35.3 || s < 1 || s >= 33) return null;
-          if (h < 2 || h >= 34.3 || s < 2 || s >= 32) return "#111827";
-          if (Math.floor(s) === 4 && h > 4 && h < 18) return "#A78BFA";
-          let x = Math.floor(h) - 4,
-            hb = [7, 11, 9, 15, 19][Math.floor(x / 6)];
-          if (x >= 0 && x < 30 && x % 6 < 4 && s >= 30 - hb && s < 30) return x % 6 === 0 ? "#67E8F9" : "#22D3EE";
-          let ly = 24 - (h - 4) * 0.55;
-          if (h > 4 && h < 33 && Math.abs(s - ly) < 0.8) return "#F472B6";
-          return Math.floor(s) === 30 && h > 3 && h < 33 ? "#475569" : "#0F172A";
+          if (h < 1.5 || h >= 34.8 || s < 1.5 || s >= 31.5) return null;
+          if (h < 2.5 || h >= 33.8 || s < 2.5 || s >= 30.5) return s >= 30.5 ? "#1F2937" : "#374151";
+          let x = Math.floor(h) - 5,
+            n = Math.floor(x / 5),
+            hb = [8, 12, 10, 15, 19][n],
+            bas = 27;
+          if (Math.floor(s) === 5 && h > 5 && h < 17) return "#C4B5FD";
+          if (Math.floor(s) === 5 && h > 25 && h < 31) return "#4ADE80";
+          if (n >= 0 && n < 5 && x % 5 < 3 && s < bas && s >= bas - hb) return x % 5 === 0 ? "#A5F3FC" : "#22D3EE";
+          if (n >= 0 && n < 5 && (x % 5 === 3 || x % 5 === 4 || s < bas - hb) && x % 5 < 4 && s < bas && s >= bas - hb - 1) return [34, 211, 238, 70];
+          let ly = 20 - (h - 5) * 0.48;
+          if (h > 4 && h < 32 && Math.abs(s - ly) < 0.7) return "#F9A8D4";
+          if (h > 4 && h < 32 && Math.abs(s - ly) < 1.6) return [244, 114, 182, 60];
+          return Math.floor(s) === bas && h > 4 && h < 32 ? "#475569" : "#0B1220";
         },
         depot: (h, s) => {
-          if (h < 1 || h >= 35.3 || s < 1 || s >= 33) return null;
-          if (h < 2 || h >= 34.3 || s < 2 || s >= 32) return "#7A4E10";
-          if (h < 3.5 || h >= 32.8 || s < 3.5 || s >= 30.5) return (Math.floor(h + s) % 4 === 0) ? "#FFE59A" : "#F6C343";
-          if (s < 12) return s < 8 ? "#BAE6FD" : "#E0F2FE";
-          if (s < 15) return Math.abs(h - 18) < (15 - s) * 4 + 6 ? "#94A3B8" : "#E0F2FE";
-          if (s >= 28) return "#64748B";
-          let bx = (Math.floor(h) - 4) % 4,
-            row = Math.floor((s - 15) / 6.5),
-            sy = (s - 15) - row * 6.5;
-          if (bx === 3 || sy > 5.5) return "#CBD5E1";
-          if (sy < 1.2) return bx === 1 ? "#475569" : "#CBD5E1";
-          return row % 2 ? (bx === 0 ? "#2563EB" : "#3B82F6") : bx === 0 ? "#9CA3AF" : "#D1D5DB";
+          if (h < 0.8 || h >= 35.5 || s < 0.8 || s >= 33.2) return null;
+          let bord = Math.min(h - 0.8, 35.5 - h, s - 0.8, 33.2 - s);
+          if (bord < 3) {
+            let coin = (h < 5 || h > 31.3) && (s < 5 || s > 29);
+            if (bord < 0.9) return "#7A4E10";
+            if (coin) return (Math.floor(h) + Math.floor(s)) % 2 ? "#FFF3B0" : "#E0A82E";
+            return bord < 1.8 ? (h + s < 34 ? "#FFE59A" : "#C98E16") : "#F6C343";
+          }
+          if (bord < 3.6) return "#5A3A0E";
+          if (s < 9) return s < 5.5 ? "#FDBA74" : "#FDA4AF";
+          if (s < 13) {
+            let toit = Math.abs(h - 18) < (13 - s) * 3.2 + 7;
+            return toit ? (s < 10 ? "#64748B" : "#94A3B8") : "#C4B5FD";
+          }
+          if (s >= 27) return s < 28 ? "#475569" : "#6B7280";
+          let bx = Math.floor(h - 4.5) % 4,
+            rang = Math.floor((s - 13) / 7),
+            sy = s - 13 - rang * 7;
+          if (h < 4.5 || h > 31.5 || bx === 3 || sy > 6) return "#E2E8F0";
+          let cols = [["#2563EB", "#60A5FA"], ["#16A34A", "#4ADE80"], ["#EA580C", "#FDBA74"], ["#6B7280", "#D1D5DB"]],
+            [c0, c1] = cols[(Math.floor((h - 4.5) / 4) + rang * 2) % 4];
+          if (sy < 1.5) return bx === 1 ? "#334155" : "#E2E8F0";
+          if (sy < 2.5) return bx === 1 ? c1 : bx === 0 ? c0 : c1;
+          return bx === 0 ? c0 : bx === 1 ? c1 : c0;
+        },
+      },
+      // Objets du petit mur : zone de 12 x 21 (à la place de la cible de fléchettes)
+      DECO_MP = {
+        horloge: (h, s) => {
+          let dx = h - 6.15,
+            dy = s - 10.5,
+            d = Math.sqrt(dx * dx + dy * dy),
+            seg = (ax, ay, L, ep) => {
+              let t = Math.max(0, Math.min(L, dx * ax + dy * ay));
+              return Math.hypot(dx - ax * t, dy - ay * t) < ep;
+            };
+          if (d > 5.9) return d < 6.6 && dx + dy > 2 ? [0, 0, 0, 60] : null;
+          if (d > 4.9) return dx + dy < -1 ? "#8A5A30" : "#5A3A22";
+          if (d < 0.9) return "#DC2626";
+          if (seg(0, -1, 3.8, 0.55) || seg(-0.87, -0.5, 2.6, 0.6)) return "#1F2937";
+          let a = Math.atan2(dy, dx) / (Math.PI / 6);
+          if (d > 3.7 && Math.abs(a - Math.round(a)) < 0.18) return "#334155";
+          return dx + dy < -2 ? "#FFFFFF" : "#F1EAD8";
+        },
+        calendrier: (h, s) => {
+          if (h < 1 || h >= 11.3 || s < 2 || s >= 19) return h >= 11.3 && h < 12.2 && s > 3 && s < 20 ? [0, 0, 0, 60] : (Math.abs(h - 3.5) < 0.6 || Math.abs(h - 8) < 0.6) && s >= 0.8 && s < 3 ? "#6B7280" : null;
+          if (s < 6) return s > 3.6 && s < 4.6 && h > 3 && h < 9 ? "#FFFFFF" : "#DC2626";
+          let cx = Math.floor((h - 1.5) / 2),
+            cy = Math.floor((s - 7) / 2.4),
+            px = (h - 1.5) % 2,
+            py = (s - 7) % 2.4;
+          if (cx === 3 && cy === 3) return Math.hypot(h - 9, s - 15.5) < 1.6 && Math.hypot(h - 9, s - 15.5) > 0.9 ? "#DC2626" : "#FFFFFF";
+          if (s > 7 && s < 18.5 && px > 0.4 && px < 1.2 && py > 0.6 && py < 1.4 && h < 10.5) return cy < 2 && cx < 2 ? "#CBD5E1" : "#94A3B8";
+          return h < 2 ? "#E5E7EB" : "#FFFFFF";
+        },
+        manometre: (h, s) => {
+          let dx = h - 6.15,
+            dy = s - 8,
+            d = Math.sqrt(dx * dx + dy * dy);
+          if (s > 13 && s < 19 && Math.abs(dx) < 1) return dx < 0 ? "#F6C343" : "#B7791F";
+          if (s >= 19 && s < 20.5 && Math.abs(dx) < 2.2) return "#8A5A1A";
+          if (d > 5.8) return d < 6.5 && dx + dy > 2 ? [0, 0, 0, 60] : null;
+          if (d > 4.7) return dx + dy < -1.5 ? "#FFE59A" : dx + dy < 2 ? "#E0A82E" : "#9A6516";
+          let a = Math.atan2(dy, dx);
+          if (d > 3.3 && d < 4.3 && a < -0.2 && a > -2.95) return a > -0.9 ? "#DC2626" : a > -1.6 ? "#FACC15" : "#16A34A";
+          let t = Math.max(0, Math.min(3.6, dx * 0.6 - dy * 0.8));
+          if (Math.hypot(dx - 0.6 * t, dy + 0.8 * t) < 0.55) return "#B91C1C";
+          if (d < 1) return "#B7791F";
+          return dx + dy < -2.5 ? "#FFFFFF" : "#F5F0E1";
+        },
+        casque: (h, s) => {
+          if (h < 0.5 || h >= 11.8 || s < 1 || s >= 20) return h >= 11.8 && h < 12.3 && s > 2 && s < 20.5 ? [0, 0, 0, 60] : null;
+          if (h < 1.5 || s < 2) return "#E6F7FC";
+          if (h >= 10.8 || s >= 19) return "#4F8BA6";
+          let reflet = Math.abs(h - s * 0.55 - 1) < 0.5 && s > 2.5 && s < 6.5;
+          if (reflet) return [255, 255, 255, 200];
+          let dx = (h - 6.15) / 4.3,
+            dy = (s - 10.5) / 4.6;
+          if (s < 10.5 && dx * dx + dy * dy < 1) return dx < -0.3 ? "#FDE68A" : dx > 0.45 ? "#D99A0B" : (Math.abs(dx) < 0.12 && s < 9.5) ? "#F59E0B" : "#FACC15";
+          if (s >= 10.5 && s < 11.8 && Math.abs(h - 6.15) < 5) return "#B45309";
+          if (s > 13.5 && s < 17 && h > 2.5 && h < 9.8 && (Math.floor(h * 1.7 + s * 2.3) % 4 === 0)) return "#E0F2FE";
+          return "#1E3A5F";
         },
       },
       DECO = [
@@ -3644,26 +3943,6 @@ if (!window.React || !window.ReactDOM) {
         } catch {
           return {};
         }
-      },
-      // Dessine un objet (lignes de pixels) posé en (cx, base)
-      decoDessine = (r, id, cx, by) => {
-        let sp = DECO_SPR[id];
-        if (!sp) return;
-        let w = sp.rows[0].length,
-          x0 = Math.round(cx - w / 2),
-          y0 = Math.round(by) - sp.rows.length;
-        sp.rows.forEach((row, ry) => [...row].forEach((ch, rx) => ch !== "." && r.set(x0 + rx, y0 + ry, l(sp.pal[ch]))));
-      },
-      // Objet du petit mur : centré dans la zone de la cible (12 x 21)
-      decoMurPetit = (id) => {
-        let sp = DECO_SPR[id],
-          oy = Math.floor((21 - sp.rows.length) / 2);
-        return (h, s) => {
-          let x = Math.floor(h),
-            y = Math.floor(s) - oy,
-            ch = y >= 0 && y < sp.rows.length ? sp.rows[y][x] : void 0;
-          return ch && ch !== "." ? l(sp.pal[ch]) : null;
-        };
       };
     function gi(t) {
       let dp = decoPose();
@@ -3747,8 +4026,8 @@ if (!window.React || !window.ReactDOM) {
         };
       ($t(r, "L", 0, Ft.j0, Ft.j1, Ft.z0, Ft.z1, (h, s) => p(h, s, t)),
         $t(r, "R", 0, 1.4, 3.05, 35, 69, dp.mur ? (h, s) => {
-          let c = DECO_MUR[dp.mur](h, s);
-          return c ? l(c) : null;
+          let c = DECO_MUR[dp.mur](h, 34 - s);
+          return c ? (typeof c == "string" ? l(c) : c) : null;
         } : (h, s, k, L) => {
           if (h < 1.2 || h >= 36.3 - 1.2 || s < 2.2 || s >= 33)
             return s < 1.4 && h > 3 && h < 36.3 - 3 ? l("#9CA3AF") : l("#BFC5CC");
@@ -3766,7 +4045,10 @@ if (!window.React || !window.ReactDOM) {
           let F = Math.abs((h - s * 1.2) % 14) < 1.2 && h > 6 && h < 36.3 - 6;
           return l(F ? "#FFFFFF" : "#F3F5F7");
         }),
-        $t(r, "R", 0, 3.22, 3.78, 41, 62, dp.murPetit ? decoMurPetit(dp.murPetit) : (h, s) => {
+        $t(r, "R", 0, 3.22, 3.78, 41, 62, dp.murPetit ? (h, s) => {
+          let c = DECO_MP[dp.murPetit](h, 21 - s);
+          return c ? (typeof c == "string" ? l(c) : c) : null;
+        } : (h, s) => {
           let k = (h - 6.16) / 5.9,
             L = (s - 10.5) / 9.8,
             b = Math.sqrt(k * k + L * L);
@@ -3838,7 +4120,7 @@ if (!window.React || !window.ReactDOM) {
         r.rect(s[0] - 1, s[1], 3, 1, l("#E5E7EB"));
       }
       // Peluche Bébé Yoda (boule d'argent) posée sur le classeur, à la place de la plante (ou l'objet de décor choisi)
-      if (dp.classeur) decoDessine(r, dp.classeur, 170, 74);
+      if (dp.classeur) decoPoser(r, dp.classeur, "classeur");
       else {
         let rows = [
           "....OOOOOOO....",
@@ -4036,8 +4318,7 @@ if (!window.React || !window.ReactDOM) {
       let r = new Wt(Lt, Ct),
         dp = decoPose();
       if (dp.sous) {
-        let [x, y] = A(2.18, 4.74, 0);
-        decoDessine(r, dp.sous, x, y + 3);
+        decoPoser(r, dp.sous, "sous");
       } else {
         // poubelle ronde évasée : corps crème (3/4 haut) sur socle noir (1/4 bas), rebord évasé noir
         let ci = 2.18,
@@ -4087,8 +4368,7 @@ if (!window.React || !window.ReactDOM) {
         }
       }
       if (dp.devant) {
-        let [x, y] = A(he.i, he.j, 0);
-        decoDessine(r, dp.devant, x, y + 2);
+        decoPoser(r, dp.devant, "devant");
       } else {
         let [i, o] = A(he.i, he.j, 0),
           n = he.r;
@@ -11717,22 +11997,40 @@ if (!window.React || !window.ReactDOM) {
     // Décor : aperçu en pixels d'un objet (dessin de la boutique)
     function DecoApercu({ id, zoom: z = 3 }) {
       let ref = (0, a.useRef)(null),
-        sp = DECO_SPR[id],
-        mf = DECO_MUR[id],
-        w = sp ? sp.rows[0].length : 36,
-        hh = sp ? sp.rows.length : 34;
+        img = (0, a.useMemo)(() => {
+          let col = (c) => (c ? (typeof c == "string" ? l(c) : c) : null);
+          if (DECO_MUR[id] || DECO_MP[id]) {
+            let f = DECO_MUR[id] || DECO_MP[id],
+              w = DECO_MUR[id] ? 37 : 13,
+              hh = DECO_MUR[id] ? 34 : 21,
+              d = new Uint8ClampedArray(w * hh * 4);
+            for (let y = 0; y < hh; y++)
+              for (let x = 0; x < w; x++) {
+                let c = col(f(x + 0.5, y + 0.5));
+                c && d.set([c[0], c[1], c[2], c.length > 3 ? c[3] : 255], (y * w + x) * 4);
+              }
+            return { w, h: hh, d };
+          }
+          let slot = (DECO.find((e) => e.items.some((x) => x.id === id)) || {}).id,
+            g = new Wt(Lt, Ct);
+          decoPoser(g, id, slot);
+          let x0 = Lt,
+            y0 = Ct,
+            x1 = -1,
+            y1 = -1;
+          for (let y = 0; y < Ct; y++)
+            for (let x = 0; x < Lt; x++) g.d[(y * Lt + x) * 4 + 3] > 0 && ((x0 = Math.min(x0, x)), (y0 = Math.min(y0, y)), (x1 = Math.max(x1, x)), (y1 = Math.max(y1, y)));
+          let w = x1 - x0 + 1,
+            hh = y1 - y0 + 1,
+            d = new Uint8ClampedArray(w * hh * 4);
+          for (let y = 0; y < hh; y++) d.set(g.d.subarray(((y0 + y) * Lt + x0) * 4, ((y0 + y) * Lt + x1 + 1) * 4), y * w * 4);
+          return { w, h: hh, d };
+        }, [id]);
       (0, a.useEffect)(() => {
         let c = ref.current;
-        if (!c) return;
-        let g = c.getContext("2d");
-        g.clearRect(0, 0, w, hh);
-        for (let y = 0; y < hh; y++)
-          for (let x = 0; x < w; x++) {
-            let col = sp ? (sp.rows[y][x] !== "." ? sp.pal[sp.rows[y][x]] : null) : mf(x + 0.5, y + 0.5);
-            col && ((g.fillStyle = col), g.fillRect(x, y, 1, 1));
-          }
-      }, [id]);
-      return a.default.createElement("canvas", { ref, width: w, height: hh, "aria-hidden": "true", style: { width: w * z, height: hh * z, imageRendering: "pixelated" } });
+        c && c.getContext("2d").putImageData(new ImageData(img.d, img.w, img.h), 0, 0);
+      }, [img]);
+      return a.default.createElement("canvas", { ref, width: img.w, height: img.h, "aria-hidden": "true", style: { width: img.w * z, height: img.h * z, imageRendering: "pixelated" } });
     }
     // Boutique : un emplacement par ligne, l'objet d'origine puis 4 objets du plus courant au plus rare
     function DecoBoutique({ onClose: fermer }) {
@@ -11765,7 +12063,7 @@ if (!window.React || !window.ReactDOM) {
           h(
             "div",
             { className: "flex items-end justify-center", style: { height: 72, width: "100%", background: "#E7DFCF" } },
-            it ? h(DecoApercu, { id: it.id, zoom: DECO_MUR[it.id] ? 2 : 4 }) : h("span", { className: "text-[12px] text-[#64748B]", style: { fontFamily: Yr, alignSelf: "center" } }, "D'origine"),
+            it ? h(DecoApercu, { id: it.id, zoom: DECO_MUR[it.id] ? 2 : 3 }) : h("span", { className: "text-[12px] text-[#64748B]", style: { fontFamily: Yr, alignSelf: "center" } }, "D'origine"),
           ),
           h(
             "span",
