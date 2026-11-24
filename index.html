@@ -3675,78 +3675,139 @@ if (!window.React || !window.ReactDOM) {
           }
         },
         // --- Sol devant le bureau (centre 5.45, 5.45)
-        chariot: (g, ci, cj, z) => {
-          decoBox(g, ci - 0.14, ci + 0.12, cj - 0.14, cj + 0.14, z + 1, z + 2.2, "#4B5563");
-          for (let b of [cj - 0.15, cj + 0.15]) decoBox(g, ci - 0.19, ci - 0.15, b - 0.025, b + 0.025, z + 1, z + 21, "#B91C1C");
-          decoBox(g, ci - 0.19, ci - 0.15, cj - 0.17, cj + 0.17, z + 19.5, z + 21, "#B91C1C");
-          (decoCyl(g, ci, cj, 0.1, z + 2.2, z + 14, "#8C96A3", { top: !1, hi: 1.3 }),
-            decoCyl(g, ci, cj, 0.101, z + 10.5, z + 12, "#F59E0B", { top: !1 }),
-            decoCyl(g, ci, cj, 0.075, z + 14, z + 15.5, "#7C8693", { top: "#A3ACB8" }),
-            decoCyl(g, ci, cj, 0.03, z + 15.5, z + 18, "#374151", { top: "#4B5563" }));
-          for (let b of [cj - 0.18, cj + 0.18]) {
-            let [x, y] = A(ci - 0.1, b, 2.5);
-            g.ellipse(x, y, 2.6, 2.6, l("#1F2937"));
-            decoPx(g, x, y - 1, "#6B7280");
+        chariot: (g, ci, cj, z, k = 1) => {
+          decoBox(g, ci - 0.14 * k, ci + 0.12 * k, cj - 0.14 * k, cj + 0.14 * k, z + 1 * k, z + 2.2 * k, "#4B5563");
+          for (let b of [cj - 0.15 * k, cj + 0.15 * k]) decoBox(g, ci - 0.19 * k, ci - 0.15 * k, b - 0.025 * k, b + 0.025 * k, z + 1 * k, z + 21 * k, "#B91C1C");
+          decoBox(g, ci - 0.19 * k, ci - 0.15 * k, cj - 0.17 * k, cj + 0.17 * k, z + 19.5 * k, z + 21 * k, "#B91C1C");
+          (decoCyl(g, ci, cj, 0.1 * k, z + 2.2 * k, z + 14 * k, "#8C96A3", { top: !1, hi: 1.3 }),
+            decoCyl(g, ci, cj, 0.101 * k, z + 10.5 * k, z + 12 * k, "#F59E0B", { top: !1 }),
+            decoCyl(g, ci, cj, 0.075 * k, z + 14 * k, z + 15.5 * k, "#7C8693", { top: "#A3ACB8" }),
+            decoCyl(g, ci, cj, 0.03 * k, z + 15.5 * k, z + 18 * k, "#374151", { top: "#4B5563" }));
+          for (let b of [cj - 0.18 * k, cj + 0.18 * k]) {
+            let [x, y] = A(ci - 0.1 * k, b, 2.5 * k);
+            (g.ellipse(x, y, 2.6 * k, 2.6 * k, l("#1F2937")), g.ellipse(x, y, 1.1 * k, 1.1 * k, l("#6B7280")));
           }
         },
-        chat: (g, ci, cj, z) => {
-          decoBox(g, ci - 0.22, ci + 0.22, cj - 0.16, cj + 0.16, z, z + 6, "#C08A52");
-          decoFace(g, "R", cj + 0.16, ci - 0.22, ci + 0.22, z + 2, z + 3.2, (h, s, w) => (Math.abs(h - w / 2) < 3 ? "#4A2E18" : null));
-          let [cx, cy] = A(ci, cj, z + 6),
+        chat: (g, ci, cj, z, k = 1) => {
+          decoBox(g, ci - 0.22 * k, ci + 0.22 * k, cj - 0.16 * k, cj + 0.16 * k, z, z + 6 * k, "#C08A52");
+          decoFace(g, "R", cj + 0.16 * k, ci - 0.22 * k, ci + 0.22 * k, z + 2 * k, z + 3.2 * k, (h, s, w) => (Math.abs(h - w / 2) < 3 * k ? "#4A2E18" : null));
+          let [cx, cy] = A(ci, cj, z + 6 * k),
             fur = (p, u, h, s) => {
-              let k = -h * 0.4 - s * 0.9,
-                raie = (Math.round(p - u * 0.4) % 3 + 3) % 3 === 0;
-              return l(k > 0.45 ? "#FCD34D" : k < -0.4 ? "#C2410C" : raie ? "#D97706" : "#F59E0B");
-            };
-          (g.ellipse(cx + 2, cy - 3, 7, 3.6, fur), g.ellipse(cx - 5, cy - 4.5, 3.4, 3, fur));
-          for (let [dx, dy] of [[-7, -8], [-7, -9], [-6, -8], [-3, -8], [-3, -9], [-4, -8]]) decoPx(g, cx + dx, cy + dy, "#EA8A0C");
-          (decoPx(g, cx - 6, cy - 5, "#5A3214"), decoPx(g, cx - 5, cy - 5, "#5A3214"), decoPx(g, cx - 3, cy - 5, "#5A3214"), decoPx(g, cx - 2, cy - 5, "#5A3214"), decoPx(g, cx - 4, cy - 3, "#F472B6"));
-          for (let k = 0; k < 6; k++) decoPx(g, cx + 8 - k * 0.5, cy - 1 + (k > 3 ? 0 : 0) + (k === 5 ? -1 : 0), "#D97706");
+              let kk = -h * 0.4 - s * 0.9,
+                raie = (Math.round((p - u * 0.4) / k) % 3 + 3) % 3 === 0;
+              return l(kk > 0.45 ? "#FCD34D" : kk < -0.4 ? "#C2410C" : raie ? "#D97706" : "#F59E0B");
+            },
+            P = (dx, dy, c) => g.rect(Math.round(cx + dx * k), Math.round(cy + dy * k), k, k, l(c));
+          (g.ellipse(cx + 2 * k, cy - 3 * k, 7 * k, 3.6 * k, fur), g.ellipse(cx - 5 * k, cy - 4.5 * k, 3.4 * k, 3 * k, fur));
+          for (let [dx, dy] of [[-7, -8], [-7, -9], [-6, -8], [-3, -8], [-3, -9], [-4, -8]]) P(dx, dy, "#EA8A0C");
+          for (let [dx, dy] of [[-6, -5], [-5, -5], [-3, -5], [-2, -5]]) P(dx, dy, "#5A3214");
+          P(-4, -3, "#F472B6");
+          for (let q = 0; q < 6; q++) P(8 - q * 0.5, q === 5 ? -2 : -1, "#D97706");
         },
-        transpalette: (g, ci, cj, z) => {
-          for (let b of [cj - 0.11, cj + 0.07]) decoBox(g, ci - 0.12, ci + 0.32, b, b + 0.05, z + 0.5, z + 2, "#D97706", { topF: 1.25 });
-          decoBox(g, ci - 0.24, ci - 0.08, cj - 0.14, cj + 0.14, z + 0.5, z + 6, "#F59E0B", { topF: 1.2 });
-          decoBox(g, ci - 0.21, ci - 0.11, cj - 0.06, cj + 0.06, z + 6, z + 8, "#374151");
-          let [x0, y0] = A(ci - 0.16, cj, 8),
-            [x1, y1] = A(ci - 0.36, cj, 19);
-          (g.line(x0, y0, x1, y1, l("#1F2937")), g.line(x0 + 1, y0, x1 + 1, y1, l("#4B5563")), g.rect(x1 - 2, y1 - 1, 5, 2, l("#DC2626")));
-          for (let [a, b] of [[ci + 0.3, cj - 0.085], [ci + 0.3, cj + 0.095], [ci - 0.16, cj]]) {
-            let [x, y] = A(a, b, 0.8);
-            g.rect(x - 1, y - 1, 2, 2, l("#111827"));
+        transpalette: (g, ci, cj, z, k = 1) => {
+          for (let b of [cj - 0.11 * k, cj + 0.07 * k]) decoBox(g, ci - 0.12 * k, ci + 0.32 * k, b, b + 0.05 * k, z + 0.5 * k, z + 2 * k, "#D97706", { topF: 1.25 });
+          decoBox(g, ci - 0.24 * k, ci - 0.08 * k, cj - 0.14 * k, cj + 0.14 * k, z + 0.5 * k, z + 6 * k, "#F59E0B", { topF: 1.2 });
+          decoBox(g, ci - 0.21 * k, ci - 0.11 * k, cj - 0.06 * k, cj + 0.06 * k, z + 6 * k, z + 8 * k, "#374151");
+          decoFace(g, "L", ci - 0.08 * k, cj - 0.14 * k, cj + 0.14 * k, z + 2 * k, z + 4 * k, (h, s, w) => (h > w * 0.3 && h < w * 0.7 ? "#111827" : null));
+          let [x0, y0] = A(ci - 0.16 * k, cj, 8 * k),
+            [x1, y1] = A(ci - 0.36 * k, cj, 19 * k);
+          for (let e = 0; e < k + 1; e++) g.line(x0 + e, y0, x1 + e, y1, l(e === 0 ? "#1F2937" : "#4B5563"));
+          g.rect(x1 - 2 * k, y1 - k, 5 * k, 2 * k, l("#DC2626"));
+          for (let [a, b] of [[ci + 0.3 * k, cj - 0.085 * k], [ci + 0.3 * k, cj + 0.095 * k], [ci - 0.16 * k, cj]]) {
+            let [x, y] = A(a, b, 0.8 * k);
+            g.rect(x - k, y - k, 2 * k, 2 * k, l("#111827"));
           }
         },
-        elevateur: (g, ci, cj, z) => {
-          decoBox(g, ci - 0.22, ci + 0.14, cj - 0.15, cj + 0.15, z + 2, z + 8, "#E8AE2A", { topF: 1.22 });
-          decoBox(g, ci - 0.24, ci - 0.14, cj - 0.15, cj + 0.15, z + 2, z + 10, "#C98E16");
-          decoBox(g, ci - 0.08, ci + 0.04, cj - 0.07, cj + 0.07, z + 8, z + 10.5, "#1F2937");
-          for (let [a, b] of [[ci - 0.16, cj - 0.13], [ci - 0.16, cj + 0.13], [ci + 0.1, cj - 0.13], [ci + 0.1, cj + 0.13]]) {
-            let [x, y] = A(a, b, z + 8),
-              [x2, y2] = A(a, b, z + 19);
-            g.line(x, y, x2, y2, l("#B7791F"));
+        elevateur: (g, ci, cj, z, k = 1) => {
+          decoBox(g, ci - 0.22 * k, ci + 0.14 * k, cj - 0.15 * k, cj + 0.15 * k, z + 2 * k, z + 8 * k, "#E8AE2A", { topF: 1.22 });
+          decoBox(g, ci - 0.24 * k, ci - 0.14 * k, cj - 0.15 * k, cj + 0.15 * k, z + 2 * k, z + 10 * k, "#C98E16");
+          decoBox(g, ci - 0.08 * k, ci + 0.04 * k, cj - 0.07 * k, cj + 0.07 * k, z + 8 * k, z + 10.5 * k, "#1F2937");
+          for (let [a, b] of [[ci - 0.16 * k, cj - 0.13 * k], [ci - 0.16 * k, cj + 0.13 * k], [ci + 0.1 * k, cj - 0.13 * k], [ci + 0.1 * k, cj + 0.13 * k]]) {
+            let [x, y] = A(a, b, z + 8 * k),
+              [x2, y2] = A(a, b, z + 19 * k);
+            for (let e = 0; e < k; e++) g.line(x + e, y, x2 + e, y2, l(e ? "#F6C343" : "#B7791F"));
           }
-          decoBox(g, ci - 0.18, ci + 0.12, cj - 0.15, cj + 0.15, z + 19, z + 20, "#F6C343", { topF: 1.3 });
-          for (let b of [cj - 0.12, cj + 0.1]) decoBox(g, ci + 0.15, ci + 0.19, b, b + 0.02, z + 1, z + 22, "#6B7280");
-          for (let b of [cj - 0.1, cj + 0.07]) decoBox(g, ci + 0.19, ci + 0.4, b, b + 0.03, z + 1, z + 1.8, "#9CA3AF");
-          for (let [a, b] of [[ci - 0.15, cj + 0.16], [ci + 0.08, cj + 0.16], [ci + 0.08, cj - 0.16]]) {
-            let [x, y] = A(a, b, 2.5);
-            (g.ellipse(x, y, 2.5, 2.5, l("#111827")), decoPx(g, x, y - 1, "#6B7280"));
+          decoBox(g, ci - 0.18 * k, ci + 0.12 * k, cj - 0.15 * k, cj + 0.15 * k, z + 19 * k, z + 20 * k, "#F6C343", { topF: 1.3 });
+          for (let b of [cj - 0.12 * k, cj + 0.1 * k]) decoBox(g, ci + 0.15 * k, ci + 0.19 * k, b, b + 0.02 * k, z + 1 * k, z + 22 * k, "#6B7280");
+          for (let b of [cj - 0.1 * k, cj + 0.07 * k]) decoBox(g, ci + 0.19 * k, ci + 0.4 * k, b, b + 0.03 * k, z + 1 * k, z + 1.8 * k, "#9CA3AF");
+          for (let [a, b] of [[ci - 0.15 * k, cj + 0.16 * k], [ci + 0.08 * k, cj + 0.16 * k], [ci + 0.08 * k, cj - 0.16 * k]]) {
+            let [x, y] = A(a, b, 2.5 * k);
+            (g.ellipse(x, y, 2.5 * k, 2.5 * k, l("#111827")), g.ellipse(x, y, 1 * k, 1 * k, l("#6B7280")));
           }
-          for (let [a, b, h] of [[ci, cj + 0.15, 6], [ci + 0.14, cj - 0.05, 5], [ci - 0.1, cj, 20.2]]) {
+          for (let [a, b, h] of [[ci, cj + 0.15 * k, 6 * k], [ci + 0.14 * k, cj - 0.05 * k, 5 * k], [ci - 0.1 * k, cj, 20.2 * k]]) {
             let [x, y] = A(a, b, h);
             decoPx(g, x, y, "#FFFFFF");
           }
         },
+        // --- Sur le bureau, à la place de la raquette (centre 1.84, 3.14 ; plateau à z = 19.5)
+        lampe: (g, ci, cj, z) => {
+          decoCyl(g, ci, cj, 0.09, z, z + 1.2, "#1F2937", { top: "#374151" });
+          let [x0, y0] = A(ci, cj, z + 1.2),
+            [x1, y1] = A(ci - 0.05, cj + 0.05, z + 9),
+            [x2, y2] = A(ci + 0.08, cj - 0.04, z + 13);
+          (g.line(x0, y0, x1, y1, l("#374151")), g.line(x1, y1, x2, y2, l("#4B5563")));
+          (decoCyl(g, ci + 0.1, cj - 0.05, 0.06, z + 9, z + 12.5, "#16A34A", { top: "#22C55E", hi: 1.3 }), decoDisc(g, ci + 0.1, cj - 0.05, 0.035, z + 9, "#FEF9C3"));
+          let [lx, ly] = A(ci + 0.1, cj - 0.05, z);
+          g.ellipse(lx, ly, 5, 2, [254, 249, 195, 90]);
+        },
+        crayons: (g, ci, cj, z) => {
+          (decoCyl(g, ci, cj, 0.075, z, z + 7, "#3B82F6", { top: !1, hi: 1.3 }), decoCyl(g, ci, cj, 0.076, z + 4.5, z + 5.5, "#FACC15", { top: !1 }), decoDisc(g, ci, cj, 0.06, z + 7, "#1E3A8A"));
+          let [cx, cy] = A(ci, cj, z + 7);
+          for (let [dx, h, c] of [[-2, 6, "#DC2626"], [0, 8, "#16A34A"], [2, 5, "#F59E0B"], [1, 7, "#111827"], [-1, 4, "#8B5CF6"]]) {
+            g.rect(cx + dx, cy - h, 1, h, l(c));
+            decoPx(g, cx + dx, cy - h - 1, dx === 1 ? "#E5E7EB" : "#F5D0A9");
+          }
+        },
+        sablier: (g, ci, cj, z) => {
+          (decoCyl(g, ci, cj, 0.1, z, z + 1.5, "#B7791F", { top: "#F6C343" }), decoCyl(g, ci, cj, 0.1, z + 12, z + 13.5, "#B7791F", { top: "#FFE59A" }));
+          let [cx, cy] = A(ci, cj, 0);
+          for (let y = Math.round(cy - z - 12); y < Math.round(cy - z - 1.5); y++) {
+            let t = (y - (cy - z - 12)) / 10.5,
+              w = 0.6 + 3.2 * Math.abs(t - 0.5) * 2,
+              sable = (t > 0.6 && t - 0.6 > 0.4 - (w - 0.6) / 8) || (t < 0.5 && t > 0.3) || (Math.abs(t - 0.5) < 0.1 && Math.abs(0) < 1);
+            for (let x = Math.round(cx - w); x <= Math.round(cx + w); x++) {
+              let bord = x === Math.round(cx - w) || x === Math.round(cx + w);
+              decoPx(g, x, y, bord ? [214, 240, 250] : sable && Math.abs(x - cx) < w - 0.5 ? (x < cx ? "#F59E0B" : "#FCD34D") : [225, 245, 252]);
+            }
+          }
+          for (let [a, b] of [[-0.07, 0.07], [0.07, -0.07]]) {
+            let [x, y] = A(ci + a, cj + b, z + 1.5),
+              [x2, y2] = A(ci + a, cj + b, z + 12);
+            g.line(x, y, x2, y2, l("#B7791F"));
+          }
+        },
+        globe: (g, ci, cj, z) => {
+          (decoCyl(g, ci, cj, 0.09, z, z + 1.5, "#B7791F", { top: "#F6C343" }), decoCyl(g, ci, cj, 0.02, z + 1.5, z + 4, "#D99A1E", { top: !1 }));
+          let [cx, cy] = A(ci, cj, z + 9.5),
+            R = 5.2;
+          g.ellipse(cx, cy, R, R, (p, u, h, s) => {
+            let lon = Math.floor((h + 1) * 3 + s * 1.5),
+              terre = (lon * 7 + Math.floor((s + 1) * 4) * 3) % 5 < 2,
+              k = -h * 0.5 - s * 0.6;
+            return l(terre ? (k > 0.3 ? "#86EFAC" : k < -0.4 ? "#15803D" : "#22C55E") : k > 0.35 ? "#93C5FD" : k < -0.4 ? "#1E40AF" : "#3B82F6");
+          });
+          for (let t = -1.1; t <= 1.1; t += 0.05) {
+            let x = cx + Math.sin(t) * (R + 1.2),
+              y = cy - Math.cos(t) * (R + 1.2) * -1;
+            decoPx(g, x, y, "#F6C343");
+          }
+          for (let [dx, dy] of [[-2, -2], [1, 1], [3, -1]]) decoPx(g, cx + dx, cy + dy, "#FEF08A");
+          decoPx(g, cx - 2, cy - 3, "#FFFFFF");
+        },
       },
-      DECO_POS = { classeur: [0.29, 0.29, 34], sous: [2.18, 4.74, 0], devant: [5.45, 5.45, 0] },
+      DECO_POS = { classeur: [0.29, 0.29, 34], sous: [2.18, 4.74, 0], devant: [5.25, 5.25, 0], bureau: [1.84, 3.14, 19.5] },
+      // Les objets du sol devant sont deux fois plus grands
+      DECO_ECH = { devant: 2 },
       // Pose un objet en volume : ombre au sol, puis l'objet avec un contour assombri (et la cloche de verre par-dessus)
       decoPoser = (r, id, slot) => {
         let [ci, cj, z] = DECO_POS[slot],
           g = new Wt(Lt, Ct);
-        if (slot !== "classeur") {
+        let k = DECO_ECH[slot] || 1;
+        if (slot === "sous" || slot === "devant") {
           let [x, y] = A(ci, cj, 0);
-          r.ellipse(x + 1, y, 12, 4.5, [12, 14, 20, 110]);
+          r.ellipse(x + k, y, 12 * k, 4.5 * k, [12, 14, 20, 110]);
         }
-        (DECO_ISO[id](g, ci, cj, z), r.stamp(g, 0, 0, [0, 0, 0], !1, !0));
+        (DECO_ISO[id](g, ci, cj, z, k), r.stamp(g, 0, 0, [0, 0, 0], !1, !0));
         if (id === "cloche") {
           let [cx, cy] = A(ci, cj, 0),
             rx = 22 * Math.SQRT2 * 0.15,
@@ -3924,6 +3985,12 @@ if (!window.React || !window.ReactDOM) {
           { id: "poubelle", t: "argent", prix: 400, nom: "Bouteille recycl\xE9e en poubelle", d: "Le recyclage maison." },
           { id: "coffre", t: "or", prix: 1500, nom: "Coffre des mots de passe", d: "Le seul endroit s\xFBr du b\xE2timent." },
           { id: "frigo", t: "platine", prix: 4e3, nom: "Mini-frigo r\xE9tro", d: "Toujours une boisson fra\xEEche pour la nuit." },
+        ] },
+        { id: "bureau", nom: "Sur le bureau", defaut: "Raquette", items: [
+          { id: "lampe", t: "bronze", prix: 100, nom: "Lampe de bureau", d: "Pour les nuits de recette." },
+          { id: "crayons", t: "argent", prix: 400, nom: "Bouteille porte-crayons", d: "Une bouteille de gaz, version papeterie." },
+          { id: "sablier", t: "or", prix: 1500, nom: "Sablier du go-live", d: "Le sable est dor\xE9, le d\xE9lai aussi." },
+          { id: "globe", t: "platine", prix: 4e3, nom: "Globe des d\xE9p\xF4ts", d: "Tous les sites Divalife, sur pied dor\xE9." },
         ] },
         { id: "devant", nom: "Sol, devant le bureau", defaut: "Ballon", items: [
           { id: "chariot", t: "bronze", prix: 150, nom: "Chariot \xE0 bouteilles", d: "Le classique de l'entrep\xF4t." },
@@ -4229,6 +4296,7 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     function pi(t) {
+      let dp = decoPose();
       let r = new Wt(Lt, Ct),
         i = { top: "#D49A5A", right: "#B07840", left: "#8C5A30", out: "#3A2412" },
         o = Di,
@@ -4298,7 +4366,7 @@ if (!window.React || !window.ReactDOM) {
           { top: "#9AA1A9", right: "#A7ADB4", left: "#8E959D", out: "#2A2F35" },
           { noHi: !0 },
         ));
-      Raq(r);
+      (dp.bureau ? decoPoser(r, dp.bureau, "bureau") : Raq(r));
       if (t) {
         r.tintNight();
         for (let [p, h] of [
