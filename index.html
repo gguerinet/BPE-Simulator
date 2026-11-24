@@ -12335,25 +12335,7 @@ if (!window.React || !window.ReactDOM) {
         h(
           "div",
           { className: "jde-pop my-auto w-full max-w-4xl border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
-          h(
-            "div",
-            {
-              className: "flex items-center justify-between gap-2",
-              // En-tête fixé en haut pendant le défilement : « Fermer » reste à portée de main
-              style: { position: "sticky", top: 0, zIndex: 3, background: "#FFFBEB", paddingTop: 6, paddingBottom: 6, marginTop: -6, borderBottom: `3px solid ${W}` },
-            },
-            h(
-              "div",
-              { className: "flex flex-wrap items-baseline gap-x-3" },
-              h("span", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, "Boutique"),
-              h("span", { className: "flex items-center gap-1 text-lg font-bold", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), et(solde)),
-            ),
-            h(
-              "button",
-              { type: "button", autoFocus: !0, onClick: fermer, className: "jde-btn border-[3px] px-3 py-0.5 text-base font-semibold", style: { background: "#FACC15", color: W, borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr } },
-              "Fermer",
-            ),
-          ),
+          h("div", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, "Boutique"),
           h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Les pi\xE8ces se gagnent avec les succ\xE8s et \xE0 chaque partie finie."),
           DECO.map((e) =>
             h(
@@ -12361,6 +12343,20 @@ if (!window.React || !window.ReactDOM) {
               { key: e.id, className: "mt-3" },
               h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, e.nom),
               h("ul", { className: "mt-1.5 grid gap-1.5", style: { gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" } }, carte(e, null), e.items.map((it) => carte(e, it))),
+            ),
+          ),
+          // Bande fixée en bas pendant le défilement : solde et « Fermer » toujours à portée de main
+          h(
+            "div",
+            {
+              className: "mt-3 flex items-center justify-between gap-2",
+              style: { position: "sticky", bottom: -12, zIndex: 3, background: "#FFFBEB", paddingTop: 8, paddingBottom: 12, borderTop: `3px solid ${W}` },
+            },
+            h("span", { className: "flex items-center gap-1 text-lg font-bold", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 20 }), et(solde)),
+            h(
+              "button",
+              { type: "button", ref: (el) => el && !el.dataset.f && ((el.dataset.f = "1"), el.focus({ preventScroll: !0 })), onClick: fermer, className: "jde-btn border-[3px] px-4 py-1 text-base font-semibold", style: { background: "#FACC15", color: W, borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr } },
+              "Fermer",
             ),
           ),
         ),
