@@ -3888,21 +3888,23 @@ if (!window.React || !window.ReactDOM) {
           (g.rect(cx - 2, cy - 2, 4, 1, l("#9F1239")), g.rect(cx - 2, cy, 4, 1, l("#7A5C3A")), g.rect(cx - 1, cy + 1, 2, 1, l("#B9A27A")));
         },
         milka: (g, ci, cj, z) => {
-          // Tablette de chocolat au lait dans son emballage violet, posée à plat, un bout ouvert (papier alu et carrés de chocolat)
-          let i0 = ci - 0.2,
-            i1 = ci + 0.12,
-            j0 = cj - 0.1,
-            j1 = cj + 0.1;
+          // Tablette de chocolat au lait dans son emballage violet, posée à plat dans le sens du bureau,
+          // un bout ouvert (papier alu et carrés de chocolat)
+          let i0 = ci - 0.1,
+            i1 = ci + 0.1,
+            j0 = cj - 0.2,
+            j1 = cj + 0.12;
           decoBox(g, i0, i1, j0, j1, z, z + 2, "#8B6FC6", { topF: 1.18 });
-          decoBox(g, i1, i1 + 0.03, j0 + 0.005, j1 - 0.005, z, z + 1.8, "#D1D5DB", { topF: 1.15 });
-          decoBox(g, i1 + 0.03, i1 + 0.11, j0 + 0.01, j1 - 0.01, z, z + 1.3, "#6B3E1F", { topF: 1.25 });
-          let [ax, ay] = A(i1 + 0.07, cj, z + 1.3);
-          (decoPx(g, ax, ay, "#4A2A14"), decoPx(g, ax - 1, ay - 1, "#4A2A14"), decoPx(g, ax + 1, ay + 1, "#4A2A14"));
-          // logo blanc en écriture sur le dessus, et une petite touche lilas plus claire
-          let pts = [];
-          for (let t = 0; t <= 1; t += 0.04) pts.push(A(i0 + 0.05 + t * 0.2, cj + Math.sin(t * Math.PI * 3) * 0.025, z + 2));
-          for (let [x, y] of pts) decoPx(g, x, y, "#FFFFFF");
-          let [mx, my] = A(i0 + 0.05, cj + 0.06, z + 2);
+          decoBox(g, i0 + 0.005, i1 - 0.005, j1, j1 + 0.03, z, z + 1.8, "#D1D5DB", { topF: 1.15 });
+          decoBox(g, i0 + 0.01, i1 - 0.01, j1 + 0.03, j1 + 0.11, z, z + 1.3, "#6B3E1F", { topF: 1.25 });
+          let [ax, ay] = A(ci, j1 + 0.07, z + 1.3);
+          (decoPx(g, ax, ay, "#4A2A14"), decoPx(g, ax - 1, ay + 1, "#4A2A14"), decoPx(g, ax + 1, ay - 1, "#4A2A14"));
+          // logo blanc en écriture sur le dessus, dans la longueur, et une touche lilas
+          for (let t = 0; t <= 1; t += 0.04) {
+            let [x, y] = A(ci + Math.sin(t * Math.PI * 3) * 0.025, j0 + 0.05 + t * 0.2, z + 2);
+            decoPx(g, x, y, "#FFFFFF");
+          }
+          let [mx, my] = A(ci + 0.06, j0 + 0.05, z + 2);
           g.rect(mx - 1, my, 3, 1, l("#C4B5FD"));
         },
         trophee: (g, ci, cj, z) => {
@@ -11706,23 +11708,23 @@ if (!window.React || !window.ReactDOM) {
       SUC_VOL = ["R\xE9sultat du projet", "Style de jeu", "M\xE9tier et collection"],
       SUC = [
         { id: "golive", v: 0, t: "bronze", nom: "Premier go-live", c: "Finir une partie.", ok: (f) => !0 },
-        { id: "comex", v: 0, t: "argent", nom: "F\xE9licitations du Comex", c: "D\xE9crocher la m\xE9daille d'or (8 000 points).", ok: (f, s) => s >= 8e3 },
-        { id: "legende", v: 0, t: "platine", nom: "Dans la l\xE9gende", c: "D\xE9crocher la m\xE9daille de platine (9 000 points).", ok: (f, s) => s >= 9e3 },
-        { id: "heure", v: 0, t: "or", nom: "Pile \xE0 l'heure", c: "Go-live au plus tard \xE0 J+85.", ok: (f) => f.total <= 85 },
-        { id: "zerodefaut", v: 0, t: "platine", nom: "Z\xE9ro d\xE9faut", c: "Finir avec au moins 85 % de qualit\xE9.", ok: (f) => f.qualite >= 85 },
+        { id: "comex", v: 0, t: "bronze", nom: "F\xE9licitations du Comex", c: "D\xE9crocher la m\xE9daille d'or (8 000 points).", ok: (f, s) => s >= 8e3 },
+        { id: "legende", v: 0, t: "or", nom: "Dans la l\xE9gende", c: "D\xE9crocher la m\xE9daille de platine (9 000 points).", ok: (f, s) => s >= 9e3 },
+        { id: "heure", v: 0, t: "platine", nom: "Pile \xE0 l'heure", c: "Go-live au plus tard \xE0 J+85.", ok: (f) => f.total <= 85 },
+        { id: "zerodefaut", v: 0, t: "or", nom: "Z\xE9ro d\xE9faut", c: "Finir avec au moins 85 % de qualit\xE9.", ok: (f) => f.qualite >= 85 },
         { id: "kamikaze", v: 0, t: "or", nom: "Kamikaze", c: "R\xE9ussir un GO avec moins de 50 % de qualit\xE9.", ok: (f) => f.gonogoChoix === "go-ok" && f.qualite < 50 },
-        { id: "zeroeuro", v: 1, t: "argent", nom: "Z\xE9ro euro", c: "Ne payer aucune mission b.workchoc.", ok: (f) => !f.cout },
+        { id: "zeroeuro", v: 1, t: "bronze", nom: "Z\xE9ro euro", c: "Ne payer aucune mission b.workchoc.", ok: (f) => !f.cout },
         { id: "famille", v: 1, t: "argent", nom: "Vie de famille", c: "Rentrer chez toi tous les week-ends.", ok: (f) => !f.nWeBureau && !f.nUrg && f.weekendsMaison > 0 },
         { id: "corps", v: 1, t: "or", nom: "Corps et \xE2me", c: "Ne jamais rentrer chez toi le week-end.", ok: (f) => !f.weekendsMaison },
         { id: "sanscafe", v: 1, t: "argent", nom: "Sans caf\xE9", c: "Ne boire aucun caf\xE9.", ok: (f) => !f.nCafes },
         { id: "noctambule", v: 1, t: "argent", nom: "Noctambule", c: "Travailler 50 nuits.", ok: (f) => (f.nightsWorked || 0) >= 50 },
-        { id: "sage", v: 1, t: "argent", nom: "Le sage", c: "Choisir NO-GO et finir avec 8\u00A0500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
+        { id: "sage", v: 1, t: "or", nom: "Le sage", c: "Choisir NO-GO et finir avec 8\u00A0500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
         { id: "rescape", v: 1, t: "or", nom: "Rescap\xE9", c: "Revenir d'un arr\xEAt maladie.", ok: (f) => f.nBurnout > 0 },
-        { id: "mercenaire", v: 1, t: "platine", nom: "Mercenaire", c: "Accepter un week-end d'urgence pour une autre soci\xE9t\xE9.", ok: (f) => f.nUrg > 0 },
+        { id: "mercenaire", v: 1, t: "platine", nom: "Mercenaire", c: "Accepter 2 week-ends d'urgence pour une autre soci\xE9t\xE9 et finir avec 8\u00A0500 points.", ok: (f, s) => f.nUrg >= 2 && s >= 8500 },
         { id: "delegateur", v: 2, t: "bronze", nom: "D\xE9l\xE9gateur", c: "Passer 5 tickets \xE0 la TMA dans une partie.", ok: (f) => (f.nTicketsTMA || 0) >= 5 },
         { id: "denicheur", v: 2, t: "argent", nom: "D\xE9nicheur", c: "D\xE9jouer toutes les fausses bonnes id\xE9es d'une partie (au moins 3).", ok: (f) => f.nPieges >= 3 && f.piegesEvites >= f.nPieges },
         { id: "formateur", v: 2, t: "or", nom: "Formateur", c: "Suivre 8 ateliers PMO dans une partie.", ok: (f) => (f.nAteliers || 0) >= 8 },
-        { id: "cambouis", v: 2, t: "or", nom: "Mains dans le cambouis", c: "Traiter toi-m\xEAme 12 tickets dans une partie.", ok: (f) => (f.nTickets || 0) - (f.nTicketsTMA || 0) >= 12 },
+        { id: "cambouis", v: 2, t: "platine", nom: "Mains dans le cambouis", c: "Traiter toi-m\xEAme 12 tickets dans une partie.", ok: (f) => (f.nTickets || 0) - (f.nTicketsTMA || 0) >= 12 },
         { id: "equipe", v: 2, t: "bronze", nom: "L'\xE9quipe au complet", c: "Finir une partie avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].f) },
         { id: "orpartout", v: 2, t: "platine", nom: "Or partout", c: "M\xE9daille d'or avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].o) },
       ],
@@ -11800,7 +11802,7 @@ if (!window.React || !window.ReactDOM) {
         n && (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), vt.tirelire(Math.min(7, 2 + n * 2)), sucSync());
       },
       // Solde : pièces gagnées moins les objets de décor achetés
-      sucSolde = (st) => sucPieces(st) - Object.keys(st.deco.achats).reduce((n, id) => n + ((decoItem(id) || {}).prix || 0), 0),
+      sucSolde = (st) => Math.max(0, sucPieces(st) - Object.keys(st.deco.achats).reduce((n, id) => n + ((decoItem(id) || {}).prix || 0), 0)),
       // Fusion de deux états : chaque succès garde sa date la plus ancienne, chaque compteur sa plus grande valeur
       sucFus = (...l) => {
         let r = { ok: {}, heros: {}, cumul: {}, deco: { achats: {}, pose: {} }, recl: {} };
@@ -12164,20 +12166,21 @@ if (!window.React || !window.ReactDOM) {
         let x = setTimeout(() => vt.tirelire(Math.min(7, 2 + Math.floor(pc / 150))), 500);
         return () => clearTimeout(x);
       }, []);
+      // Titre, puis un succès par ligne, les pièces gagnées et, en dessous, le rappel des récompenses à réclamer
       return h(
         "div",
-        { className: "jde-pop flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b-4 bg-[#FEF3C7] px-3 py-1.5", style: { borderColor: W, color: W }, role: "status" },
+        { className: "jde-pop flex flex-col items-center gap-1 border-b-4 bg-[#FEF3C7] px-3 py-2", style: { borderColor: W, color: W }, role: "status" },
         liste.length > 0 && h("span", { className: "text-base font-bold sm:text-lg", style: { fontFamily: Lr } }, liste.length > 1 ? "Nouveaux succ\xE8s !" : "Nouveau succ\xE8s !"),
         liste.map((d) =>
           h(
             "span",
             { key: d.id, className: "flex items-center gap-1.5 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
-            h(SucIcone, { t: d.t, id: d.ic || d.id, taille: 26 }),
+            h(SucIcone, { t: d.t, id: d.ic || d.id, taille: 24 }),
             d.nom,
           ),
         ),
-        pc > 0 && h("span", { className: "flex items-center gap-1 text-[14px] font-bold sm:text-base", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), `+${et(pc)} pi\xE8ces`),
-        liste.length > 0 && h("span", { className: "text-[13px] font-bold sm:text-sm", style: { fontFamily: Yr, color: "#92400E" } }, "\u2192 r\xE9compenses \xE0 r\xE9clamer dans Succ\xE8s"),
+        pc > 0 && h("span", { className: "mt-1 flex items-center gap-1 text-[14px] font-bold sm:text-base", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), `+${et(pc)} pi\xE8ces`),
+        liste.length > 0 && h("span", { className: "text-[13px] font-bold sm:text-sm", style: { fontFamily: Yr, color: "#92400E" } }, "→ r\xE9compenses \xE0 r\xE9clamer dans Succ\xE8s"),
       );
     }
     // Accueil : grille des 20 succès, par volet
