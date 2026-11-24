@@ -11295,6 +11295,8 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Succès : icône de rareté (médaille bronze, argent, or ou platine), grisée tant que le succès n'est pas obtenu
+    // Ordre de la grille dans chaque volet : du plus courant au plus rare
+    var SUC_RANG = { bronze: 0, argent: 1, or: 2, platine: 3 };
     var SUC_T = { bronze: ["Bronze", "#D08A4A"], argent: ["Argent", "#CBD5E1"], or: ["Or", "#FACC15"], platine: ["Platine", "#9FD8EA"] };
     // Icône carrée en pixel art : symbole du succès (7 x 7) sur fond de la couleur de sa rareté
     var SUC_PAL = {
@@ -11398,7 +11400,9 @@ if (!window.React || !window.ReactDOM) {
               h(
                 "ul",
                 { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
-                SUC.filter((d) => d.v === vi).map((d) => {
+                SUC.filter((d) => d.v === vi)
+                  .sort((x, y) => SUC_RANG[x.t] - SUC_RANG[y.t])
+                  .map((d) => {
                   let ok = st.ok[d.id];
                   return h(
                     "li",
