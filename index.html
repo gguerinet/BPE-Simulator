@@ -3839,6 +3839,8 @@ if (!window.React || !window.ReactDOM) {
           (decoPx(g, cx + 2, cy - 3, "#FFFFFF"), decoPx(g, cx + 3, cy - 2, "#E0F2FE"));
         },
       },
+      // « __vide » : emplacement sans objet (sert à isoler l'objet d'origine pour l'aperçu de la boutique)
+      decoVide = (DECO_ISO.__vide = () => {}),
       DECO_POS = { classeur: [0.29, 0.29, 34], sous: [2.18, 4.74, 0], devant: [5.25, 5.25, 0], bureau: [1.84, 3.14, 19.5] },
       // Les objets du sol devant sont deux fois plus grands
       DECO_ECH = { devant: 2 },
@@ -3878,6 +3880,7 @@ if (!window.React || !window.ReactDOM) {
       },
       // Objets muraux : fonctions (h depuis la gauche, s depuis le haut) -> couleur
       DECO_MUR = {
+        __vide: () => null,
         planning: (h, s) => {
           if (h < 1.5 || h >= 34.8 || s < 1 || s >= 31) return s >= 31 && s < 33 && h > 4 && h < 32 ? (s < 32 ? "#B6BCC5" : "#6B7280") : null;
           if (h < 2.5 || h >= 33.8 || s < 2 || s >= 30) return h + s < 12 ? "#E5E7EB" : "#9CA3AF";
@@ -3955,6 +3958,7 @@ if (!window.React || !window.ReactDOM) {
       },
       // Objets du petit mur : zone de 12 x 21 (à la place de la cible de fléchettes)
       DECO_MP = {
+        __vide: () => null,
         horloge: (h, s) => {
           let dx = h - 6.15,
             dy = s - 10.5,
@@ -4052,7 +4056,9 @@ if (!window.React || !window.ReactDOM) {
       ],
       decoItem = (id) => DECO.flatMap((e) => e.items).find((x) => x.id === id),
       // Objets posés (lus au lancement d'une partie)
+      decoForce = null,
       decoPose = () => {
+        if (decoForce) return decoForce;
         try {
           let d = sucLit().deco,
             o = {};
@@ -6311,6 +6317,26 @@ if (!window.React || !window.ReactDOM) {
                   V.stop(m + 0.07),
                   D(F(88), m + 0.08, 0.5, "triangle", 0.05),
                   D(F(93), m + 0.16, 0.7, "triangle", 0.05));
+              } catch {}
+          },
+          // Pièces qui tombent dans une tirelire : tintements aigus, puis petit choc sourd
+          tirelire(n = 4) {
+            if (!t || !h) return;
+            let m = t.currentTime + av();
+            for (let k = 0; k < n; k++) {
+              let d = m + k * 0.11 + Math.random() * 0.02;
+              (D(F(98 + (k % 3)), d, 0.14, "triangle", 0.045), D(F(105 + (k % 2)), d + 0.005, 0.09, "sine", 0.03));
+            }
+            D(F(55), m + n * 0.11 + 0.04, 0.16, "sine", 0.06);
+          },
+          // Encaissement : tiroir-caisse qui s'ouvre (bruit bref) puis « ka-ching »
+          encaisse() {
+            if (!(!t || !h || !s))
+              try {
+                let m = t.currentTime + av();
+                this.bruit(m, 0.08, "bandpass", 1800, 0.14, 0.8);
+                this.bruit(m + 0.09, 0.05, "highpass", 3200, 0.1);
+                (D(F(91), m + 0.14, 0.9, "sine", 0.06), D(F(96), m + 0.14, 0.9, "sine", 0.05), D(F(103), m + 0.16, 0.6, "triangle", 0.03), D(F(98), m + 0.3, 0.8, "sine", 0.04));
               } catch {}
           },
           dodo() {
@@ -11951,6 +11977,11 @@ if (!window.React || !window.ReactDOM) {
     // Fin de partie : bandeau des succès et paliers débloqués, et des pièces gagnées
     function SucBandeau({ liste, pieces: pc }) {
       let h = a.default.createElement;
+      (0, a.useEffect)(() => {
+        if (!(pc > 0)) return;
+        let x = setTimeout(() => vt.tirelire(Math.min(7, 2 + Math.floor(pc / 150))), 500);
+        return () => clearTimeout(x);
+      }, []);
       return h(
         "div",
         { className: "jde-pop flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b-4 bg-[#FEF3C7] px-3 py-1.5", style: { borderColor: W, color: W }, role: "status" },
@@ -12119,11 +12150,30 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Décor : aperçu en pixels d'un objet (dessin de la boutique)
-    function DecoApercu({ id, zoom: z = 3 }) {
+    // Calque de la scène qui porte chaque emplacement, et objet d'origine isolé (pixels qui changent quand l'emplacement est vidé)
+    var DECO_CALQUE = { classeur: gi, mur: gi, murPetit: gi, bureau: pi, sous: ki, devant: ki },
+      decoOrigine = (slot) => {
+        try {
+          decoForce = {};
+          let a0 = DECO_CALQUE[slot](!1);
+          decoForce = { [slot]: "__vide" };
+          let b0 = DECO_CALQUE[slot](!1),
+            g = new Wt(Lt, Ct);
+          for (let n = 0; n < Lt * Ct * 4; n += 4) {
+            let o = a0.d;
+            (o[n + 3] && (o[n] !== b0.d[n] || o[n + 1] !== b0.d[n + 1] || o[n + 2] !== b0.d[n + 2] || o[n + 3] !== b0.d[n + 3])) &&
+              ((g.d[n] = o[n]), (g.d[n + 1] = o[n + 1]), (g.d[n + 2] = o[n + 2]), (g.d[n + 3] = 255));
+          }
+          return g;
+        } finally {
+          decoForce = null;
+        }
+      };
+    function DecoApercu({ id, zoom: z = 3, slot: so }) {
       let ref = (0, a.useRef)(null),
         img = (0, a.useMemo)(() => {
           let col = (c) => (c ? (typeof c == "string" ? l(c) : c) : null);
-          if (DECO_MUR[id] || DECO_MP[id]) {
+          if (!so && (DECO_MUR[id] || DECO_MP[id])) {
             let f = DECO_MUR[id] || DECO_MP[id],
               w = DECO_MUR[id] ? 37 : 13,
               hh = DECO_MUR[id] ? 34 : 21,
@@ -12136,8 +12186,8 @@ if (!window.React || !window.ReactDOM) {
             return { w, h: hh, d };
           }
           let slot = (DECO.find((e) => e.items.some((x) => x.id === id)) || {}).id,
-            g = new Wt(Lt, Ct);
-          decoPoser(g, id, slot);
+            g = so ? decoOrigine(so) : new Wt(Lt, Ct);
+          so || decoPoser(g, id, slot);
           let x0 = Lt,
             y0 = Ct,
             x1 = -1,
@@ -12149,7 +12199,7 @@ if (!window.React || !window.ReactDOM) {
             d = new Uint8ClampedArray(w * hh * 4);
           for (let y = 0; y < hh; y++) d.set(g.d.subarray(((y0 + y) * Lt + x0) * 4, ((y0 + y) * Lt + x1 + 1) * 4), y * w * 4);
           return { w, h: hh, d };
-        }, [id]);
+        }, [id, so]);
       (0, a.useEffect)(() => {
         let c = ref.current;
         c && c.getContext("2d").putImageData(new ImageData(img.d, img.w, img.h), 0, 0);
@@ -12166,7 +12216,7 @@ if (!window.React || !window.ReactDOM) {
           (f(x), Tr(SUK, x), window.dispatchEvent(new Event("bpe-succes")), sucSync());
         },
         acheter = (e, it) =>
-          sucSolde(sucLit()) >= it.prix && (vt.caisse && vt.caisse(), maj((x) => ((x.deco.achats[it.id] = 1), (x.deco.pose[e.id] = it.id)))),
+          sucSolde(sucLit()) >= it.prix && (vt.encaisse(), maj((x) => ((x.deco.achats[it.id] = 1), (x.deco.pose[e.id] = it.id)))),
         poser = (e, id) => maj((x) => (x.deco.pose[e.id] = id));
       (0, a.useEffect)(() => {
         let k = (ev) => ev.key === "Escape" && (ev.preventDefault(), ev.stopPropagation(), fermer());
@@ -12186,8 +12236,8 @@ if (!window.React || !window.ReactDOM) {
           },
           h(
             "div",
-            { className: "flex items-end justify-center", style: { height: 72, width: "100%", background: "#E7DFCF", overflow: "hidden", paddingBottom: 2 } },
-            it ? h(DecoApercu, { id: it.id, zoom: DECO_MUR[it.id] ? 2 : 3 }) : h("span", { className: "text-[12px] text-[#64748B]", style: { fontFamily: Yr, alignSelf: "center" } }, "D'origine"),
+            { className: "flex items-center justify-center", style: { height: 72, width: "100%", background: "#E7DFCF", overflow: "hidden" } },
+            it ? h(DecoApercu, { id: it.id, zoom: DECO_MUR[it.id] ? 2 : 3 }) : h(DecoApercu, { id: "__origine_" + e.id, slot: e.id, zoom: 3 }),
           ),
           !it && h("span", { className: "text-[12px] font-bold", style: { color: "#64748B" } }, "Gratuit"),
           h("span", { className: "text-[13px] font-bold leading-tight", style: { fontFamily: Yr } }, it ? it.nom : e.defaut),
@@ -12256,7 +12306,7 @@ if (!window.React || !window.ReactDOM) {
       return h(
         a.default.Fragment,
         null,
-        h(mt, { bg: "#BAE6FD", fg: W, onClick: () => setOuv(!0), title: "Acheter et poser des objets dans le bureau", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" }, h(SucIcone, { t: "platine", id: "cloche", taille: 24 }), "D\xE9cor"),
+        h(mt, { bg: "#BAE6FD", fg: W, onClick: () => setOuv(!0), title: "Acheter et poser des objets dans le bureau", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" }, h("span", { className: "flex items-center justify-center", style: { width: 26, height: 26 } }, h(DecoApercu, { id: "plante", zoom: 1.15 })), "D\xE9cor"),
         ouv && h(DecoBoutique, { onClose: () => setOuv(!1) }),
       );
     }
