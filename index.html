@@ -11296,11 +11296,36 @@ if (!window.React || !window.ReactDOM) {
     }
     // Succès : icône de rareté (médaille bronze, argent, or ou platine), grisée tant que le succès n'est pas obtenu
     var SUC_T = { bronze: ["Bronze", "#D08A4A"], argent: ["Argent", "#CBD5E1"], or: ["Or", "#FACC15"], platine: ["Platine", "#9FD8EA"] };
-    function SucIcone({ t, ok = !0, scale: sc = 1 }) {
-      return a.default.createElement(
-        "span",
-        { className: "inline-flex shrink-0", "aria-hidden": "true", style: ok ? null : { filter: "grayscale(0.6)", opacity: 0.5 } },
-        a.default.createElement(D2, { kind: t, scale: sc }),
+    // Icône carrée en pixel art : symbole du succès (7 x 7) sur fond de la couleur de sa rareté
+    var SUC_PAL = {
+        bronze: ["#D08A4A", "#F0B482", "#5A3214"],
+        argent: ["#D9DEE5", "#FFFFFF", "#4A5260"],
+        or: ["#F6C343", "#FFE59A", "#7A4E10"],
+        platine: ["#9FD8EA", "#F2FCFF", "#24546B"],
+      },
+      SUC_IC = {"golive": "#......#####..######.#####..#......#......#......", "comex": "########.###.#.#####...###.....#.....###...#####.", "legende": "...#......#...#######.#####...###...##.##.##...##", "heure": ".#####.#..#..##..#..##..###.#.....##.....#.#####.", "zerodefaut": "......#.....###...##.##.##...###.....#...........", "kamikaze": "....##....##....##....#####....##....##....##....", "zeroeuro": "..####..#.....#####...#.....#####...#.......####.", "famille": "...#.....###...#####.#######.#...#..#.#.#..#.#.#.", "corps": "..###....#.#..########.....####.####.....########", "sanscafe": "#.......#####..##..##.#.#.#..#..##...###.......#.", "noctambule": "..###...##....##.....##.....##......##......###..", "sage": "########.....##.###.##.....#.#...#...#.#.....#...", "rescape": "..###....###..#####################..###....###..", "mercenaire": "......#.....#.....#..#..#....##.....##....#..#...", "delegateur": "...#......##..##############...##.....#..........", "denicheur": ".###...#...#..#...#..#...#...###.......##......##", "formateur": "########.....##.##..##.....########..#.#...#...#.", "cambouis": ".##....#.....##....##.#..##....##....##....##....", "equipe": ".#...#.###.###.#...#....#....#.###.###.#...#.....", "orpartout": "#..#..###.#.#################.#.#.########......."};
+    function SucIcone({ t, id, ok = !0, taille: tl = 32 }) {
+      let h = a.default.createElement,
+        [c, cl, cf] = SUC_PAL[t] || SUC_PAL.bronze,
+        m = SUC_IC[id] || "",
+        px = [];
+      for (let i = 0; i < 49; i++) m[i] === "#" && px.push(h("rect", { key: i, x: 2 + (i % 7), y: 2 + Math.floor(i / 7), width: 1, height: 1, fill: cf }));
+      return h(
+        "svg",
+        {
+          viewBox: "0 0 11 11",
+          width: tl,
+          height: tl,
+          shapeRendering: "crispEdges",
+          "aria-hidden": "true",
+          className: "shrink-0",
+          style: ok ? null : { filter: "grayscale(0.6)", opacity: 0.5 },
+        },
+        h("rect", { x: 0, y: 0, width: 11, height: 11, fill: W }),
+        h("rect", { x: 1, y: 1, width: 9, height: 9, fill: c }),
+        h("rect", { x: 1, y: 1, width: 9, height: 1, fill: cl }),
+        h("rect", { x: 1, y: 1, width: 1, height: 9, fill: cl }),
+        px,
       );
     }
     function useSucces() {
@@ -11322,7 +11347,7 @@ if (!window.React || !window.ReactDOM) {
           h(
             "span",
             { key: d.id, className: "flex items-center gap-1.5 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
-            h(SucIcone, { t: d.t }),
+            h(SucIcone, { t: d.t, id: d.id, taille: 26 }),
             d.nom,
           ),
         ),
@@ -11362,7 +11387,7 @@ if (!window.React || !window.ReactDOM) {
           h(
             "div",
             { className: "mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[13px]", style: { fontFamily: Yr } },
-            Object.entries(SUC_T).map(([k, [nm]]) => h("span", { key: k, className: "flex items-center gap-1" }, h(SucIcone, { t: k, scale: 0.5 }), nm)),
+            Object.entries(SUC_T).map(([k, [nm]]) => h("span", { key: k, className: "flex items-center gap-1" }, h(SucIcone, { t: k, taille: 14 }), nm)),
             h("span", { className: "opacity-70" }, "\xB7 du plus courant au plus rare"),
           ),
           SUC_VOL.map((vol, vi) =>
@@ -11383,7 +11408,7 @@ if (!window.React || !window.ReactDOM) {
                       style: { borderColor: ok ? W : "#94A3B8", background: ok ? "#FFFFFF" : "#F1F5F9" },
                       "aria-label": `${d.nom}, ${SUC_T[d.t][0]}, ${ok ? "obtenu" : "pas encore obtenu"} : ${d.c}`,
                     },
-                    h(SucIcone, { t: d.t, ok: !!ok }),
+                    h(SucIcone, { t: d.t, id: d.id, ok: !!ok, taille: 36 }),
                     h(
                       "span",
                       { className: "min-w-0 leading-tight" },
@@ -11410,7 +11435,7 @@ if (!window.React || !window.ReactDOM) {
         h(
           mt,
           { bg: "#FACC15", fg: W, onClick: () => setOuv(!0), title: "Voir les succ\xE8s", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" },
-          h(SucIcone, { t: "or", scale: 0.75 }),
+          h(SucIcone, { t: "or", id: "comex", taille: 24 }),
           `Succ\xE8s ${n}/${SUC.length}`,
         ),
         ouv && h(SucGrille, { onClose: () => setOuv(!1) }),
