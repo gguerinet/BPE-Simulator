@@ -3933,6 +3933,7 @@ if (!window.React || !window.ReactDOM) {
         }
       },
       // Objets muraux : fonctions (h depuis la gauche, s depuis le haut) -> couleur
+      CARTE_FR = {"fr": [[18.5, 4.03], [20.01, 4.84], [21.91, 6.71], [23.23, 7.51], [25.31, 8.31], [27.2, 9.38], [29.47, 9.92], [28.34, 13.39], [27.2, 13.93], [25.5, 16.6], [26.82, 17.67], [27.2, 19.54], [26.64, 21.41], [28.15, 23.55], [26.45, 25.42], [24.18, 25.15], [22.66, 24.62], [21.34, 24.35], [19.82, 25.96], [19.82, 27.29], [17.18, 27.02], [14.91, 26.49], [12.64, 25.96], [10.55, 24.62], [11.31, 23.01], [11.69, 20.34], [12.07, 18.47], [11.5, 17.13], [9.99, 15.53], [9.23, 14.19], [7.72, 13.12], [5.64, 12.59], [5.07, 11.25], [6.2, 10.45], [8.28, 10.18], [10.18, 10.45], [11.12, 10.72], [10.93, 9.11], [10.36, 7.78], [11.69, 8.04], [14.15, 8.31], [14.34, 7.78], [16.8, 6.71], [16.99, 4.57]], "corse": [[31.55, 25.69], [32.03, 26.76], [31.84, 28.36], [31.36, 29.97], [30.42, 29.16], [30.23, 27.83], [30.61, 26.76]], "dep": [[18.41, 10.05], [19.75, 5.29], [23.14, 18.31], [24.18, 24.75], [12.86, 20.77], [11.03, 14.41], [28.62, 10.77]]},
       DECO_MUR = {
         __vide: () => null,
         planning: (h, s) => {
@@ -3952,23 +3953,39 @@ if (!window.React || !window.ReactDOM) {
           return "#FFFFFF";
         },
         carte: (h, s) => {
-          // Carte de France des livraisons : cadre clair, mer bleue, hexagone beige, dépôts (points rouges) reliés par des fils
+          // Carte de France des livraisons : contour fidèle (côtes, frontières, Corse), dépôts marqués d'une petite bouteille de gaz,
+          // reliés par la tournée (fil rouge) ; mer bleue et cadre clair
           if (h < 2 || h >= 34.3 || s < 1.5 || s >= 32.5) return null;
           if (h < 3 || h >= 33.3 || s < 2.5 || s >= 31.5) return h + s < 14 ? "#F1F5F9" : "#94A3B8";
-          let x = (h - 18) / 13,
-            y = (s - 16.5) / 13.5,
-            hexa = Math.abs(x) * 0.95 + Math.abs(y) * 0.55 < 0.72 && Math.abs(y) < 0.86 && !(x > 0.45 && y > 0.35),
-            depots = [[16, 9], [22, 13], [12, 15], [19, 20], [25, 22], [14, 24]];
-          for (let [px, py] of depots) if (Math.hypot(h - px, s - py) < 1.1) return "#DC2626";
+          let dans = (pts, X, Y) => {
+              let c = !1;
+              for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+                let [xi, yi] = pts[i],
+                  [xj, yj] = pts[j];
+                yi > Y != yj > Y && X < ((xj - xi) * (Y - yi)) / (yj - yi) + xi && (c = !c);
+              }
+              return c;
+            },
+            sol = (X, Y) => dans(CARTE_FR.fr, X, Y) || dans(CARTE_FR.corse, X, Y),
+            terre = sol(h, s),
+            cote = terre && !(sol(h + 1, s) && sol(h - 1, s) && sol(h, s + 1) && sol(h, s - 1)),
+            D = CARTE_FR.dep;
+          // bouteille de 2 x 4 au-dessus du point du dépôt : ogive verte, corps gris clair, ombre à droite
+          for (let [px, py] of D) {
+            let x = Math.floor(h) - Math.floor(px),
+              y = Math.floor(s) - Math.floor(py);
+            if (x >= 0 && x < 2 && y >= -3 && y < 0) return y === -3 ? (x ? "#15803D" : "#22C55E") : x ? "#6B7280" : "#D1D5DB";
+          }
           let fil = (a, b) => {
-            let [x0, y0] = depots[a],
-              [x1, y1] = depots[b],
+            let [x0, y0] = D[a],
+              [x1, y1] = D[b],
               t = Math.max(0, Math.min(1, ((h - x0) * (x1 - x0) + (s - y0) * (y1 - y0)) / ((x1 - x0) ** 2 + (y1 - y0) ** 2)));
-            return Math.hypot(h - x0 - t * (x1 - x0), s - y0 - t * (y1 - y0)) < 0.45;
+            return Math.hypot(h - x0 - t * (x1 - x0), s - y0 - t * (y1 - y0)) < 0.35;
           };
-          if (hexa && [[0, 1], [0, 2], [2, 3], [3, 4], [3, 5], [1, 4]].some(([a, b]) => fil(a, b))) return "#B91C1C";
-          if (hexa) return (Math.floor(h) + Math.floor(s)) % 5 === 0 ? "#E7D7B1" : "#F3E6C6";
-          return (Math.floor(h * 0.5 + s) % 6 === 0) ? "#7DD3FC" : "#BAE6FD";
+          if ([[0, 1], [0, 6], [0, 5], [0, 2], [2, 3], [5, 4], [4, 3]].some(([a, b]) => fil(a, b))) return "#DC2626";
+          if (cote) return "#A47B45";
+          if (terre) return (Math.floor(h) * 3 + Math.floor(s)) % 11 === 0 ? "#E5D3A8" : "#F3E6C6";
+          return Math.floor(h * 0.5 + s) % 6 === 0 ? "#7DD3FC" : "#BAE6FD";
         },
         securite: (h, s) => {
           if (h < 7.5 || h >= 29 || s < 1 || s >= 32) return h >= 29 && h < 30 && s > 2 && s < 33 ? [0, 0, 0, 60] : s >= 32 && s < 33 && h > 8.5 && h < 30 ? [0, 0, 0, 60] : null;
