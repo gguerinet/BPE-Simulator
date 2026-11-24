@@ -6966,6 +6966,7 @@ if (!window.React || !window.ReactDOM) {
       "nCafes",
       "nWeBureau",
       "nUrg",
+      "eMin",
     ];
     function ye(t) {
       let r = t.transit;
@@ -8850,6 +8851,7 @@ if (!window.React || !window.ReactDOM) {
                 nCafes: e.nCafes || 0,
                 nWeBureau: e.nWeBureau || 0,
                 nUrg: e.nUrg || 0,
+                eMin: e.eMin ?? 100,
                 burnout: e.d.burnout || 0,
               });
             }, 5200));
@@ -9160,6 +9162,9 @@ if (!window.React || !window.ReactDOM) {
               j = requestAnimationFrame(G);
               try {
                 U(gt);
+                // Succès « Zen » : énergie la plus basse atteinte pendant la partie
+                let ge = n.current;
+                ge && !ge.golive && typeof ge.energy == "number" && (ge.eMin = Math.min(ge.eMin ?? 100, ge.energy));
               } catch (xt) {
                 typeof console < "u" && console.error(xt);
               }
@@ -11719,7 +11724,11 @@ if (!window.React || !window.ReactDOM) {
         { id: "sanscafe", v: 1, t: "argent", nom: "Sans caf\xE9", c: "Ne boire aucun caf\xE9.", ok: (f) => !f.nCafes },
         { id: "noctambule", v: 1, t: "argent", nom: "Noctambule", c: "Travailler 50 nuits.", ok: (f) => (f.nightsWorked || 0) >= 50 },
         { id: "sage", v: 1, t: "or", nom: "Le sage", c: "Choisir NO-GO et finir avec 8\u00A0500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
-        { id: "rescape", v: 1, t: "or", nom: "Rescap\xE9", c: "Revenir d'un arr\xEAt maladie.", ok: (f) => f.nBurnout > 0 },
+        { id: "rescape", v: 1, t: "bronze", nom: "Infatigable", c: "Travailler au moins 30 nuits sans jamais tomber en arr\xEAt maladie.", ok: (f) => !f.nBurnout && (f.nightsWorked || 0) >= 30 },
+        { id: "propre", v: 1, t: "argent", nom: "Code propre", c: "Finir sans aucune r\xE9gression.", ok: (f) => !f.nRegressions },
+        { id: "fidele", v: 1, t: "argent", nom: "Fid\xE8le \xE0 Divalife", c: "Refuser toutes les urgences pour d'autres soci\xE9t\xE9s.", ok: (f) => !f.nUrg },
+        { id: "imprevu", v: 1, t: "or", nom: "Sans impr\xE9vu", c: "Finir avec au plus un impr\xE9vu.", ok: (f) => (f.nImprevus || 0) <= 1 },
+        { id: "zen", v: 1, t: "or", nom: "Zen", c: "Ne jamais descendre sous 35\u00A0% d'\xE9nergie.", ok: (f) => (f.eMin ?? 0) >= 35 },
         { id: "mercenaire", v: 1, t: "platine", nom: "Mercenaire", c: "Accepter 2 week-ends d'urgence pour une autre soci\xE9t\xE9 et finir avec 8\u00A0500 points.", ok: (f, s) => f.nUrg >= 2 && s >= 8500 },
         { id: "delegateur", v: 2, t: "bronze", nom: "D\xE9l\xE9gateur", c: "Passer 5 tickets \xE0 la TMA dans une partie.", ok: (f) => (f.nTicketsTMA || 0) >= 5 },
         { id: "denicheur", v: 2, t: "argent", nom: "D\xE9nicheur", c: "D\xE9jouer toutes les fausses bonnes id\xE9es d'une partie (au moins 3).", ok: (f) => f.nPieges >= 3 && f.piegesEvites >= f.nPieges },
@@ -12111,6 +12120,12 @@ if (!window.React || !window.ReactDOM) {
         platine: ["#9FD8EA", "#F2FCFF", "#24546B"],
       },
       SUC_IC = {"golive": "#......#####..######.#####..#......#......#......", "comex": "########.###.#.#####...###.....#.....###...#####.", "legende": "...#......#...#######.#####...###...##.##.##...##", "heure": ".#####.#..#..##..#..##..###.#.....##.....#.#####.", "zerodefaut": "......#.....###...##.##.##...###.....#...........", "kamikaze": "....##....##....##....#####....##....##....##....", "zeroeuro": "..####..#.....#####...#.....#####...#.......####.", "famille": "...#.....###...#####.#######.#...#..#.#.#..#.#.#.", "corps": "..###....#.#..########.....####.####.....########", "sanscafe": "#.......#####..##..##.#.#.#..#..##...###.......#.", "noctambule": "..###...##....##.....##.....##......##......###..", "sage": "########.....##.###.##.....#.#...#...#.#.....#...", "rescape": "..###....###..#####################..###....###..", "mercenaire": "......#.....#.....#..#..#....##.....##....#..#...", "delegateur": "...#......##..##############...##.....#..........", "denicheur": ".###...#...#..#...#..#...#...###.......##......##", "formateur": "########.....##.##..##.....########..#.#...#...#.", "cambouis": ".##....#.....##....##.#..##....##....##....##....", "equipe": ".#...#.###.###.#...#....#....#.###.###.#...#.....", "orpartout": "#..#..###.#.#################.#.#.########......."};
+    // Icônes des succès ajoutés ensuite (Infatigable remplace Rescapé)
+    SUC_IC.rescape = ".......######.#.##.###.##.###.##.########........";
+    SUC_IC.propre = "...#......#.....###..#######..###.....#......#...";
+    SUC_IC.fidele = ".##.##.#####################.#####...###.....#...";
+    SUC_IC.imprevu = "..###...#####.#######...#......#......#.#.....#..";
+    SUC_IC.zen = "....##...####..#####..####...###...##.....#......";
     function SucIcone({ t, id, ok = !0, taille: tl = 32 }) {
       let h = a.default.createElement,
         [c, cl, cf] = SUC_PAL[t] || SUC_PAL.bronze,
