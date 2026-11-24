@@ -3602,34 +3602,22 @@ if (!window.React || !window.ReactDOM) {
             g.ellipse(cx + dx, cy + dy, rx, ry, f);
           for (let [dx, dy] of [[-1, -5], [3, -9], [-4, -8], [1, -13]]) decoPx(g, cx + dx, cy + dy, "#BFEAA3");
         },
-        chantier: (g, ci, cj, z) => {
-          // Casque de chantier : visière claire tout autour (plus large devant), calotte bombée, nervure, autocollant Divalife
-          let [cx, cy] = A(ci, cj, z + 1),
-            jaune = ["#B45309", "#CA8A04", "#EAB308", "#FACC15", "#FDE047", "#FEF9C3"],
-            ton = (t) => l(jaune[Math.max(0, Math.min(5, Math.floor(t * 6)))]);
-          // visière : dessous foncé d'un pixel, dessus jaune
-          for (let y = Math.floor(cy - 4); y <= Math.ceil(cy + 4); y++)
-            for (let x = Math.floor(cx - 10); x <= Math.ceil(cx + 10); x++) {
-              let u = (x + 0.5 - cx) / 9.6,
-                v = (y + 0.5 - (cy + 0.8)) / 3.9;
-              if (u * u + v * v > 1) continue;
-              let bas = (u * u + ((y + 1.5 - (cy + 0.8)) / 3.9) ** 2) > 1;
-              g.set(x, y, bas ? l("#B45309") : ton(0.5 + u * 0.2 - v * 0.1));
-            }
-          // calotte bombée (forme arrondie, plus pleine qu'une demi-ellipse)
-          let R = 6.8,
-            H = 7,
-            by = cy;
-          for (let y = Math.floor(by - H); y <= Math.round(by); y++)
-            for (let x = Math.floor(cx - R); x <= Math.ceil(cx + R); x++) {
-              let u = (x + 0.5 - cx) / R,
-                v = (by - (y + 0.5)) / H;
-              if (v < 0 || Math.abs(u) ** 2.6 + v ** 2.2 > 1) continue;
-              let t = decoLum(u * 0.9, v * 0.8);
-              Math.abs(u) < 0.1 && v > 0.12 && (t += 0.17);
-              g.set(x, y, ton(t));
-            }
-          (g.rect(Math.round(cx - 4), Math.round(by - 4), 2, 2, l("#2563EB")), decoPx(g, Math.round(cx - 4), Math.round(by - 4), "#93C5FD"));
+        bidon: (g, ci, cj, z) => {
+          // Bidon de lave-glace : plastique bleu translucide, épaule, goulot et bouchon blanc, poignée creuse, étiquette
+          let e = 0.13;
+          decoBox(g, ci - e, ci + e, cj - e, cj + e, z, z + 11, "#3B82F6", { topF: 1.25 });
+          decoBox(g, ci - e + 0.03, ci + e - 0.03, cj - e + 0.03, cj + e - 0.03, z + 11, z + 12.5, "#2F74E0", { topF: 1.3 });
+          // niveau du liquide visible à travers le plastique, étiquette sur les deux faces
+          for (let [cote, fixe] of [["L", ci + e], ["R", cj + e]])
+            decoFace(g, cote, fixe, cote === "L" ? cj - e : ci - e, cote === "L" ? cj + e : ci + e, z, z + 11, (x, y, w, H) => {
+              if (y > 4 && y < 8.5 && x > 1.2 && x < w - 1.2) return y > 5.5 && y < 6.5 && x > 2.5 && x < w - 2.5 ? "#2563EB" : y > 7 && y < 7.8 && x > 2.5 && x < w - 3.5 ? "#94A3B8" : "#F8FAFC";
+              if (y < 2.5) return cote === "L" ? "#93C5FD" : "#60A5FA";
+              return null;
+            });
+          // poignée sur l'arrière du dessus, goulot et bouchon blanc à l'avant
+          decoBox(g, ci - e + 0.02, ci - e + 0.07, cj - 0.08, cj + 0.08, z + 12.5, z + 16, "#2F74E0", { topF: 1.3 });
+          decoBox(g, ci - e + 0.02, ci - e + 0.07, cj - 0.04, cj + 0.04, z + 12.5, z + 14.5, "#1E3A8A");
+          (decoCyl(g, ci + 0.05, cj + 0.05, 0.035, z + 12.5, z + 14, "#2F74E0", { top: !1 }), decoCyl(g, ci + 0.05, cj + 0.05, 0.042, z + 14, z + 16, "#E5E7EB", { top: "#FFFFFF", hi: 1.15 }));
         },
         maquette: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
@@ -4004,7 +3992,7 @@ if (!window.React || !window.ReactDOM) {
       DECO = [
         { id: "classeur", nom: "Haut du classeur", defaut: "Peluche de Yoda", items: [
           { id: "plante", t: "bronze", prix: 100, nom: "Plante verte", d: "Elle survit \xE0 tous les go-live." },
-          { id: "chantier", t: "argent", prix: 400, nom: "Casque de chantier", d: "Obligatoire pour les visites du d\xE9p\xF4t." },
+          { id: "bidon", t: "argent", prix: 400, nom: "Bidon de lave-glace", d: "Pour la flotte de camions. Et le pare-brise du Comex." },
           { id: "maquette", t: "or", prix: 1500, nom: "Maquette de bouteille chrom\xE9e", d: "Sur socle en bois, comme au si\xE8ge." },
           { id: "cloche", t: "platine", prix: 5e3, nom: "Bouteille en or sous cloche", d: "La pi\xE8ce de collection du Comex." },
         ] },
@@ -11563,7 +11551,7 @@ if (!window.React || !window.ReactDOM) {
             let a0 = { ...(x.deco.achats || {}) },
               p0 = { ...(x.deco.pose || {}) };
             // Le chat a été remplacé par la palette de bouteilles (même prix) : l'achat est conservé
-            for (let [v, n] of [["chat", "palette"], ["mug", "chantier"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["sablier", "trophee"], ["chariot", "cones"]]) {
+            for (let [v, n] of [["chat", "palette"], ["mug", "bidon"], ["chantier", "bidon"], ["radio", "bidon"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["sablier", "trophee"], ["chariot", "cones"]]) {
               a0[v] && (a0[n] = 1);
               for (let k in p0) p0[k] === v && (p0[k] = n);
             }
