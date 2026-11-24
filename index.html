@@ -3744,20 +3744,36 @@ if (!window.React || !window.ReactDOM) {
             decoDisc(g, bi, bj, 0.018 * k, z + (1.2 + hc) * k + 0.5, "#EA580C");
           }
         },
-        fontaine: (g, ci, cj, z, k = 1) => {
-          // Fontaine à eau : meuble blanc, deux robinets (bleu, rouge), égouttoir, grosse bonbonne bleue retournée
-          decoBox(g, ci - 0.12 * k, ci + 0.12 * k, cj - 0.12 * k, cj + 0.12 * k, z, z + 15 * k, "#E5E7EB", { topF: 1.1 });
-          decoFace(g, "L", ci + 0.12 * k, cj - 0.12 * k, cj + 0.12 * k, z, z + 15 * k, (x, y, w, H) => {
-            if (y > H * 0.18 && y < H * 0.26 && Math.abs(x - w * 0.3) < 1.2 * k) return "#3B82F6";
-            if (y > H * 0.18 && y < H * 0.26 && Math.abs(x - w * 0.7) < 1.2 * k) return "#DC2626";
-            if (y > H * 0.42 && y < H * 0.5 && x > w * 0.15 && x < w * 0.85) return "#64748B";
-            if (y > H * 0.5 && y < H * 0.55 && x > w * 0.2 && x < w * 0.8) return "#334155";
-            return null;
-          });
-          (decoCyl(g, ci, cj, 0.04 * k, z + 15 * k, z + 16.5 * k, "#93C5FD", { top: !1 }));
-          for (let q = 0; q < 3; q++) decoCyl(g, ci, cj, (0.05 + q * 0.025) * k, z + (16.5 + q * 0.8) * k, z + (17.3 + q * 0.8) * k, "#60A5FA", { top: !1, hi: 1.35 });
-          (decoCyl(g, ci, cj, 0.11 * k, z + 18.9 * k, z + 27 * k, "#60A5FA", { top: !1, hi: 1.4 }), decoCyl(g, ci, cj, 0.111 * k, z + 21 * k, z + 21.8 * k, "#3B82F6", { top: !1 }), decoCyl(g, ci, cj, 0.111 * k, z + 24 * k, z + 24.8 * k, "#3B82F6", { top: !1 }));
-          for (let q = 0; q < 3; q++) decoCyl(g, ci, cj, (0.1 - q * 0.03) * k, z + (27 + q * 0.7) * k, z + (27.7 + q * 0.7) * k, "#93C5FD", { top: !1, hi: 1.3 });
+        flipper: (g, ci, cj, z, k = 1) => {
+          // Flipper orienté vers la porte : la place du joueur côté porte (j petit), la tête lumineuse au fond (j grand).
+          // Pieds chromés, caisse rouge décorée, plateau vitré avec bumpers, batteurs et bille, tête avec fronton éclairé.
+          let w = 0.11 * k,
+            jA = cj - 0.3 * k,
+            jB = cj + 0.22 * k,
+            h0 = z + 7 * k,
+            h1 = z + 11 * k;
+          for (let [a, b] of [[ci - w + 0.02 * k, jA + 0.03 * k], [ci + w - 0.02 * k, jA + 0.03 * k], [ci - w + 0.02 * k, jB - 0.03 * k], [ci + w - 0.02 * k, jB - 0.03 * k]])
+            decoBox(g, a - 0.012 * k, a + 0.012 * k, b - 0.012 * k, b + 0.012 * k, z, h0, "#9CA3AF", { topF: 1.2 });
+          decoBox(g, ci - w, ci + w, jA, jB, h0, h1, "#B91C1C", { topF: 1.2 });
+          // flancs : frise jaune et étoiles
+          decoFace(g, "L", ci + w, jA, jB, h0, h1, (x, y, W2, H) => (y > H * 0.3 && y < H * 0.5 ? "#FACC15" : (Math.floor(x) % 5 === 2 && y > H * 0.6 && y < H * 0.8) ? "#FDE68A" : null));
+          decoFace(g, "R", jB, ci - w, ci + w, h0, h1, (x, y, W2, H) => (y > H * 0.3 && y < H * 0.5 ? "#FACC15" : null));
+          // plateau vitré
+          decoBox(g, ci - w + 0.012 * k, ci + w - 0.012 * k, jA + 0.012 * k, jB - 0.012 * k, h1, h1 + 0.5 * k, "#1E3A8A", { topF: 1.35 });
+          for (let [di, dj, c] of [[-0.04, 0.1, "#F472B6"], [0.04, 0.06, "#22D3EE"], [0, 0.15, "#FACC15"], [-0.05, -0.02, "#4ADE80"]])
+            decoCyl(g, ci + di * k, cj + dj * k, 0.022 * k, h1 + 0.5 * k, h1 + 1.5 * k, c, { top: ct(l(c), 1.25), hi: 1.3 });
+          // batteurs côté joueur et bille
+          for (let sg of [-1, 1]) {
+            let [x0, y0] = A(ci + sg * 0.06 * k, jA + 0.1 * k, h1 + 0.6 * k),
+              [x1, y1] = A(ci + sg * 0.02 * k, jA + 0.06 * k, h1 + 0.6 * k);
+            g.line(x0, y0, x1, y1, l("#F8FAFC"));
+          }
+          let [bx, by] = A(ci + 0.02 * k, cj - 0.05 * k, h1 + 1 * k);
+          (g.rect(bx, by, k, k, l("#E5E7EB")), decoPx(g, bx, by, "#FFFFFF"));
+          // tête au fond : caisse sombre, fronton éclairé sur le dessus et liseré néon
+          decoBox(g, ci - w, ci + w, jB - 0.06 * k, jB + 0.01 * k, h1, h1 + 11 * k, "#312E81", { topF: 1.3 });
+          decoFace(g, "R", jB + 0.01 * k, ci - w, ci + w, h1, h1 + 11 * k, (x, y, W2, H) => (y < 1.2 * k || y > H - 1.2 * k ? "#F472B6" : x > W2 * 0.2 && x < W2 * 0.8 && y > H * 0.25 && y < H * 0.7 ? (Math.floor(x + y) % 3 ? "#FACC15" : "#FB923C") : null));
+          decoFace(g, "L", ci + w, jB - 0.06 * k, jB + 0.01 * k, h1, h1 + 11 * k, (x, y, W2, H) => (y < 1.2 * k ? "#F472B6" : null));
         },
         palette: (g, ci, cj, z, k = 1) => {
           // Palette en bois (3 planches sur 3 traverses), 4 bouteilles cerclées d'un feuillard, étiquette Divalife
@@ -4156,7 +4172,7 @@ if (!window.React || !window.ReactDOM) {
         { id: "devant", nom: "Sol, devant le bureau", defaut: "Ballon", items: [
           { id: "cones", t: "bronze", prix: 150, nom: "C\xF4nes de chantier", d: "Zone en travaux : go-live en cours." },
           { id: "palette", t: "argent", prix: 600, nom: "Palette de bouteilles", d: "Livraison du jour, cercl\xE9e et pr\xEAte \xE0 partir." },
-          { id: "fontaine", t: "argent", prix: 800, nom: "Fontaine \xE0 eau", d: "Le vrai lieu des d\xE9cisions." },
+          { id: "flipper", t: "argent", prix: 800, nom: "Flipper", d: "Tourn\xE9 vers la porte, pour finir la partie avant le Comex." },
           { id: "transpalette", t: "or", prix: 2e3, nom: "Transpalette miniature", d: "T\xE9l\xE9command\xE9, pour les livraisons urgentes." },
           { id: "elevateur", t: "platine", prix: 5e3, nom: "Chariot \xE9l\xE9vateur dor\xE9", d: "Employ\xE9 du mois, pour toujours." },
         ] },
@@ -11710,7 +11726,7 @@ if (!window.React || !window.ReactDOM) {
             let a0 = { ...(x.deco.achats || {}) },
               p0 = { ...(x.deco.pose || {}) };
             // Le chat a été remplacé par la palette de bouteilles (même prix) : l'achat est conservé
-            for (let [v, n] of [["chat", "palette"], ["mug", "frigorigene"], ["chantier", "frigorigene"], ["radio", "frigorigene"], ["bidon", "frigorigene"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["crayons", "milka"], ["sablier", "trophee"], ["chariot", "cones"]]) {
+            for (let [v, n] of [["chat", "palette"], ["mug", "frigorigene"], ["chantier", "frigorigene"], ["radio", "frigorigene"], ["bidon", "frigorigene"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["crayons", "milka"], ["fontaine", "flipper"], ["sablier", "trophee"], ["chariot", "cones"]]) {
               a0[v] && (a0[n] = 1);
               for (let k in p0) p0[k] === v && (p0[k] = n);
             }
