@@ -12107,7 +12107,7 @@ if (!window.React || !window.ReactDOM) {
         let c = ref.current;
         c && c.getContext("2d").putImageData(new ImageData(img.d, img.w, img.h), 0, 0);
       }, [img]);
-      return a.default.createElement("canvas", { ref, width: img.w, height: img.h, "aria-hidden": "true", style: { width: img.w * z, height: img.h * z, imageRendering: "pixelated" } });
+      return a.default.createElement("canvas", { ref, width: img.w, height: img.h, "aria-hidden": "true", style: { width: img.w * Math.min(z, 68 / img.h, 130 / img.w), height: img.h * Math.min(z, 68 / img.h, 130 / img.w), imageRendering: "pixelated" } });
     }
     // Boutique : un emplacement par ligne, l'objet d'origine puis 4 objets du plus courant au plus rare
     function DecoBoutique({ onClose: fermer }) {
@@ -12139,7 +12139,7 @@ if (!window.React || !window.ReactDOM) {
           },
           h(
             "div",
-            { className: "flex items-end justify-center", style: { height: 72, width: "100%", background: "#E7DFCF" } },
+            { className: "flex items-end justify-center", style: { height: 72, width: "100%", background: "#E7DFCF", overflow: "hidden", paddingBottom: 2 } },
             it ? h(DecoApercu, { id: it.id, zoom: DECO_MUR[it.id] ? 2 : 3 }) : h("span", { className: "text-[12px] text-[#64748B]", style: { fontFamily: Yr, alignSelf: "center" } }, "D'origine"),
           ),
           h(
