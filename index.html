@@ -11004,52 +11004,96 @@ if (!window.React || !window.ReactDOM) {
         { id: "equipe", v: 2, t: "bronze", nom: "L'\xE9quipe au complet", c: "Finir une partie avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].f) },
         { id: "orpartout", v: 2, t: "platine", nom: "Or partout", c: "M\xE9daille d'or avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].o) },
       ],
+      // Carrière : compteurs cumulés de partie en partie, avec 4 paliers (bronze, argent, or, platine)
+      SUC_TIERS = ["bronze", "argent", "or", "platine"],
+      SUC_CAR = [
+        { id: "golive", ic: "golive", nom: "Go-live r\xE9alis\xE9s", p: [10, 25, 50, 100], val: () => 1 },
+        { id: "ateliers", ic: "formateur", nom: "Ateliers PMO suivis", p: [10, 50, 100, 250], val: (f) => f.nAteliers || 0 },
+        { id: "tickets", ic: "cambouis", nom: "Tickets trait\xE9s toi-m\xEAme", p: [25, 100, 250, 500], val: (f) => Math.max(0, (f.nTickets || 0) - (f.nTicketsTMA || 0)) },
+        { id: "nuits", ic: "noctambule", nom: "Nuits travaill\xE9es", p: [50, 250, 1e3, 2500], val: (f) => Math.max(0, f.nightsWorked || 0) },
+        { id: "ors", ic: "comex", nom: "M\xE9dailles d'or", p: [1, 5, 10, 25], val: (f, s) => (s >= 8e3 ? 1 : 0) },
+        { id: "points", ic: "legende", nom: "Points cumul\xE9s", p: [5e4, 25e4, 1e6, 25e5], val: (f, s) => Math.max(0, s || 0) },
+      ],
+      // Pièces : gagnées une fois par succès ou palier (selon sa rareté), et à chaque partie finie (selon la médaille)
+      SUC_GAIN = { bronze: 50, argent: 150, or: 400, platine: 1e3 },
+      SUC_PARTIE = (s) => (s >= 9e3 ? 60 : s >= 8e3 ? 40 : s >= 7e3 ? 30 : s >= 5e3 ? 20 : 10),
+      sucPalId = (c, n) => `c-${c.id}-${n + 1}`,
+      // Définition affichable d'un palier (bandeau de fin de partie)
+      sucPalDef = (c, n) => ({ id: sucPalId(c, n), ic: c.ic, t: SUC_TIERS[n], nom: `${c.nom} \xB7 ${et(c.p[n])}`, c: `${c.nom} : ${et(c.p[n])}.` }),
+      sucCles = () => [...SUC.map((d) => d.id), ...SUC_CAR.flatMap((c) => c.p.map((x, n) => sucPalId(c, n)))],
       sucNet = (x) => {
         let ok = {},
-          heros = {};
+          heros = {},
+          cumul = {};
         if (x && typeof x == "object") {
           if (x.ok && typeof x.ok == "object")
-            for (let d of SUC) typeof x.ok[d.id] == "string" && (ok[d.id] = x.ok[d.id].slice(0, 30));
+            for (let k of sucCles()) typeof x.ok[k] == "string" && (ok[k] = x.ok[k].slice(0, 30));
           if (x.heros && typeof x.heros == "object")
             for (let k of ["francois", "gabriel", "hugues", "samuel"]) {
               let v = x.heros[k];
               v && typeof v == "object" && (heros[k] = { f: v.f ? 1 : 0, o: v.o ? 1 : 0 });
             }
+          if (x.cumul && typeof x.cumul == "object")
+            for (let k of [...SUC_CAR.map((c) => c.id), "pieces"]) {
+              let v = Number(x.cumul[k]);
+              isFinite(v) && v > 0 && (cumul[k] = Math.min(1e9, Math.floor(v)));
+            }
         }
-        return { ok, heros };
+        return { ok, heros, cumul };
       },
       sucLit = () => sucNet(xr(SUK, null)),
-      // Fusion de deux états : chaque succès garde sa date la plus ancienne
+      // Pièces disponibles : succès et paliers obtenus + gains des parties (les achats de décor viendront en déduction)
+      sucPieces = (st) => {
+        let n = st.cumul.pieces || 0;
+        for (let d of SUC) st.ok[d.id] && (n += SUC_GAIN[d.t]);
+        for (let c of SUC_CAR) c.p.forEach((x, i) => st.ok[sucPalId(c, i)] && (n += SUC_GAIN[SUC_TIERS[i]]));
+        return n;
+      },
+      // Fusion de deux états : chaque succès garde sa date la plus ancienne, chaque compteur sa plus grande valeur
       sucFus = (...l) => {
-        let r = { ok: {}, heros: {} };
+        let r = { ok: {}, heros: {}, cumul: {} };
         for (let x of l.map(sucNet)) {
           for (let [k, v] of Object.entries(x.ok)) (!r.ok[k] || v < r.ok[k]) && (r.ok[k] = v);
           for (let [k, v] of Object.entries(x.heros)) {
             let a0 = r.heros[k] || { f: 0, o: 0 };
             r.heros[k] = { f: a0.f || v.f ? 1 : 0, o: a0.o || v.o ? 1 : 0 };
           }
+          for (let [k, v] of Object.entries(x.cumul)) r.cumul[k] = Math.max(r.cumul[k] || 0, v);
         }
         return r;
       },
       sucCle = (x) => {
         let y = sucNet(x);
-        return JSON.stringify([SUC.map((d) => y.ok[d.id] || ""), ["francois", "gabriel", "hugues", "samuel"].map((k) => (y.heros[k] ? y.heros[k].f + "" + y.heros[k].o : "00"))]);
+        return JSON.stringify([
+          sucCles().map((k) => y.ok[k] || ""),
+          ["francois", "gabriel", "hugues", "samuel"].map((k) => (y.heros[k] ? y.heros[k].f + "" + y.heros[k].o : "00")),
+          [...SUC_CAR.map((c) => c.id), "pieces"].map((k) => y.cumul[k] || 0),
+        ]);
       },
-      // Fin de partie : succès débloqués par cette partie (liste des définitions, dans l'ordre)
+      // Fin de partie : succès et paliers débloqués par cette partie, et pièces gagnées
       sucFin = (f, sc) => {
         try {
           let st = sucLit(),
             hid = f.hero && f.hero.id,
-            nv = [];
+            nv = [],
+            av = sucPieces(st),
+            now = new Date().toISOString();
           hid && (st.heros[hid] = { f: 1, o: (st.heros[hid] && st.heros[hid].o) || sc >= 8e3 ? 1 : 0 });
           for (let d of SUC)
             if (!st.ok[d.id])
               try {
-                d.ok(f, sc, st.heros) && (d.v !== 1 || sc >= 7e3) && ((st.ok[d.id] = new Date().toISOString()), nv.push(d));
+                d.ok(f, sc, st.heros) && (d.v !== 1 || sc >= 7e3) && ((st.ok[d.id] = now), nv.push(d));
               } catch {}
-          return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), nv);
+          for (let c of SUC_CAR) {
+            let v = (st.cumul[c.id] || 0) + (Number(c.val(f, sc)) || 0);
+            st.cumul[c.id] = Math.floor(v);
+            c.p.forEach((x, i) => v >= x && !st.ok[sucPalId(c, i)] && ((st.ok[sucPalId(c, i)] = now), nv.push(sucPalDef(c, i))));
+          }
+          st.cumul.pieces = (st.cumul.pieces || 0) + SUC_PARTIE(sc);
+          let gain = sucPieces(st) - av;
+          return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), { liste: nv, pieces: gain });
         } catch {
-          return [];
+          return { liste: [], pieces: 0 };
         }
       },
       sucSync = async () => {
@@ -11339,27 +11383,43 @@ if (!window.React || !window.ReactDOM) {
       return st;
     }
     // Fin de partie : bandeau des succès débloqués par cette partie
-    function SucBandeau({ liste }) {
+    // Pièce en pixel art (monnaie du jeu)
+    function Piece({ taille: tl = 16 }) {
+      let h = a.default.createElement;
+      return h(
+        "svg",
+        { viewBox: "0 0 9 9", width: tl, height: tl, shapeRendering: "crispEdges", "aria-hidden": "true", className: "shrink-0" },
+        h("path", { d: "M2 0h5v1h1v1h1v5h-1v1h-1v1h-5v-1h-1v-1h-1v-5h1v-1h1z", fill: W }),
+        h("path", { d: "M2 1h5v1h1v5h-1v1h-5v-1h-1v-5h1z", fill: "#F6C343" }),
+        h("path", { d: "M2 1h4v1h-4v4h-1v-4h1z", fill: "#FFE59A" }),
+        h("path", { d: "M4 2h1v5h-1z M3 3h1v1h-1z M5 5h1v1h-1z", fill: "#B7791F" }),
+      );
+    }
+    var nbSucces = (st) => Object.keys(st.ok).length,
+      nbSuccesMax = () => SUC.length + SUC_CAR.length * 4;
+    // Fin de partie : bandeau des succès et paliers débloqués, et des pièces gagnées
+    function SucBandeau({ liste, pieces: pc }) {
       let h = a.default.createElement;
       return h(
         "div",
         { className: "jde-pop flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b-4 bg-[#FEF3C7] px-3 py-1.5", style: { borderColor: W, color: W }, role: "status" },
-        h("span", { className: "text-base font-bold sm:text-lg", style: { fontFamily: Lr } }, liste.length > 1 ? "Nouveaux succ\xE8s !" : "Nouveau succ\xE8s !"),
+        liste.length > 0 && h("span", { className: "text-base font-bold sm:text-lg", style: { fontFamily: Lr } }, liste.length > 1 ? "Nouveaux succ\xE8s !" : "Nouveau succ\xE8s !"),
         liste.map((d) =>
           h(
             "span",
             { key: d.id, className: "flex items-center gap-1.5 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
-            h(SucIcone, { t: d.t, id: d.id, taille: 26 }),
+            h(SucIcone, { t: d.t, id: d.ic || d.id, taille: 26 }),
             d.nom,
           ),
         ),
+        pc > 0 && h("span", { className: "flex items-center gap-1 text-[14px] font-bold sm:text-base", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), `+${et(pc)} pi\xE8ces`),
       );
     }
     // Accueil : grille des 20 succès, par volet
     function SucGrille({ onClose: fermer }) {
       let h = a.default.createElement,
         st = useSucces(),
-        n = SUC.filter((d) => st.ok[d.id]).length;
+        n = nbSucces(st);
       (0, a.useEffect)(() => {
         let k = (e) => e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), fermer());
         return (window.addEventListener("keydown", k, !0), () => window.removeEventListener("keydown", k, !0));
@@ -11379,7 +11439,12 @@ if (!window.React || !window.ReactDOM) {
           h(
             "div",
             { className: "flex items-center justify-between gap-2" },
-            h("div", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, `Succ\xE8s ${n}/${SUC.length}`),
+            h(
+              "div",
+              { className: "flex flex-wrap items-baseline gap-x-3" },
+              h("span", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, `Succ\xE8s ${n}/${nbSuccesMax()}`),
+              h("span", { className: "flex items-center gap-1 text-lg font-bold", style: { fontFamily: Yr, color: "#92400E" }, title: "Pi\xE8ces gagn\xE9es" }, h(Piece, { taille: 18 }), et(sucPieces(st))),
+            ),
             h(
               "button",
               { type: "button", autoFocus: !0, onClick: fermer, className: "jde-btn border-[3px] px-3 py-0.5 text-base font-semibold", style: { background: "#FACC15", color: W, borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr } },
@@ -11391,6 +11456,61 @@ if (!window.React || !window.ReactDOM) {
             { className: "mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[13px]", style: { fontFamily: Yr } },
             Object.entries(SUC_T).map(([k, [nm]]) => h("span", { key: k, className: "flex items-center gap-1" }, h(SucIcone, { t: k, taille: 14 }), nm)),
             h("span", { className: "opacity-70" }, "\xB7 du plus courant au plus rare"),
+          ),
+          h(
+            "p",
+            { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } },
+            h("span", { style: { display: "inline-block", verticalAlign: "-2px", marginRight: 4 } }, h(Piece, { taille: 13 })),
+            `Chaque succ\xE8s rapporte des pi\xE8ces : ${Object.values(SUC_GAIN).map((g) => et(g)).join(", ")} selon sa raret\xE9, plus 10 \xE0 60 par partie finie selon la m\xE9daille.`,
+          ),
+          // Carrière : paliers cumulés de partie en partie
+          h(
+            "section",
+            { className: "mt-3" },
+            h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, "Carri\xE8re"),
+            h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Compt\xE9 de partie en partie, avec 4 paliers : bronze, argent, or puis platine."),
+            h(
+              "ul",
+              { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
+              SUC_CAR.map((c) => {
+                let v = st.cumul[c.id] || 0,
+                  nAtt = c.p.filter((x, i) => st.ok[sucPalId(c, i)]).length,
+                  suiv = nAtt < 4 ? c.p[nAtt] : null,
+                  prec = nAtt > 0 ? c.p[nAtt - 1] : 0,
+                  pct = suiv ? Math.max(0, Math.min(1, (v - prec) / (suiv - prec))) : 1;
+                return h(
+                  "li",
+                  {
+                    key: c.id,
+                    className: "flex items-center gap-2 border-2 px-2 py-1",
+                    style: { borderColor: nAtt ? W : "#94A3B8", background: nAtt ? "#FFFFFF" : "#F1F5F9" },
+                    "aria-label": `${c.nom} : ${et(v)}${suiv ? `, prochain palier ${et(suiv)} (${SUC_T[SUC_TIERS[nAtt]][0]})` : ", tous les paliers atteints"}`,
+                  },
+                  h(SucIcone, { t: SUC_TIERS[Math.max(0, nAtt - 1)], id: c.ic, ok: nAtt > 0, taille: 36 }),
+                  h(
+                    "span",
+                    { className: "min-w-0 leading-tight", style: { flex: 1 } },
+                    h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: nAtt ? W : "#64748B" } }, c.nom),
+                    h(
+                      "span",
+                      { className: "flex items-center gap-1.5 text-[13px]", style: { fontFamily: Yr, color: "#334155" } },
+                      suiv
+                        ? [
+                            h("span", { key: "s", className: "tabular-nums" }, `${et(v)}/${et(suiv)}`),
+                            h("span", { key: "i", className: "inline-flex" }, h(SucIcone, { t: SUC_TIERS[nAtt], taille: 12 })),
+                            h("span", { key: "g", className: "inline-flex items-center", style: { gap: 2 } }, "+", et(SUC_GAIN[SUC_TIERS[nAtt]]), h(Piece, { taille: 11 })),
+                          ]
+                        : `${et(v)} \xB7 tous les paliers atteints`,
+                    ),
+                    h(
+                      "span",
+                      { style: { display: "block", marginTop: 3, height: 7, width: "100%", border: `1px solid ${W}`, background: "#E2E8F0" } },
+                      h("span", { style: { display: "block", height: "100%", width: `${Math.round(pct * 100)}%`, background: { bronze: "#C2410C", argent: "#64748B", or: "#D97706", platine: "#0891B2" }[SUC_TIERS[Math.min(3, nAtt)]] } }),
+                    ),
+                  ),
+                );
+              }),
+            ),
           ),
           SUC_VOL.map((vol, vi) =>
             h(
@@ -11433,7 +11553,7 @@ if (!window.React || !window.ReactDOM) {
       let h = a.default.createElement,
         st = useSucces(),
         [ouv, setOuv] = (0, a.useState)(!1),
-        n = SUC.filter((d) => st.ok[d.id]).length;
+        n = nbSucces(st);
       return h(
         a.default.Fragment,
         null,
@@ -11441,7 +11561,8 @@ if (!window.React || !window.ReactDOM) {
           mt,
           { bg: "#FACC15", fg: W, onClick: () => setOuv(!0), title: "Voir les succ\xE8s", className: "flex items-center gap-2 px-3 py-1 text-base sm:text-lg" },
           h(SucIcone, { t: "or", id: "comex", taille: 24 }),
-          `Succ\xE8s ${n}/${SUC.length}`,
+          `Succ\xE8s ${n}/${nbSuccesMax()}`,
+          h("span", { className: "flex items-center gap-1", style: { borderLeft: `2px solid ${W}`, paddingLeft: 8 } }, h(Piece, { taille: 18 }), et(sucPieces(st))),
         ),
         ouv && h(SucGrille, { onClose: () => setOuv(!1) }),
       );
@@ -12728,7 +12849,7 @@ if (!window.React || !window.ReactDOM) {
               "Divalife \xB7 confidentiel",
             ),
           ),
-          rev && t.succes && t.succes.length > 0 && a.default.createElement(SucBandeau, { liste: t.succes }),
+          rev && t.succes && (t.succes.length > 0 || t.pieces > 0) && a.default.createElement(SucBandeau, { liste: t.succes, pieces: t.pieces || 0 }),
           a.default.createElement(
             "div",
             {
@@ -13374,7 +13495,7 @@ if (!window.React || !window.ReactDOM) {
                 })));
               let kt = nt.indexOf(Y) + 1 || nt.length + 1,
                 sucNv = sucFin(f, H);
-              (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi, succes: sucNv }), r("report"));
+              (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi, succes: sucNv.liste, pieces: sucNv.pieces }), r("report"));
             },
             onMenu: () => {
               (L(xr(fr, null)), r("select"));
