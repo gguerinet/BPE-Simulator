@@ -3575,7 +3575,7 @@ if (!window.React || !window.ReactDOM) {
       decoBox = (g, i0, i1, j0, j1, z0, z1, base, o = {}) => {
         let c = l(base),
           hx = (v) => "#" + v.map((x) => x.toString(16).padStart(2, "0")).join("");
-        K(g, i0, i1, j0, j1, z0, z1, { top: hx(ct(c, o.topF || 1.18)), right: hx(c), left: hx(ct(c, 0.72)), out: "#000000" }, { noOutline: !0, noHi: o.noHi });
+        K(g, i0, i1, j0, j1, z0, z1, { top: hx(ct(c, o.topF || 1.18)), right: hx(c), left: hx(ct(c, 0.72)), out: "#000000" }, { noOutline: !0, noHi: !0 });
       },
       // Face avant gauche (plan j fixe) ou avant droite (plan i fixe) d'une boîte : motif en coordonnées (h, s depuis le haut)
       decoFace = (g, cote, fixe, a0, a1, z0, z1, fn) =>
@@ -3649,8 +3649,8 @@ if (!window.React || !window.ReactDOM) {
           decoPx(g, cx, cy + 1, "#FFFFFF");
         },
         coffre: (g, ci, cj, z) => {
-          decoBox(g, ci - 0.18, ci + 0.18, cj - 0.15, cj + 0.15, z + 1, z + 12, "#5B6472", { topF: 1.3 });
-          decoFace(g, "R", cj + 0.15, ci - 0.18, ci + 0.18, z + 2, z + 11, (h, s, w, H) => {
+          decoBox(g, ci - 0.18, ci + 0.18, cj - 0.15, cj + 0.15, z, z + 11, "#5B6472", { topF: 1.3 });
+          decoFace(g, "R", cj + 0.15, ci - 0.18, ci + 0.18, z + 1, z + 10, (h, s, w, H) => {
             if (h < 1 || h >= w - 1 || s < 1 || s >= H - 1) return "#3B424D";
             let dx = h - w * 0.45,
               dy = s - H / 2,
@@ -3661,10 +3661,6 @@ if (!window.React || !window.ReactDOM) {
             if (h > w - 3.2 && h < w - 2 && s > 2.5 && s < H - 2.5) return "#E5E7EB";
             return "#4B5361";
           });
-          for (let [a, b] of [[ci - 0.15, cj + 0.12], [ci + 0.15, cj + 0.12], [ci + 0.15, cj - 0.12]]) {
-            let [x, y] = A(a, b, z);
-            g.rect(x - 1, y - 1, 2, 2, l("#1F2937"));
-          }
         },
         frigo: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.15, cj + 0.15, z + 1.5, z + 14, "#D72F2F", { topF: 1.15 });
@@ -3675,7 +3671,7 @@ if (!window.React || !window.ReactDOM) {
             return null;
           });
           decoFace(g, "L", ci + 0.17, cj - 0.15, cj + 0.15, z + 2, z + 13.5, (h, s, w) => (h < 1.2 ? "#F87171" : null));
-          for (let [a, b] of [[ci - 0.14, cj + 0.12], [ci + 0.14, cj + 0.12], [ci + 0.14, cj - 0.12]]) {
+          for (let [a, b] of [[ci - 0.14, cj + 0.12], [ci + 0.14, cj + 0.12]]) {
             let [x, y] = A(a, b, z);
             g.rect(x, y - 2, 1, 2, l("#9CA3AF"));
           }
@@ -3748,7 +3744,7 @@ if (!window.React || !window.ReactDOM) {
           decoBox(g, ci - 0.18 * k, ci + 0.12 * k, cj - 0.15 * k, cj + 0.15 * k, z + 19 * k, z + 20 * k, "#F6C343", { topF: 1.3 });
           for (let b of [cj - 0.12 * k, cj + 0.1 * k]) decoBox(g, ci + 0.15 * k, ci + 0.19 * k, b, b + 0.02 * k, z + 1 * k, z + 22 * k, "#6B7280");
           for (let b of [cj - 0.1 * k, cj + 0.07 * k]) decoBox(g, ci + 0.19 * k, ci + 0.4 * k, b, b + 0.03 * k, z + 1 * k, z + 1.8 * k, "#9CA3AF");
-          for (let [a, b] of [[ci - 0.15 * k, cj + 0.16 * k], [ci + 0.08 * k, cj + 0.16 * k], [ci + 0.08 * k, cj - 0.16 * k]]) {
+          for (let [a, b] of [[ci - 0.15 * k, cj + 0.16 * k], [ci + 0.08 * k, cj + 0.16 * k]]) {
             let [x, y] = A(a, b, 2.5 * k);
             (g.ellipse(x, y, 2.5 * k, 2.5 * k, l("#111827")), g.ellipse(x, y, 1 * k, 1 * k, l("#6B7280")));
           }
@@ -3758,16 +3754,14 @@ if (!window.React || !window.ReactDOM) {
           }
         },
         // --- Sur le bureau, à la place de la raquette (centre 1.84, 3.14 ; plateau à z = 19.5)
-        cactus: (g, ci, cj, z) => {
-          (decoCyl(g, ci, cj, 0.075, z, z + 4.5, "#C2683A", { top: !1 }), decoCyl(g, ci, cj, 0.085, z + 4, z + 5, "#A9552C", { top: "#5A3A22" }));
-          decoCyl(g, ci, cj, 0.05, z + 5, z + 14, "#2F8F3A", { top: "#4CAF50", hi: 1.35 });
-          (decoCyl(g, ci - 0.07, cj + 0.07, 0.025, z + 9, z + 12.5, "#2F8F3A", { top: "#4CAF50" }), decoCyl(g, ci + 0.07, cj - 0.07, 0.025, z + 7.5, z + 11, "#2F8F3A", { top: "#4CAF50" }));
-          let [x0, y0] = A(ci - 0.035, cj + 0.035, z + 9),
-            [x1, y1] = A(ci + 0.035, cj - 0.035, z + 8);
-          (g.rect(Math.round(x0) - 2, y0, 2, 2, l("#2F8F3A")), g.rect(Math.round(x1) + 1, y1, 2, 2, l("#3FA34A")));
-          let [cx, cy] = A(ci, cj, z + 14);
-          (decoPx(g, cx, cy - 1, "#F472B6"), decoPx(g, cx - 1, cy, "#EC4899"), decoPx(g, cx + 1, cy, "#EC4899"));
-          for (let [dx, dy] of [[-1, 4], [1, 7], [0, 10], [2, 3]]) decoPx(g, cx + dx, cy + dy, "#D9F99D");
+        vin: (g, ci, cj, z) => {
+          // Bouteille de bordeaux : verre sombre avec reflet, épaule arrondie, goulot, capsule rouge, étiquette crème
+          decoCyl(g, ci, cj, 0.055, z, z + 9, "#4A1525", { top: !1, hi: 1.6 });
+          for (let q = 0; q < 3; q++) decoCyl(g, ci, cj, 0.05 - q * 0.011, z + 9 + q, z + 10 + q, "#4A1525", { top: !1, hi: 1.6 });
+          (decoCyl(g, ci, cj, 0.019, z + 12, z + 15, "#3A101C", { top: !1, hi: 1.5 }), decoCyl(g, ci, cj, 0.021, z + 15, z + 17.5, "#9F1239", { top: "#BE123C", hi: 1.3 }));
+          decoCyl(g, ci, cj, 0.056, z + 2.5, z + 6.5, "#F5E6C8", { top: !1, hi: 1.05 });
+          let [cx, cy] = A(ci, cj, z + 4.5);
+          (g.rect(cx - 1, cy - 1, 3, 1, l("#9F1239")), g.rect(cx - 1, cy + 1, 3, 1, l("#B9A27A")));
         },
         crayons: (g, ci, cj, z) => {
           (decoCyl(g, ci, cj, 0.075, z, z + 7, "#3B82F6", { top: !1, hi: 1.3 }), decoCyl(g, ci, cj, 0.076, z + 4.5, z + 5.5, "#FACC15", { top: !1 }), decoDisc(g, ci, cj, 0.06, z + 7, "#1E3A8A"));
@@ -3817,7 +3811,17 @@ if (!window.React || !window.ReactDOM) {
           let [x, y] = A(ci, cj, 0);
           r.ellipse(x + k, y, 12 * k, 4.5 * k, [12, 14, 20, 110]);
         }
-        (DECO_ISO[id](g, ci, cj, z, k), r.stamp(g, 0, 0, [0, 0, 0], !1, !0));
+        DECO_ISO[id](g, ci, cj, z, k);
+        // Boîtes : retire les pixels isolés aux pointes du losange (sommet, bas) avant de tracer le contour
+        if (["carton", "coffre", "frigo"].includes(id))
+          for (let y = 1; y < Ct - 1; y++)
+            for (let x = 1; x < Lt - 1; x++) {
+              let o = (y * Lt + x) * 4;
+              if (!g.d[o + 3]) continue;
+              let n = [-4, 4, -Lt * 4, Lt * 4].filter((d) => g.d[o + d + 3] > 0).length;
+              n <= 1 && (g.d[o + 3] = 0);
+            }
+        r.stamp(g, 0, 0, [0, 0, 0], !1, !0);
         if (id === "cloche") {
           let [cx, cy] = A(ci, cj, 0),
             rx = 22 * Math.SQRT2 * 0.15,
@@ -3998,7 +4002,7 @@ if (!window.React || !window.ReactDOM) {
           { id: "frigo", t: "platine", prix: 4e3, nom: "Mini-frigo r\xE9tro", d: "Toujours une boisson fra\xEEche pour la nuit." },
         ] },
         { id: "bureau", nom: "Sur le bureau", defaut: "Raquette", items: [
-          { id: "cactus", t: "bronze", prix: 100, nom: "Cactus", d: "R\xE9siste \xE0 tout, m\xEAme aux recettes." },
+          { id: "vin", t: "bronze", prix: 100, nom: "Bouteille de vin rouge", d: "Pour f\xEAter le go-live. Pas avant." },
           { id: "crayons", t: "argent", prix: 400, nom: "Bouteille porte-crayons", d: "Une bouteille de gaz, version papeterie." },
           { id: "trophee", t: "or", prix: 1500, nom: "Troph\xE9e de la meilleure vente", d: "Remis par le Comex, poli tous les matins." },
           { id: "globe", t: "platine", prix: 4e3, nom: "Globe des d\xE9p\xF4ts", d: "Tous les sites Divalife, sur pied dor\xE9." },
@@ -11534,7 +11538,7 @@ if (!window.React || !window.ReactDOM) {
             let a0 = { ...(x.deco.achats || {}) },
               p0 = { ...(x.deco.pose || {}) };
             // Le chat a été remplacé par la palette de bouteilles (même prix) : l'achat est conservé
-            for (let [v, n] of [["chat", "palette"], ["mug", "chantier"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "cactus"], ["sablier", "trophee"], ["chariot", "cones"]]) {
+            for (let [v, n] of [["chat", "palette"], ["mug", "chantier"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["sablier", "trophee"], ["chariot", "cones"]]) {
               a0[v] && (a0[n] = 1);
               for (let k in p0) p0[k] === v && (p0[k] = n);
             }
