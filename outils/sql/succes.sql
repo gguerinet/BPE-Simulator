@@ -1,6 +1,7 @@
 -- Succès : ceux de chaque joueur, gardés sur le serveur pour les retrouver sur un autre appareil avec le code joueur.
 -- À lancer une fois dans Supabase > SQL Editor, après code-joueur.sql. Sans danger si relancé.
--- Forme : {"ok": {"<id du succès>": "<date ISO>"}, "heros": {"<héros>": {"f": 0|1, "o": 0|1}}}
+-- Forme : {"ok": {"<id du succès ou palier c-<compteur>-<1..4>>": "<date ISO>"}, "heros": {"<héros>": {"f": 0|1, "o": 0|1}},
+--          "cumul": {"<compteur>": <nombre>, "pieces": <nombre>}}
 begin;
 
 create table if not exists public.succes_joueurs (
@@ -27,18 +28,25 @@ returns text language plpgsql volatile security definer set search_path = public
 begin
   if j is null or s is null or jsonb_typeof(s) <> 'object' or pg_column_size(s) > 4000
      or jsonb_typeof(coalesce(s->'ok', '{}'::jsonb)) <> 'object'
-     or jsonb_typeof(coalesce(s->'heros', '{}'::jsonb)) <> 'object' then
+     or jsonb_typeof(coalesce(s->'heros', '{}'::jsonb)) <> 'object'
+     or jsonb_typeof(coalesce(s->'cumul', '{}'::jsonb)) <> 'object' then
     return 'refuse';
   end if;
   if exists (select 1 from jsonb_each(coalesce(s->'ok', '{}'::jsonb)) e
              where e.key not in ('golive', 'comex', 'legende', 'heure', 'zerodefaut', 'kamikaze',
                                  'zeroeuro', 'famille', 'corps', 'sanscafe', 'noctambule', 'sage', 'rescape', 'mercenaire',
                                  'delegateur', 'denicheur', 'formateur', 'cambouis', 'equipe', 'orpartout')
+                and e.key !~ '^c-(golive|ateliers|tickets|nuits|ors|points)-[1-4]$'
                 or jsonb_typeof(e.value) <> 'string') then
     return 'refuse';
   end if;
   if exists (select 1 from jsonb_each(coalesce(s->'heros', '{}'::jsonb)) e
              where e.key not in ('francois', 'gabriel', 'hugues', 'samuel') or jsonb_typeof(e.value) <> 'object') then
+    return 'refuse';
+  end if;
+  if exists (select 1 from jsonb_each(coalesce(s->'cumul', '{}'::jsonb)) e
+             where e.key not in ('golive', 'ateliers', 'tickets', 'nuits', 'ors', 'points', 'pieces')
+                or jsonb_typeof(e.value) <> 'number' or (e.value)::numeric < 0 or (e.value)::numeric > 1000000000) then
     return 'refuse';
   end if;
   if not exists (select 1 from public.joueurs where joueur_id = j) then
