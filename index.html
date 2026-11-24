@@ -4059,20 +4059,20 @@ if (!window.React || !window.ReactDOM) {
         wrike: (h, s) => {
           // Grande affiche « TOP WRIKE 2026 » : fond vert sombre, cadre, TOP en jaune (grandes lettres), WRIKE en vert vif,
           // 2026 en blanc, étoiles
-          if (h < 3 || h >= 33.3 || s < 1 || s >= 33) return h >= 33.3 && h < 34.3 && s > 2 && s < 34 ? [0, 0, 0, 60] : s >= 33 && s < 34 && h > 4 && h < 34.3 ? [0, 0, 0, 60] : null;
-          if ((Math.abs(h - 5) < 0.6 || Math.abs(h - 31.3) < 0.6) && Math.abs(s - 2.6) < 0.6) return "#E5E7EB";
-          if (h < 4 || h >= 32.3 || s < 2 || s >= 32) return "#052E1C";
+          if (h < 1 || h >= 35.3 || s < 1 || s >= 33) return h >= 35.3 && h < 36.3 && s > 2 && s < 34 ? [0, 0, 0, 60] : s >= 33 && s < 34 && h > 2 && h < 36.3 ? [0, 0, 0, 60] : null;
+          if ((Math.abs(h - 3) < 0.6 || Math.abs(h - 33.3) < 0.6) && Math.abs(s - 2.6) < 0.6) return "#E5E7EB";
+          if (h < 2 || h >= 34.3 || s < 2 || s >= 32) return "#052E1C";
           let lit = (lg, x0, y0, c) => {
               let x = Math.floor(h) - x0,
                 y = Math.floor(s) - y0;
               return y >= 0 && y < lg.length && x >= 0 && x < lg[0].length && lg[y][x] === "#" ? c : null;
             },
             L = WRIKE_TXT,
-            c = lit(L.top, Math.round(18.15 - L.top[0].length / 2), 5, "#FACC15") || lit(L.wrike, Math.round(18.15 - L.wrike[0].length / 2), 18, "#22E07A") || lit(L.an, Math.round(18.15 - L.an[0].length / 2), 25, "#FFFFFF");
+            c = lit(L.top, Math.round(18.15 - L.top[0].length / 2), 6, "#FACC15") || lit(L.wrike, Math.round(18.15 - L.wrike[0].length / 2), 19, "#22E07A") || lit(L.an, Math.round(18.15 - L.an[0].length / 2), 26, "#FFFFFF");
           if (c) return c;
-          // étoiles autour de TOP
-          for (let [ex, ey] of [[7, 8], [29, 8], [8.5, 13], [27.5, 13]]) if (Math.abs(h - ex) + Math.abs(s - ey) < 1.1) return "#FDE047";
-          if (Math.floor(s) === 16 && h > 9 && h < 27.3) return "#0F5132";
+          // étoiles de part et d'autre de WRIKE (loin des lettres de TOP)
+          for (let [ex, ey] of [[5.5, 21.5], [30.8, 21.5]]) if (Math.abs(h - ex) + Math.abs(s - ey) < 1.1) return "#FDE047";
+          if (Math.floor(s) === 17 && h > 7 && h < 29.3) return "#0F5132";
           return (Math.floor(h) + Math.floor(s)) % 7 === 0 ? "#083D27" : "#0A4730";
         },
         depot: (h, s) => {
