@@ -33,6 +33,6 @@ const S = {
   bureau:    { ...base, gap: '(g) => (window.__piege(g) ? "B" : "A")', gonogo: 'B', maison: false, dort: '(g) => g.energy < 40', reposWE: false, bw: '(g) => g.boostCalls < 1' },
 };
 const toSrc = (o) => '{' + Object.entries(o).map(([k, v]) => `${k}: ${typeof v === 'string' && v.startsWith('(') ? v : JSON.stringify(v)}`).join(', ') + '}';
-const C2 = (t) => { const r = (i) => Math.max(0, Math.min(100, i)); return { qualite: r(((t.qualite - 40) / 50) * 100), budget: r(100 - (Math.max(0, (t.cout || 0) - 5e3) / 25e3) * 100), delai: r(((170 - Math.max(90, t.total)) / 80) * 100) }; };
+const C2 = (t) => { const r = (i) => Math.max(0, Math.min(100, i)); return { qualite: r(((t.qualite - 40) / 50) * 100), budget: [100, 95, 85, 65, 25][Math.round((t.cout || 0) / 5e3)] ?? 0, delai: r(((170 - Math.max(90, t.total)) / 80) * 100) }; };
 const w2 = (t) => { const r = C2(t); const b = Math.round(1e4 * Math.cbrt((r.qualite / 100) * (r.budget / 100) * (r.delai / 100))); return b > 0 ? Math.max(0, Math.min(1e4, b + (t.bonusGo || 0))) : 0; };
 module.exports = { S, toSrc, w2, C2 };

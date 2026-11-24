@@ -16,7 +16,7 @@ window.__bot = (P) => {
     if (m && m.ok) { const id = m.choix && m.choix.length > 1 ? ch('regression', g) : 'OK'; A.De(id); return; }
     if (g.dilemma) { A.ze(ch(g.dilemma.kind, g)); return; }
     if (g.busy === 'reunion') { if (A.reunion()) A.Pe(); return; }
-    if (g.busy === 'weekend') { if (A.we()) A.Oe(ch('maison', g)); return; }
+    if (g.busy === 'weekend') { if (A.we()) { const m = !!ch('maison', g); const kk = Math.floor(g.days / 5); if (window.__weK !== kk) { window.__weK = kk; window.__weM = (window.__weM || 0) + (m ? 1 : 0); window.__weB = (window.__weB || 0) + (m ? 0 : 1); } A.Oe(m); } return; }
     if (g.busy === 'sick') { if (A.sick()) A.un(); return; }
     if (g.busy) return;
     if (P.cafe && g.energy < 92) A.Xe();

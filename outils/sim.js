@@ -15,6 +15,7 @@ async function partie(b, hero, P, maxReal = 400000) {
     if (stuck > 300) { res = { bloque: await p.evaluate(() => { const g = window.__api.n.current; return { busy: g.busy, dil: !!g.dilemma, msg: !!window.__api.msg(), pu: g.pu, j: g.days, paused: g.paused, att: g.attenteOK, q: g.queue.map((x) => x.type) }; }) }; break; }
   }
   const viol = await p.evaluate(() => window.__viol || []);
+  if (res && !res.bloque) Object.assign(res, await p.evaluate(() => { const g = window.__api.n.current; return { xCafe: g.coffeeCount, xWeM: window.__weM || 0, xWeB: window.__weB || 0 }; }));
   await ctx.close();
   return { res, viol, errs, real: (Date.now() - t0) / 1000 };
 }
