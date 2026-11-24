@@ -3584,6 +3584,11 @@ if (!window.React || !window.ReactDOM) {
           return c ? (typeof c == "string" ? l(c) : c) : null;
         }),
       decoPx = (g, x, y, c) => g.set(x, y, typeof c == "string" ? l(c) : c),
+      // Éclairage d'une sphère : u vers la droite, v vers le haut (-1..1) ; renvoie 0 (ombre) à 1 (reflet)
+      decoLum = (u, v) => {
+        let w = Math.sqrt(Math.max(0, 1 - u * u - v * v));
+        return Math.max(0, Math.min(1, 0.15 + 0.55 * (u * 0.55 + v * 0.5 + w * 0.67)));
+      },
       DECO_ISO = {
         // --- Haut du classeur (centre 0.29, 0.29 ; dessus à z = 34)
         plante: (g, ci, cj, z) => {
@@ -3598,21 +3603,33 @@ if (!window.React || !window.ReactDOM) {
           for (let [dx, dy] of [[-1, -5], [3, -9], [-4, -8], [1, -13]]) decoPx(g, cx + dx, cy + dy, "#BFEAA3");
         },
         chantier: (g, ci, cj, z) => {
-          // Casque de chantier jaune posé sur le classeur : visière en disque, calotte en dôme ombré, nervure centrale, logo
-          decoDisc(g, ci + 0.03, cj + 0.03, 0.19, z + 0.5, "#B7791F");
-          decoDisc(g, ci + 0.03, cj + 0.03, 0.18, z + 1, "#E0A800");
+          // Casque de chantier : visière claire tout autour (plus large devant), calotte bombée, nervure, autocollant Divalife
           let [cx, cy] = A(ci, cj, z + 1),
-            R = 7.5;
-          for (let y = Math.floor(cy - R * 0.95); y <= cy; y++)
+            jaune = ["#B45309", "#CA8A04", "#EAB308", "#FACC15", "#FDE047", "#FEF9C3"],
+            ton = (t) => l(jaune[Math.max(0, Math.min(5, Math.floor(t * 6)))]);
+          // visière : dessous foncé d'un pixel, dessus jaune
+          for (let y = Math.floor(cy - 4); y <= Math.ceil(cy + 4); y++)
+            for (let x = Math.floor(cx - 10); x <= Math.ceil(cx + 10); x++) {
+              let u = (x + 0.5 - cx) / 9.6,
+                v = (y + 0.5 - (cy + 0.8)) / 3.9;
+              if (u * u + v * v > 1) continue;
+              let bas = (u * u + ((y + 1.5 - (cy + 0.8)) / 3.9) ** 2) > 1;
+              g.set(x, y, bas ? l("#B45309") : ton(0.5 + u * 0.2 - v * 0.1));
+            }
+          // calotte bombée (forme arrondie, plus pleine qu'une demi-ellipse)
+          let R = 6.8,
+            H = 7,
+            by = cy;
+          for (let y = Math.floor(by - H); y <= Math.round(by); y++)
             for (let x = Math.floor(cx - R); x <= Math.ceil(cx + R); x++) {
               let u = (x + 0.5 - cx) / R,
-                v = (cy - y - 0.5) / (R * 0.95);
-              if (u * u + v * v > 1) continue;
-              let k = u * 0.55 + v * 0.45,
-                c = Math.abs(u) < 0.1 && v > 0.15 ? (u < 0 ? "#FDE047" : "#EAB308") : k > 0.55 ? "#FEF08A" : k > 0.15 ? "#FACC15" : k > -0.3 ? "#EAB308" : "#CA8A04";
-              decoPx(g, x, y, c);
+                v = (by - (y + 0.5)) / H;
+              if (v < 0 || Math.abs(u) ** 2.6 + v ** 2.2 > 1) continue;
+              let t = decoLum(u * 0.9, v * 0.8);
+              Math.abs(u) < 0.1 && v > 0.12 && (t += 0.17);
+              g.set(x, y, ton(t));
             }
-          (g.rect(Math.round(cx - R), Math.round(cy), Math.round(2 * R) + 1, 1, l("#A16207")), g.rect(cx - 3, cy - 4, 2, 2, l("#2563EB")), decoPx(g, cx - 2, cy - 4, "#FFFFFF"));
+          (g.rect(Math.round(cx - 4), Math.round(by - 4), 2, 2, l("#2563EB")), decoPx(g, Math.round(cx - 4), Math.round(by - 4), "#93C5FD"));
         },
         maquette: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
@@ -3785,18 +3802,30 @@ if (!window.React || !window.ReactDOM) {
           decoPx(g, cx + 2, cy - 1, "#FFFFFF");
         },
         globe: (g, ci, cj, z) => {
-          (decoCyl(g, ci, cj, 0.09, z, z + 1.5, "#B7791F", { top: "#F6C343" }), decoCyl(g, ci, cj, 0.02, z + 1.5, z + 4, "#D99A1E", { top: !1 }));
-          let [cx, cy] = A(ci, cj, z + 9.5),
-            R = 5.2;
-          g.ellipse(cx, cy, R, R, (p, u, h, s) => {
-            let lon = Math.floor((h + 1) * 3 + s * 1.5),
-              terre = (lon * 7 + Math.floor((s + 1) * 4) * 3) % 5 < 2,
-              k = -h * 0.5 - s * 0.6;
-            return l(terre ? (k > 0.3 ? "#86EFAC" : k < -0.4 ? "#15803D" : "#22C55E") : k > 0.35 ? "#93C5FD" : k < -0.4 ? "#1E40AF" : "#3B82F6");
-          });
-          for (let y = Math.round(cy + R); y < Math.round(cy + R + 2); y++) decoPx(g, cx, y, "#D99A1E");
-          for (let [dx, dy] of [[-2, -2], [1, 1], [3, -1]]) decoPx(g, cx + dx, cy + dy, "#FEF08A");
-          decoPx(g, cx - 2, cy - 3, "#FFFFFF");
+          // Globe sur pied doré : socle, tige, demi-méridien, sphère ombrée avec continents
+          (decoCyl(g, ci, cj, 0.085, z, z + 1.2, "#B7791F", { top: "#F6C343" }), decoCyl(g, ci, cj, 0.05, z + 1.2, z + 2, "#D99A1E", { top: "#FFE59A" }), decoCyl(g, ci, cj, 0.016, z + 2, z + 4.5, "#B7791F", { top: !1, hi: 1.5 }));
+          let [cx, cy] = A(ci, cj, z + 10),
+            R = 5.6,
+            terres = [[-2.6, -2.2, 2.2], [-1.2, -0.4, 1.8], [2.2, -1.8, 1.5], [1.4, 2.2, 1.9], [-2.4, 2.6, 1.2], [3.4, 0.8, 1.1]];
+          for (let y = Math.floor(cy - R); y <= Math.ceil(cy + R); y++)
+            for (let x = Math.floor(cx - R); x <= Math.ceil(cx + R); x++) {
+              let dx = x + 0.5 - cx,
+                dy = y + 0.5 - cy;
+              if (dx * dx + dy * dy > R * R) continue;
+              let t = decoLum(dx / R, -dy / R),
+                terre = terres.some(([a, b, rr]) => (dx - a) ** 2 + (dy - b) ** 2 < rr * rr),
+                pal = terre ? ["#14532D", "#15803D", "#22C55E", "#86EFAC"] : ["#1E3A8A", "#1D4ED8", "#3B82F6", "#93C5FD"];
+              g.set(x, y, l(pal[Math.max(0, Math.min(3, Math.floor(t * 4)))]));
+            }
+          // demi-méridien doré du côté gauche, relié à la tige
+          for (let a = Math.PI * 0.55; a <= Math.PI * 1.45; a += 0.04) {
+            let x = Math.round(cx + Math.cos(a) * (R + 1.3)),
+              y = Math.round(cy - Math.sin(a) * (R + 1.3));
+            g.set(x, y, l(a < Math.PI ? "#FFE59A" : "#D99A1E"));
+          }
+          let [sx, sy] = A(ci, cj, z + 4.5);
+          for (let y = Math.round(cy + R + 1); y <= sy; y++) g.set(Math.round(cx), y, l("#D99A1E"));
+          (decoPx(g, cx + 2, cy - 3, "#FFFFFF"), decoPx(g, cx + 3, cy - 2, "#E0F2FE"));
         },
       },
       DECO_POS = { classeur: [0.29, 0.29, 34], sous: [2.18, 4.74, 0], devant: [5.25, 5.25, 0], bureau: [1.84, 3.14, 19.5] },
@@ -3807,10 +3836,6 @@ if (!window.React || !window.ReactDOM) {
         let [ci, cj, z] = DECO_POS[slot],
           g = new Wt(Lt, Ct);
         let k = DECO_ECH[slot] || 1;
-        if (slot === "sous" || slot === "devant") {
-          let [x, y] = A(ci, cj, 0);
-          r.ellipse(x + k, y, 12 * k, 4.5 * k, [12, 14, 20, 110]);
-        }
         DECO_ISO[id](g, ci, cj, z, k);
         // Boîtes : retire les pixels isolés aux pointes du losange (sommet, bas) avant de tracer le contour
         if (["carton", "coffre", "frigo"].includes(id))
