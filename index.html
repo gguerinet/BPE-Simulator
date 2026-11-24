@@ -11711,31 +11711,29 @@ if (!window.React || !window.ReactDOM) {
       // Succès : 20 défis en 3 volets, rareté (bronze, argent, or, platine) réglée d'après des parties simulées
       SUK = "bpe-simulator-succes-v1",
       SUC_VOL = ["R\xE9sultat du projet", "Style de jeu", "M\xE9tier et collection"],
+      // 18 succès (6 par volet), sans condition de score ni de médaille. Raretés mesurées sur 144 parties simulées
+      // (9 profils de joueurs, 4 héros) : bronze 40 % et plus, argent 15 à 40 %, or 5 à 15 %, platine moins de 5 %.
       SUC = [
         { id: "golive", v: 0, t: "bronze", nom: "Premier go-live", c: "Finir une partie.", ok: (f) => !0 },
-        { id: "comex", v: 0, t: "bronze", nom: "F\xE9licitations du Comex", c: "D\xE9crocher la m\xE9daille d'or (8 000 points).", ok: (f, s) => s >= 8e3 },
-        { id: "legende", v: 0, t: "or", nom: "Dans la l\xE9gende", c: "D\xE9crocher la m\xE9daille de platine (9 000 points).", ok: (f, s) => s >= 9e3 },
-        { id: "heure", v: 0, t: "platine", nom: "Pile \xE0 l'heure", c: "Go-live au plus tard \xE0 J+85.", ok: (f) => f.total <= 85 },
-        { id: "zerodefaut", v: 0, t: "or", nom: "Z\xE9ro d\xE9faut", c: "Finir avec au moins 85 % de qualit\xE9.", ok: (f) => f.qualite >= 85 },
-        { id: "kamikaze", v: 0, t: "or", nom: "Kamikaze", c: "R\xE9ussir un GO avec moins de 50 % de qualit\xE9.", ok: (f) => f.gonogoChoix === "go-ok" && f.qualite < 50 },
-        { id: "zeroeuro", v: 1, t: "bronze", nom: "Z\xE9ro euro", c: "Ne payer aucune mission b.workchoc.", ok: (f) => !f.cout },
-        { id: "famille", v: 1, t: "argent", nom: "Vie de famille", c: "Rentrer chez toi tous les week-ends.", ok: (f) => !f.nWeBureau && !f.nUrg && f.weekendsMaison > 0 },
-        { id: "corps", v: 1, t: "or", nom: "Corps et \xE2me", c: "Ne jamais rentrer chez toi le week-end.", ok: (f) => !f.weekendsMaison },
-        { id: "sanscafe", v: 1, t: "argent", nom: "Sans caf\xE9", c: "Ne boire aucun caf\xE9.", ok: (f) => !f.nCafes },
-        { id: "noctambule", v: 1, t: "argent", nom: "Noctambule", c: "Travailler 50 nuits.", ok: (f) => (f.nightsWorked || 0) >= 50 },
-        { id: "sage", v: 1, t: "or", nom: "Le sage", c: "Choisir NO-GO et finir avec 8\u00A0500 points.", ok: (f, s) => f.gonogoChoix === "nogo" && s >= 8500 },
+        { id: "zeroeuro", v: 0, t: "bronze", nom: "Z\xE9ro euro", c: "Ne payer aucune mission b.workchoc.", ok: (f) => !f.cout },
+        { id: "delai", v: 0, t: "argent", nom: "Dans les temps", c: "Go-live au plus tard \xE0 J+95.", ok: (f) => f.total <= 95 },
+        { id: "qualite", v: 0, t: "argent", nom: "Travail soign\xE9", c: "Finir avec au moins 75 % de qualit\xE9.", ok: (f) => f.qualite >= 75 },
+        { id: "goreussi", v: 0, t: "or", nom: "Coup de poker", c: "Choisir GO et le r\xE9ussir.", ok: (f) => f.gonogoChoix === "go-ok" },
+        { id: "zerodefaut", v: 0, t: "platine", nom: "Z\xE9ro d\xE9faut", c: "Finir avec au moins 85 % de qualit\xE9.", ok: (f) => f.qualite >= 85 },
         { id: "rescape", v: 1, t: "bronze", nom: "Infatigable", c: "Travailler au moins 30 nuits sans jamais tomber en arr\xEAt maladie.", ok: (f) => !f.nBurnout && (f.nightsWorked || 0) >= 30 },
-        { id: "propre", v: 1, t: "argent", nom: "Code propre", c: "Finir sans aucune r\xE9gression.", ok: (f) => !f.nRegressions },
-        { id: "fidele", v: 1, t: "argent", nom: "Fid\xE8le \xE0 Divalife", c: "Refuser toutes les urgences pour d'autres soci\xE9t\xE9s.", ok: (f) => !f.nUrg },
-        { id: "imprevu", v: 1, t: "or", nom: "Sans impr\xE9vu", c: "Finir avec au plus un impr\xE9vu.", ok: (f) => (f.nImprevus || 0) <= 1 },
-        { id: "zen", v: 1, t: "or", nom: "Zen", c: "Ne jamais descendre sous 35\u00A0% d'\xE9nergie.", ok: (f) => (f.eMin ?? 0) >= 35 },
-        { id: "mercenaire", v: 1, t: "platine", nom: "Mercenaire", c: "Accepter 2 week-ends d'urgence pour une autre soci\xE9t\xE9 et finir avec 8\u00A0500 points.", ok: (f, s) => f.nUrg >= 2 && s >= 8500 },
-        { id: "delegateur", v: 2, t: "bronze", nom: "D\xE9l\xE9gateur", c: "Passer 5 tickets \xE0 la TMA dans une partie.", ok: (f) => (f.nTicketsTMA || 0) >= 5 },
-        { id: "denicheur", v: 2, t: "argent", nom: "D\xE9nicheur", c: "D\xE9jouer toutes les fausses bonnes id\xE9es d'une partie (au moins 3).", ok: (f) => f.nPieges >= 3 && f.piegesEvites >= f.nPieges },
-        { id: "formateur", v: 2, t: "or", nom: "Formateur", c: "Suivre 8 ateliers PMO dans une partie.", ok: (f) => (f.nAteliers || 0) >= 8 },
-        { id: "cambouis", v: 2, t: "platine", nom: "Mains dans le cambouis", c: "Traiter toi-m\xEAme 12 tickets dans une partie.", ok: (f) => (f.nTickets || 0) - (f.nTicketsTMA || 0) >= 12 },
+        { id: "fidele", v: 1, t: "bronze", nom: "Fid\xE8le \xE0 Divalife", c: "Refuser toutes les urgences pour d'autres soci\xE9t\xE9s.", ok: (f) => !f.nUrg },
+        { id: "famille", v: 1, t: "argent", nom: "Vie de famille", c: "Rentrer chez toi tous les week-ends.", ok: (f) => !f.nWeBureau && !f.nUrg && f.weekendsMaison > 0 },
+        { id: "corps", v: 1, t: "argent", nom: "Corps et \xE2me", c: "Ne jamais rentrer chez toi le week-end.", ok: (f) => !f.weekendsMaison },
+        { id: "mercenaire", v: 1, t: "or", nom: "Mercenaire", c: "Accepter 2 week-ends d'urgence pour une autre soci\xE9t\xE9.", ok: (f) => (f.nUrg || 0) >= 2 },
+        { id: "zen", v: 1, t: "platine", nom: "Zen", c: "Ne jamais descendre sous 45 % d'\xE9nergie.", ok: (f) => (f.eMin ?? 0) >= 45 },
+        { id: "denicheur", v: 2, t: "bronze", nom: "D\xE9nicheur", c: "D\xE9jouer toutes les fausses bonnes id\xE9es d'une partie (au moins 2).", ok: (f) => f.nPieges >= 2 && f.piegesEvites >= f.nPieges },
         { id: "equipe", v: 2, t: "bronze", nom: "L'\xE9quipe au complet", c: "Finir une partie avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].f) },
-        { id: "orpartout", v: 2, t: "platine", nom: "Or partout", c: "M\xE9daille d'or avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].o) },
+        { id: "delegateur", v: 2, t: "argent", nom: "D\xE9l\xE9gateur", c: "Passer 5 tickets \xE0 la TMA dans une partie.", ok: (f) => (f.nTicketsTMA || 0) >= 5 },
+        { id: "formateur", v: 2, t: "argent", nom: "Formateur", c: "Suivre 8 ateliers PMO dans une partie.", ok: (f) => (f.nAteliers || 0) >= 8 },
+        { id: "cambouis", v: 2, t: "or", nom: "Mains dans le cambouis", c: "Traiter toi-m\xEAme 10 tickets dans une partie.", ok: (f) => (f.nTickets || 0) - (f.nTicketsTMA || 0) >= 10 },
+        { id: "imprevu", v: 2, t: "platine", nom: "Sans impr\xE9vu", c: "Finir sans aucun impr\xE9vu.", ok: (f) => !(f.nImprevus || 0) },
+        // Anciens succès retirés : cachés, plus obtenables, mais ceux déjà obtenus gardent leurs pièces
+        ...[["comex", "bronze"], ["legende", "or"], ["heure", "platine"], ["kamikaze", "or"], ["sanscafe", "argent"], ["noctambule", "argent"], ["sage", "or"], ["propre", "argent"], ["orpartout", "platine"]].map(([id, t]) => ({ id, v: -1, t, cache: !0, nom: id, c: "", ok: () => !1 })),
       ],
       // Carrière : compteurs cumulés de partie en partie, avec 4 paliers (bronze, argent, or, platine)
       SUC_TIERS = ["bronze", "argent", "or", "platine"],
@@ -11795,13 +11793,13 @@ if (!window.React || !window.ReactDOM) {
       // Pièces disponibles : succès et paliers obtenus + gains des parties (les achats de décor viendront en déduction)
       sucPieces = (st) => {
         let n = st.cumul.pieces || 0;
-        for (let d of SUC) st.ok[d.id] && st.recl[d.id] && (n += SUC_GAIN[d.t]);
+        for (let d of SUC) st.ok[d.id] && (st.recl[d.id] || d.cache) && (n += SUC_GAIN[d.t]);
         for (let c of SUC_CAR) c.p.forEach((x, i) => st.ok[sucPalId(c, i)] && st.recl[sucPalId(c, i)] && (n += SUC_GAIN[SUC_TIERS[i]]));
         return n;
       },
       // Récompenses gagnées mais pas encore réclamées : [clé, pièces]
       sucAttente = (st) => [
-        ...SUC.filter((d) => st.ok[d.id] && !st.recl[d.id]).map((d) => [d.id, SUC_GAIN[d.t]]),
+        ...SUC.filter((d) => !d.cache && st.ok[d.id] && !st.recl[d.id]).map((d) => [d.id, SUC_GAIN[d.t]]),
         ...SUC_CAR.flatMap((c) => c.p.map((x, i) => [sucPalId(c, i), SUC_GAIN[SUC_TIERS[i]]])).filter(([k]) => st.ok[k] && !st.recl[k]),
       ],
       sucReclamer = (cles) => {
@@ -11852,7 +11850,7 @@ if (!window.React || !window.ReactDOM) {
           for (let d of SUC)
             if (!st.ok[d.id])
               try {
-                d.ok(f, sc, st.heros) && (d.v !== 1 || sc >= 7e3) && ((st.ok[d.id] = now), nv.push(d));
+                d.ok(f, sc, st.heros) && ((st.ok[d.id] = now), nv.push(d));
               } catch {}
           for (let c of SUC_CAR) {
             let v = (st.cumul[c.id] || 0) + (Number(c.val(f, sc)) || 0);
@@ -12121,6 +12119,9 @@ if (!window.React || !window.ReactDOM) {
       },
       SUC_IC = {"golive": "#......#####..######.#####..#......#......#......", "comex": "########.###.#.#####...###.....#.....###...#####.", "legende": "...#......#...#######.#####...###...##.##.##...##", "heure": ".#####.#..#..##..#..##..###.#.....##.....#.#####.", "zerodefaut": "......#.....###...##.##.##...###.....#...........", "kamikaze": "....##....##....##....#####....##....##....##....", "zeroeuro": "..####..#.....#####...#.....#####...#.......####.", "famille": "...#.....###...#####.#######.#...#..#.#.#..#.#.#.", "corps": "..###....#.#..########.....####.####.....########", "sanscafe": "#.......#####..##..##.#.#.#..#..##...###.......#.", "noctambule": "..###...##....##.....##.....##......##......###..", "sage": "########.....##.###.##.....#.#...#...#.#.....#...", "rescape": "..###....###..#####################..###....###..", "mercenaire": "......#.....#.....#..#..#....##.....##....#..#...", "delegateur": "...#......##..##############...##.....#..........", "denicheur": ".###...#...#..#...#..#...#...###.......##......##", "formateur": "########.....##.##..##.....########..#.#...#...#.", "cambouis": ".##....#.....##....##.#..##....##....##....##....", "equipe": ".#...#.###.###.#...#....#....#.###.###.#...#.....", "orpartout": "#..#..###.#.#################.#.#.########......."};
     // Icônes des succès ajoutés ensuite (Infatigable remplace Rescapé)
+    SUC_IC.delai = SUC_IC.heure;
+    SUC_IC.qualite = SUC_IC.legende;
+    SUC_IC.goreussi = SUC_IC.kamikaze;
     SUC_IC.rescape = ".......######.#.##.###.##.###.##.########........";
     SUC_IC.propre = "...#......#.....###..#######..###.....#......#...";
     SUC_IC.fidele = ".##.##.#####################.#####...###.....#...";
@@ -12171,8 +12172,8 @@ if (!window.React || !window.ReactDOM) {
         h("path", { d: "M4 2h1v5h-1z M3 3h1v1h-1z M5 5h1v1h-1z", fill: "#B7791F" }),
       );
     }
-    var nbSucces = (st) => Object.keys(st.ok).length,
-      nbSuccesMax = () => SUC.length + SUC_CAR.length * 4;
+    var nbSucces = (st) => Object.keys(st.ok).filter((k) => !(SUC.find((d) => d.id === k) || {}).cache).length,
+      nbSuccesMax = () => SUC.filter((d) => !d.cache).length + SUC_CAR.length * 4;
     // Fin de partie : bandeau des succès et paliers débloqués, et des pièces gagnées
     function SucBandeau({ liste, pieces: pc }) {
       let h = a.default.createElement;
@@ -12326,7 +12327,6 @@ if (!window.React || !window.ReactDOM) {
               "section",
               { key: vi, className: "mt-3" },
               h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, vol),
-              vi === 1 && h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Chacun se gagne en finissant avec au moins la m\xE9daille d'argent (7\u00A0000 points)."),
               h(
                 "ul",
                 { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
