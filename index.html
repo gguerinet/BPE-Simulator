@@ -3602,22 +3602,35 @@ if (!window.React || !window.ReactDOM) {
             g.ellipse(cx + dx, cy + dy, rx, ry, f);
           for (let [dx, dy] of [[-1, -5], [3, -9], [-4, -8], [1, -13]]) decoPx(g, cx + dx, cy + dy, "#BFEAA3");
         },
-        bidon: (g, ci, cj, z) => {
-          // Bidon de lave-glace : plastique bleu translucide, épaule, goulot et bouchon blanc, poignée creuse, étiquette
-          let e = 0.13;
-          decoBox(g, ci - e, ci + e, cj - e, cj + e, z, z + 11, "#3B82F6", { topF: 1.25 });
-          decoBox(g, ci - e + 0.03, ci + e - 0.03, cj - e + 0.03, cj + e - 0.03, z + 11, z + 12.5, "#2F74E0", { topF: 1.3 });
-          // niveau du liquide visible à travers le plastique, étiquette sur les deux faces
-          for (let [cote, fixe] of [["L", ci + e], ["R", cj + e]])
-            decoFace(g, cote, fixe, cote === "L" ? cj - e : ci - e, cote === "L" ? cj + e : ci + e, z, z + 11, (x, y, w, H) => {
-              if (y > 4 && y < 8.5 && x > 1.2 && x < w - 1.2) return y > 5.5 && y < 6.5 && x > 2.5 && x < w - 2.5 ? "#2563EB" : y > 7 && y < 7.8 && x > 2.5 && x < w - 3.5 ? "#94A3B8" : "#F8FAFC";
-              if (y < 2.5) return cote === "L" ? "#93C5FD" : "#60A5FA";
-              return null;
-            });
-          // poignée sur l'arrière du dessus, goulot et bouchon blanc à l'avant
-          decoBox(g, ci - e + 0.02, ci - e + 0.07, cj - 0.08, cj + 0.08, z + 12.5, z + 16, "#2F74E0", { topF: 1.3 });
-          decoBox(g, ci - e + 0.02, ci - e + 0.07, cj - 0.04, cj + 0.04, z + 12.5, z + 14.5, "#1E3A8A");
-          (decoCyl(g, ci + 0.05, cj + 0.05, 0.035, z + 12.5, z + 14, "#2F74E0", { top: !1 }), decoCyl(g, ci + 0.05, cj + 0.05, 0.042, z + 14, z + 16, "#E5E7EB", { top: "#FFFFFF", hi: 1.15 }));
+        frigorigene: (g, ci, cj, z) => {
+          // Bouteille de gaz frigorigène trapue : pied gris, fût gris clair, grande étiquette blanche, ogive verte,
+          // collerette verte de protection ouverte à l'avant, robinet bleu qui dépasse
+          let R = 0.19;
+          (decoCyl(g, ci, cj, R - 0.01, z, z + 1.5, "#7C8794", { top: !1 }),
+            decoCyl(g, ci, cj, R, z + 1.5, z + 6, "#B3BCC7", { top: !1, hi: 1.25 }),
+            decoCyl(g, ci, cj, R, z + 6, z + 15, "#EEF1F4", { top: !1, hi: 1.06 }));
+          let [ex, ey] = A(ci + 0.05, cj + 0.05, z + 11);
+          (g.rect(ex - 3, ey - 2, 7, 1, l("#1F2937")), g.rect(ex - 2, ey, 5, 1, l("#94A3B8")));
+          for (let q = 0; q < 4; q++) decoCyl(g, ci, cj, R - q * 0.017, z + 15 + q, z + 16 + q, "#34C759", { top: !1, hi: 1.25 });
+          decoDisc(g, ci, cj, R - 0.07, z + 19, "#2FA84F");
+          (decoCyl(g, ci, cj, 0.03, z + 19, z + 24, "#C9A227", { top: !1, hi: 1.4 }), decoCyl(g, ci, cj, 0.06, z + 24, z + 25.5, "#2563EB", { top: "#60A5FA" }));
+          let [cx, cy] = A(ci, cj, 0),
+            Rc = R - 0.04,
+            rx = 22 * Math.SQRT2 * Rc,
+            ry = 11 * Math.SQRT2 * Rc,
+            h0 = z + 19,
+            h1 = z + 24;
+          for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+            let u = (x + 0.5 - cx) / rx;
+            if (Math.abs(u) > 1) continue;
+            let e = ry * Math.sqrt(1 - u * u),
+              f = u < -0.6 ? 0.72 : u < -0.15 ? 0.86 : u < 0.3 ? 1 : u < 0.6 ? 1.18 : 1.05,
+              ouvert = Math.abs(u) < 0.5;
+            for (let y = Math.round(cy - h1 - e); y < Math.round(cy - h0 - e); y++) g.d[(y * Lt + x) * 4 + 3] || g.set(x, y, ct(l("#2FA84F"), f * 0.8));
+            if (!ouvert) for (let y = Math.round(cy - h1 + e); y < Math.round(cy - h0 + e); y++) g.set(x, y, ct(l("#34C759"), f));
+            else (g.set(x, Math.round(cy - h1 + e), ct(l("#34C759"), f * 1.1)), g.set(x, Math.round(cy - h1 + e) + 1, ct(l("#34C759"), f)));
+            (g.set(x, Math.round(cy - h1 - e), l("#86EFAC")), g.set(x, Math.round(cy - h1 + e) - 1, l("#86EFAC")));
+          }
         },
         maquette: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
@@ -3992,7 +4005,7 @@ if (!window.React || !window.ReactDOM) {
       DECO = [
         { id: "classeur", nom: "Haut du classeur", defaut: "Peluche de Yoda", items: [
           { id: "plante", t: "bronze", prix: 100, nom: "Plante verte", d: "Elle survit \xE0 tous les go-live." },
-          { id: "bidon", t: "argent", prix: 400, nom: "Bidon de lave-glace", d: "Pour la flotte de camions. Et le pare-brise du Comex." },
+          { id: "frigorigene", t: "argent", prix: 400, nom: "Bouteille de gaz frigorig\xE8ne", d: "Ogive verte, robinet bleu : le c\u0153ur du m\xE9tier." },
           { id: "maquette", t: "or", prix: 1500, nom: "Maquette de bouteille chrom\xE9e", d: "Sur socle en bois, comme au si\xE8ge." },
           { id: "cloche", t: "platine", prix: 5e3, nom: "Bouteille en or sous cloche", d: "La pi\xE8ce de collection du Comex." },
         ] },
@@ -11551,7 +11564,7 @@ if (!window.React || !window.ReactDOM) {
             let a0 = { ...(x.deco.achats || {}) },
               p0 = { ...(x.deco.pose || {}) };
             // Le chat a été remplacé par la palette de bouteilles (même prix) : l'achat est conservé
-            for (let [v, n] of [["chat", "palette"], ["mug", "bidon"], ["chantier", "bidon"], ["radio", "bidon"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["sablier", "trophee"], ["chariot", "cones"]]) {
+            for (let [v, n] of [["chat", "palette"], ["mug", "frigorigene"], ["chantier", "frigorigene"], ["radio", "frigorigene"], ["bidon", "frigorigene"], ["calendrier", "fanion"], ["manometre", "plaque"], ["casque", "disque"], ["lampe", "vin"], ["cactus", "vin"], ["sablier", "trophee"], ["chariot", "cones"]]) {
               a0[v] && (a0[n] = 1);
               for (let k in p0) p0[k] === v && (p0[k] = n);
             }
