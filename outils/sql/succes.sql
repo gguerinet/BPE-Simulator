@@ -35,7 +35,8 @@ begin
   if exists (select 1 from jsonb_each(coalesce(s->'ok', '{}'::jsonb)) e
              where e.key not in ('golive', 'comex', 'legende', 'heure', 'zerodefaut', 'kamikaze',
                                  'zeroeuro', 'famille', 'corps', 'sanscafe', 'noctambule', 'sage', 'rescape', 'mercenaire',
-                                 'delegateur', 'denicheur', 'formateur', 'cambouis', 'equipe', 'orpartout')
+                                 'delegateur', 'denicheur', 'formateur', 'cambouis', 'equipe', 'orpartout',
+                                 'propre', 'fidele', 'imprevu', 'zen')
                 and e.key !~ '^c-(golive|ateliers|tickets|nuits|ors|points)-[1-4]$'
                 or jsonb_typeof(e.value) <> 'string') then
     return 'refuse';
