@@ -4391,6 +4391,14 @@ if (!window.React || !window.ReactDOM) {
         ] },
       ],
       decoItem = (id) => DECO.flatMap((e) => e.items).find((x) => x.id === id),
+      // Prix payé : chaque achat garde le prix du moment (un changement de prix ne fait plus perdre de pièces).
+      // Achats d'avant cet enregistrement : le prix le plus bas que l'objet a eu dans le barème actuel
+      DECO_ANCIEN = { transpalette: 500, coffre: 2500, palette: 250 },
+      decoPaye = (id, v) => {
+        let n = Number(v);
+        return v !== 1 && v !== !0 && isFinite(n) && n > 0 ? Math.min(1e6, n) : Math.min((decoItem(id) || {}).prix || 0, DECO_ANCIEN[id] ?? 1 / 0);
+      },
+      decoDepense = (achats) => Object.entries(achats).reduce((n, [id, v]) => n + decoPaye(id, v), 0),
       // Objets posés (lus au lancement d'une partie)
       decoForce = null,
       decoPose = () => {
@@ -12022,7 +12030,7 @@ if (!window.React || !window.ReactDOM) {
               for (let k in p0) p0[k] === v && (p0[k] = n);
             }
             for (let e of DECO)
-              for (let it of e.items) a0[it.id] && (deco.achats[it.id] = 1);
+              for (let it of e.items) a0[it.id] && (deco.achats[it.id] = typeof a0[it.id] == "number" && a0[it.id] > 1 ? Math.min(1e6, a0[it.id]) : 1);
             for (let e of DECO) typeof p0[e.id] == "string" && (p0[e.id] === "" || e.items.some((it) => it.id === p0[e.id])) && (deco.pose[e.id] = p0[e.id]);
           }
         }
@@ -12033,7 +12041,7 @@ if (!window.React || !window.ReactDOM) {
         // Solde jamais négatif : si les achats dépassent ce que valent aujourd'hui les succès (raretés revues, succès retirés),
         // la différence est offerte une fois pour toutes, pour que chaque récompense réclamée fasse bien monter le compteur
         try {
-          let brut = sucPieces(st) - Object.keys(deco.achats).reduce((n, id) => n + ((decoItem(id) || {}).prix || 0), 0);
+          let brut = sucPieces(st) - decoDepense(deco.achats);
           brut < 0 && (cumul.pieces = (cumul.pieces || 0) - brut);
         } catch {}
         return st;
@@ -12058,13 +12066,17 @@ if (!window.React || !window.ReactDOM) {
         n && (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), vt.tirelire(Math.min(7, 2 + n * 2)), sucSync());
       },
       // Solde : pièces gagnées moins les objets de décor achetés
-      sucSolde = (st) => Math.max(0, sucPieces(st) - Object.keys(st.deco.achats).reduce((n, id) => n + ((decoItem(id) || {}).prix || 0), 0)),
+      sucSolde = (st) => Math.max(0, sucPieces(st) - decoDepense(st.deco.achats)),
       // Fusion de deux états : chaque succès garde sa date la plus ancienne, chaque compteur sa plus grande valeur
       sucFus = (...l) => {
         let r = { ok: {}, heros: {}, cumul: {}, deco: { achats: {}, pose: {} }, recl: {} };
         for (let x of l.map(sucNet)) {
           // Objets achetés : jamais perdus ; objet posé : celui du dernier état qui en indique un
-          Object.assign(r.deco.achats, x.deco.achats);
+          // prix payé connu sur un appareil (> 1) : il l'emporte sur un achat ancien sans prix (1) ; deux prix : le plus bas
+          for (let [k, v] of Object.entries(x.deco.achats)) {
+            let w = r.deco.achats[k];
+            r.deco.achats[k] = !w ? v : w > 1 && v > 1 ? Math.min(w, v) : Math.max(w, v);
+          }
           Object.assign(r.deco.pose, x.deco.pose);
           Object.assign(r.recl, x.recl);
           for (let [k, v] of Object.entries(x.ok)) (!r.ok[k] || v < r.ok[k]) && (r.ok[k] = v);
@@ -12861,7 +12873,7 @@ if (!window.React || !window.ReactDOM) {
           (f(x), Tr(SUK, x), window.dispatchEvent(new Event("bpe-succes")), sucSync());
         },
         acheter = (e, it) =>
-          sucSolde(sucLit()) >= it.prix && (vt.encaisse(), maj((x) => ((x.deco.achats[it.id] = 1), (x.deco.pose[e.id] = it.id)))),
+          sucSolde(sucLit()) >= it.prix && (vt.encaisse(), maj((x) => ((x.deco.achats[it.id] = it.prix), (x.deco.pose[e.id] = it.id)))),
         poser = (e, id) => maj((x) => (x.deco.pose[e.id] = id));
       (0, a.useEffect)(() => {
         let k = (ev) => ev.key === "Escape" && (ev.preventDefault(), ev.stopPropagation(), fermer());
