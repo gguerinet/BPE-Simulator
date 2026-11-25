@@ -7896,11 +7896,26 @@ if (!window.React || !window.ReactDOM) {
         if (!el) return;
         let bloc = el.parentNode,
           mesure = () => {
+            let carte = bloc.parentNode,
+              suiv = carte && carte.nextElementSibling,
+              cs = carte && carte.style;
+            // remise à l'état normal avant de mesurer
             bloc.style.display = "";
+            cs && (cs.removeProperty("width"), cs.removeProperty("justify-self"), cs.removeProperty("padding-left"), cs.removeProperty("padding-right"));
+            suiv && suiv.style.removeProperty("margin-left");
             let cache = el.scrollWidth > el.clientWidth + 1;
-            bloc.style.display = cache ? "none" : "";
-            // pseudo trop long : seule la photo du héros reste, centrée dans l'encart (pas de moitié vide)
-            bloc.parentNode && (bloc.parentNode.style.justifyContent = cache ? "center" : "");
+            if (!cache || !carte) return;
+            // pseudo trop long : l'encart ne garde que la photo du héros, avec la même marge tout autour,
+            // et l'encart suivant (date) récupère la place libérée
+            let large = carte.getBoundingClientRect().width,
+              pad = getComputedStyle(carte).paddingTop;
+            bloc.style.display = "none";
+            cs.setProperty("width", "fit-content");
+            cs.setProperty("justify-self", "start");
+            cs.setProperty("padding-left", pad, "important");
+            cs.setProperty("padding-right", pad, "important");
+            let libre = large - carte.getBoundingClientRect().width;
+            suiv && getComputedStyle(carte.parentNode).display === "grid" && libre > 0 && suiv.style.setProperty("margin-left", -libre + "px");
           };
         mesure();
         let ro = typeof ResizeObserver < "u" && bloc.parentNode ? new ResizeObserver(mesure) : null;
