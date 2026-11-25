@@ -3877,8 +3877,11 @@ if (!window.React || !window.ReactDOM) {
             let [ra, rb] = A(ii, cj - wj - 0.07 * k, h1 + 0.7 * k),
               [rc, rd] = A(ii, cj + wj + 0.07 * k, h1 + 0.7 * k);
             (g.line(ra, rb + 1, rc, rd + 1, l("#6B7280")), g.line(ra, rb, rc, rd, l("#D1D5DB")));
-            let jh = cote > 0 ? cj + wj + 0.06 * k : cj - wj - 0.1 * k;
-            decoBox(g, ii - 0.013 * k, ii + 0.013 * k, jh, jh + 0.04 * k, h1 + 0.2 * k, h1 + 1.1 * k, "#111827");
+            // poignée : trait noir prolongeant la barre. À l'arrière, elle dépasse de la silhouette et reçoit le contour
+            // sombre de l'objet (+1 px de chaque côté) : on l'épaissit donc devant pour que les deux côtés se ressemblent
+            let [pa, pb] = A(ii, cj + cote * (wj + 0.07 * k), h1 + 0.7 * k),
+              [pc, pd] = A(ii, cj + cote * (wj + 0.14 * k), h1 + 0.7 * k);
+            for (let e = cote > 0 ? -1 : 0; e <= (cote > 0 ? 2 : 1); e++) g.line(pa, pb + e, pc, pd + e, l("#111827"));
             for (let dj of n === 0 || n === 5 ? [0] : [-0.05, 0.05])
               decoBox(g, ii - 0.012 * k, ii + 0.012 * k, cj + dj * k - 0.012 * k, cj + dj * k + 0.012 * k, h1 - 0.2 * k, h1 + 1.2 * k, rouge ? "#DC2626" : "#2563EB", { topF: 1.3 });
           }
@@ -6078,7 +6081,8 @@ if (!window.React || !window.ReactDOM) {
             ((x.buffer = s),
               (N.type = "highpass"),
               (N.frequency.value = 7e3),
-              S.gain.setValueAtTime(V, m),
+              S.gain.setValueAtTime(1e-4, m),
+              S.gain.linearRampToValueAtTime(V, m + 0.003),
               S.gain.exponentialRampToValueAtTime(1e-4, m + 0.05),
               x.connect(N),
               N.connect(S),
@@ -6148,7 +6152,7 @@ if (!window.React || !window.ReactDOM) {
                   ? H(F(mel), m, b * 1.6, "triangle", 0.035)
                   : (H(F(mel), m, b * 0.85, "square", 0.022), H(F(mel + 12), m + 0.01, b * 0.5, "triangle", 0.012))));
           },
-          // Programmation de la musique en avance (0,25 s). Si le téléphone a pris du retard (onglet ralenti, calcul lourd),
+          // Programmation de la musique en avance (0,4 s). Si le téléphone a pris du retard (onglet ralenti, calcul lourd),
           // on saute les notes déjà passées au lieu de les jouer toutes d'un coup en retard : c'était une source de crépitements
           kt = () => {
             if (!t) return;
@@ -6156,7 +6160,7 @@ if (!window.React || !window.ReactDOM) {
               let k = Math.ceil((t.currentTime + 0.05 - u) / b);
               ((u += k * b), (d += k));
             }
-            for (; u < t.currentTime + 0.25; ) (nt(u), (u += b), d++);
+            for (; u < t.currentTime + 0.4; ) (nt(u), (u += b), d++);
           };
         return {
           demarrer() {
@@ -6164,7 +6168,15 @@ if (!window.React || !window.ReactDOM) {
               if (!t) {
                 let m = window.AudioContext || window.webkitAudioContext;
                 if (!m) return;
-                ((t = new m()),
+                // « balanced » : tampon audio un peu plus grand que le mode interactif par défaut,
+                // ce qui évite les trous (grésillements) quand l'écran d'accueil anime et calcule en même temps
+                ((t = (() => {
+                  try {
+                    return new m({ latencyHint: "balanced" });
+                  } catch {
+                    return new m();
+                  }
+                })()),
                   (r = t.createGain()),
                   (r.gain.value = 0.55),
                   // Limiteur en sortie : évite la saturation (crépitements) quand musique et bruitages s'additionnent
@@ -6197,7 +6209,8 @@ if (!window.React || !window.ReactDOM) {
               ((h = !0),
                 (u = t.currentTime + 0.08),
                 r.gain.cancelScheduledValues(t.currentTime),
-                r.gain.setValueAtTime(0.55, t.currentTime),
+                r.gain.setValueAtTime(Math.max(1e-4, r.gain.value), t.currentTime),
+                r.gain.linearRampToValueAtTime(0.55, t.currentTime + 0.05),
                 (n = setInterval(kt, 60)));
             } catch {
               h = !1;
