@@ -5679,6 +5679,8 @@ if (!window.React || !window.ReactDOM) {
 /* Fiche du héros : coupure de lignes ordinaire. Safari (iPhone) raccourcit fortement les lignes avec « pretty »,
    ce qui laissait de larges bandes vides sur les côtés */
 .jde-fiche,.jde-fiche *{text-wrap:wrap!important;}
+/* Encarts date, coût et qualité (téléphone) : la valeur est centrée entre l'icône et le bord droit */
+@media (max-width:639px){[data-tuto=date]>span.font-bold,[data-tuto=cout]>span.font-bold,[data-tuto=qualite]>span.font-bold{flex:1 1 auto;text-align:center;}}
 .jde-volet>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 6px 4px 0;}
 .jde-volet>summary::-webkit-details-marker{display:none;}
 .jde-volet>summary::after{content:"+";font-weight:700;font-size:18px;line-height:1;border:2px solid currentColor;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
