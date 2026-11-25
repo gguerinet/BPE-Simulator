@@ -3661,11 +3661,14 @@ if (!window.React || !window.ReactDOM) {
             g.ellipse(cx + dx, cy + dy, rx, ry, (p, u, h, s) => l(["#1F6B2C", "#2F8F3A", "#4CAF50", "#86D07B"][Math.max(0, Math.min(3, Math.floor(decoLum(h, -s) * 4)))]));
         },
         enceinte: (g, ci, cj, z) => {
-          // Enceinte connectée : cylindre en tissu gris anthracite, anneau lumineux cyan sur le dessus
-          decoCyl(g, ci, cj, 0.075, z, z + 11, "#374151", { top: !1, hi: 1.3 });
-          let [cx, cy] = A(ci, cj, z);
-          for (let y = 2; y < 10; y += 2) for (let x = -2; x <= 2; x += 2) decoPx(g, cx + x + (y % 4 ? 1 : 0), cy - y, "#2A3240");
-          (decoDisc(g, ci, cj, 0.075, z + 11, "#4B5563"), decoDisc(g, ci, cj, 0.05, z + 11, "#22D3EE"), decoDisc(g, ci, cj, 0.035, z + 11, "#1F2937"));
+          // Enceinte connectée : cylindre en tissu clair maillé, dessus sombre avec anneau lumineux bleu et deux boutons
+          decoCyl(g, ci, cj, 0.095, z, z + 14, "#D6CFC4", { top: !1, hi: 1.12 });
+          let [cx, cy] = A(ci, cj, z),
+            rx = Math.round(22 * Math.SQRT2 * 0.095);
+          for (let y = 2; y < 13; y += 2) for (let x = -rx + 2; x < rx - 1; x += 2) decoPx(g, cx + x + ((y / 2) % 2), cy - y, x < -rx / 2 ? "#9C9488" : "#B8AFA2");
+          (decoCyl(g, ci, cj, 0.095, z + 14, z + 15, "#2B2F36", { top: "#2B2F36" }), decoDisc(g, ci, cj, 0.075, z + 15, "#38BDF8"), decoDisc(g, ci, cj, 0.06, z + 15, "#2B2F36"));
+          let [bx, by] = A(ci, cj, z + 15);
+          (decoPx(g, bx - 1, by, "#9CA3AF"), decoPx(g, bx + 2, by, "#9CA3AF"));
         },
         maquette: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
@@ -3848,21 +3851,34 @@ if (!window.React || !window.ReactDOM) {
           (decoDisc(g, ci, cj, 0.09 * k, z + 1.6 * k, "#4B5563"), decoDisc(g, ci - 0.02 * k, cj - 0.02 * k, 0.025 * k, z + 1.6 * k, "#22D3EE"));
         },
         babyfoot: (g, ci, cj, z, k = 1) => {
-          // Babyfoot : caisse en bois sur pieds, terrain vert ligné, barres chromées à poignées noires, joueurs rouges et bleus
-          let wi = 0.24 * k,
-            wj = 0.13 * k;
-          for (let [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) decoBox(g, ci + a * (wi - 0.03 * k) - 0.02 * k, ci + a * (wi - 0.03 * k) + 0.02 * k, cj + b * (wj - 0.03 * k) - 0.02 * k, cj + b * (wj - 0.03 * k) + 0.02 * k, z, z + 8 * k, "#5A3A22");
-          decoBox(g, ci - wi, ci + wi, cj - wj, cj + wj, z + 8 * k, z + 12 * k, "#8A5A30", { topF: 1.2 });
-          decoBox(g, ci - wi + 0.02 * k, ci + wi - 0.02 * k, cj - wj + 0.02 * k, cj + wj - 0.02 * k, z + 11.6 * k, z + 12 * k, "#16A34A", { topF: 1.15 });
-          let [mx, my] = A(ci, cj - wj + 0.03 * k, z + 12 * k),
-            [nx, ny] = A(ci, cj + wj - 0.03 * k, z + 12 * k);
-          g.line(mx, my, nx, ny, l("#DCFCE7"));
-          [-0.17, -0.08, 0.02, 0.11, 0.19].forEach((di, n) => {
-            let ii = ci + di * k;
-            decoBox(g, ii - 0.008 * k, ii + 0.008 * k, cj - wj - 0.05 * k, cj + wj + 0.05 * k, z + 12.6 * k, z + 13.2 * k, "#CBD5E1", { topF: 1.2 });
-            decoBox(g, ii - 0.012 * k, ii + 0.012 * k, cj + wj + 0.05 * k, cj + wj + 0.09 * k, z + 12.3 * k, z + 13.5 * k, "#111827");
-            for (let dj of [-0.06, 0, 0.06]) decoBox(g, ii - 0.012 * k, ii + 0.012 * k, cj + dj * k - 0.012 * k, cj + dj * k + 0.012 * k, z + 12 * k, z + 13.6 * k, n % 2 ? "#2563EB" : "#DC2626", { topF: 1.3 });
-          });
+          // Babyfoot : pieds noirs, caisse en bois clair, bordures rouges, terrain vert,
+          // 6 barres qui dépassent des deux côtés avec poignées noires, joueurs rouges et bleus
+          let wi = 0.3 * k,
+            wj = 0.15 * k,
+            h0 = z + 7 * k,
+            h1 = z + 11 * k;
+          for (let [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+            let ii = ci + a * (wi - 0.035 * k),
+              jj = cj + b * (wj - 0.035 * k);
+            decoBox(g, ii - 0.022 * k, ii + 0.022 * k, jj - 0.022 * k, jj + 0.022 * k, z, h0, "#1F1F24", { topF: 1.3 });
+          }
+          decoBox(g, ci - wi, ci + wi, cj - wj, cj + wj, h0, h1, "#D9B07A", { topF: 1.1 });
+          decoFace(g, "R", cj + wj, ci - wi, ci + wi, h0, h1, (x, y, w, H) => (y < 1.3 * k ? "#DC2626" : null));
+          decoFace(g, "L", ci + wi, cj - wj, cj + wj, h0, h1, (x, y, w, H) => (y < 1.3 * k ? "#DC2626" : y > H * 0.45 && y < H * 0.75 && x > w * 0.35 && x < w * 0.65 ? "#1F1F24" : null));
+          decoBox(g, ci - wi + 0.03 * k, ci + wi - 0.03 * k, cj - wj + 0.03 * k, cj + wj - 0.03 * k, h1 - 0.5 * k, h1 - 0.2 * k, "#22A04A", { topF: 1.05 });
+          let [x0, y0] = A(ci, cj - wj + 0.03 * k, h1 - 0.2 * k),
+            [x1, y1] = A(ci, cj + wj - 0.03 * k, h1 - 0.2 * k);
+          g.line(x0, y0, x1, y1, l("#BBF7D0"));
+          for (let n = 0; n < 6; n++) {
+            let ii = ci - wi + 0.08 * k + n * ((2 * wi - 0.16 * k) / 5),
+              rouge = n === 0 || n === 2 || n === 4,
+              cote = n % 2 ? 1 : -1;
+            decoBox(g, ii - 0.006 * k, ii + 0.006 * k, cj - wj - 0.06 * k, cj + wj + 0.06 * k, h1 + 0.4 * k, h1 + 0.9 * k, "#9CA3AF", { topF: 1.2 });
+            let jh = cote > 0 ? cj + wj + 0.06 * k : cj - wj - 0.1 * k;
+            decoBox(g, ii - 0.013 * k, ii + 0.013 * k, jh, jh + 0.04 * k, h1 + 0.2 * k, h1 + 1.1 * k, "#111827");
+            for (let dj of n === 0 || n === 5 ? [0] : [-0.05, 0.05])
+              decoBox(g, ii - 0.012 * k, ii + 0.012 * k, cj + dj * k - 0.012 * k, cj + dj * k + 0.012 * k, h1 - 0.2 * k, h1 + 1.2 * k, rouge ? "#DC2626" : "#2563EB", { topF: 1.3 });
+          }
         },
         palette: (g, ci, cj, z, k = 1) => {
           // Palette en bois (3 planches sur 3 traverses), 4 bouteilles cerclées d'un feuillard, étiquette Divalife
@@ -3938,14 +3954,25 @@ if (!window.React || !window.ReactDOM) {
           (g.ellipse(cx, cy, 4.2, 2.1, l("#DC2626")), g.ellipse(cx, cy, 2.6, 1.2, l("#F8FAFC")), decoPx(g, cx, cy, "#DC2626"), g.ellipse(cx + 5, cy + 1.5, 1.4, 0.8, l("#B98A55")));
         },
         casqueaudio: (g, ci, cj, z) => {
-          // Casque audio posé sur le bureau : deux écouteurs noirs à coussinets rouges, arceau en arc
-          let pts = [];
-          for (let b of [cj - 0.08, cj + 0.08]) (decoCyl(g, ci, b, 0.045, z, z + 2.6, "#111827", { top: "#DC2626", hi: 1.3 }), pts.push(A(ci, b, z + 2.6)));
-          let [[x0, y0], [x1, y1]] = pts;
-          for (let t = 0; t <= 1; t += 0.03) {
-            let x = x0 + (x1 - x0) * t,
-              y = y0 + (y1 - y0) * t - Math.sin(t * Math.PI) * 7;
-            (decoPx(g, x, y, "#374151"), decoPx(g, x, y - 1, "#6B7280"));
+          // Casque audio posé sur son support : socle rond, tige, arceau rembourré, deux écouteurs à coussinets rouges
+          (decoCyl(g, ci, cj, 0.07, z, z + 1.2, "#374151", { top: "#4B5563" }), decoCyl(g, ci, cj, 0.014, z + 1.2, z + 12, "#9CA3AF", { top: !1, hi: 1.4 }));
+          let [px, py] = A(ci, cj, z + 13),
+            P = (dx, dy, c) => decoPx(g, Math.round(px + dx), Math.round(py + dy), c);
+          // arceau
+          for (let x = -6; x <= 6; x++) {
+            let y = -Math.round(Math.sqrt(Math.max(0, 36 - x * x)) * 0.55);
+            (P(x, y - 1, "#4B5563"), P(x, y, "#1F2937"), x > -2 && x < 3 && P(x, y - 1, "#6B7280"));
+          }
+          // écouteurs
+          for (let sg of [-1, 1]) {
+            let x0 = sg < 0 ? -8 : 5;
+            for (let y = 1; y <= 7; y++)
+              for (let x = 0; x < 4; x++) {
+                if ((y === 1 || y === 7) && (x === 0 || x === 3)) continue;
+                let interieur = sg < 0 ? x === 3 : x === 0;
+                P(x0 + x, y, interieur ? (y > 1 && y < 7 ? "#DC2626" : "#991B1B") : x === (sg < 0 ? 0 : 3) ? "#111827" : y < 3 ? "#4B5563" : "#1F2937");
+              }
+            for (let y = -1; y <= 1; y++) P(sg < 0 ? -6 : 6, y, "#374151");
           }
         },
         vin: (g, ci, cj, z) => {
