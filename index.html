@@ -6260,6 +6260,14 @@ if (!window.React || !window.ReactDOM) {
             let V = t.currentTime + av();
             (D(F(67), V, 0.18, "triangle", 0.08), D(F(63), V + 0.22, 0.32, "triangle", 0.08));
           },
+          // Succès débloqué en partie : petite fanfare brillante (arpège montant + étincelle), distincte du « ding »
+          succes() {
+            if (!t || !h) return;
+            let V = t.currentTime + av();
+            ([72, 76, 79, 84].forEach((x, S) => D(F(x), V + S * 0.07, 0.22, "triangle", 0.07)),
+              D(F(88), V + 0.3, 0.5, "sine", 0.05),
+              D(F(96), V + 0.36, 0.45, "sine", 0.03));
+          },
           ping() {
             if (!t || !h) return;
             let V = t.currentTime + av();
@@ -9366,7 +9374,7 @@ if (!window.React || !window.ReactDOM) {
                 if (ge && !ge.golive && gt - (ge._sucT || 0) > 800) {
                   ge._sucT = gt;
                   let nvs = sucEnCours(ge);
-                  nvs.length && (vt.ding && vt.ding(), setSucToast({ d: nvs[nvs.length - 1], k: gt }));
+                  nvs.length && (vt.succes && vt.succes(), setSucToast({ d: nvs[nvs.length - 1], k: gt }));
                 }
               } catch (xt) {
                 typeof console < "u" && console.error(xt);
@@ -11969,7 +11977,11 @@ if (!window.React || !window.ReactDOM) {
       ],
       // Pièces : gagnées une fois par succès ou palier (selon sa rareté), et à chaque partie finie (selon la médaille)
       SUC_GAIN = { bronze: 50, argent: 150, or: 400, platine: 1e3 },
-      SUC_PARTIE = (s) => (s >= 9e3 ? 60 : s >= 8e3 ? 40 : s >= 7e3 ? 30 : s >= 5e3 ? 20 : 10),
+      // Pièces de fin de partie : de quoi remplir la boutique (64 500 pièces) en une centaine de parties régulières
+      SUC_PARTIE = (s) => (s >= 9e3 ? 400 : s >= 8e3 ? 300 : s >= 7e3 ? 200 : s >= 5e3 ? 100 : 50),
+      SUC_RECORD = 100,
+      SUC_JOUR = 100,
+      SUC_JOUR_K = "bpe-simulator-bonus-jour",
       sucPalId = (c, n) => `c-${c.id}-${n + 1}`,
       SUC_CAR_ENCOURS = ["ateliers", "tickets", "nuits"],
       // Retrouve la définition affichable d'un succès ou d'un palier à partir de son identifiant
@@ -12077,7 +12089,7 @@ if (!window.React || !window.ReactDOM) {
         ]);
       },
       // Fin de partie : succès et paliers débloqués par cette partie, et pièces gagnées
-      sucFin = (f, sc) => {
+      sucFin = (f, sc, record) => {
         try {
           let st = sucLit(),
             hid = f.hero && f.hero.id,
@@ -12095,11 +12107,16 @@ if (!window.React || !window.ReactDOM) {
             st.cumul[c.id] = Math.floor(v);
             c.p.forEach((x, i) => v >= x && !st.ok[sucPalId(c, i)] && ((st.ok[sucPalId(c, i)] = now), nv.push(sucPalDef(c, i))));
           }
-          st.cumul.pieces = (st.cumul.pieces || 0) + SUC_PARTIE(sc);
+          // Détail des pièces de la partie : médaille, record personnel battu, première partie du jour
+          let jour = new Date().toLocaleDateString("sv"),
+            det = [[SUC_PARTIE(sc), (Si(sc) || { nom: "Partie termin\xE9e" }).nom]];
+          record && det.push([SUC_RECORD, "Record personnel"]);
+          xr(SUC_JOUR_K, "") !== jour && (det.push([SUC_JOUR, "Premi\xE8re partie du jour"]), Tr(SUC_JOUR_K, jour));
+          st.cumul.pieces = (st.cumul.pieces || 0) + det.reduce((n, x) => n + x[0], 0);
           let gain = sucPieces(st) - av;
-          return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), { liste: nv, pieces: gain });
+          return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), { liste: nv, pieces: gain, detail: det });
         } catch {
-          return { liste: [], pieces: 0 };
+          return { liste: [], pieces: 0, detail: [] };
         }
       },
       // En cours de partie : succès déjà acquis pour de bon (compteurs qui ne redescendent pas), débloqués tout de suite
@@ -12607,7 +12624,7 @@ if (!window.React || !window.ReactDOM) {
             "p",
             { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } },
             h("span", { style: { display: "inline-block", verticalAlign: "-2px", marginRight: 4 } }, h(Piece, { taille: 13 })),
-            `Chaque succ\xE8s rapporte des pi\xE8ces \xE0 r\xE9clamer ici : ${Object.values(SUC_GAIN).map((g) => et(g)).join(", ")} selon sa raret\xE9. Chaque partie finie rapporte aussi 10 \xE0 60 pi\xE8ces selon la m\xE9daille.`,
+            `Chaque succ\xE8s rapporte des pi\xE8ces \xE0 r\xE9clamer ici : ${Object.values(SUC_GAIN).map((g) => et(g)).join(", ")} selon sa raret\xE9. Chaque partie finie rapporte aussi 50 \xE0 400 pi\xE8ces selon la m\xE9daille, plus 100 pour un record personnel battu et 100 pour la premi\xE8re partie du jour.`,
           ),
           // Carrière : paliers cumulés de partie en partie
           h(
@@ -14096,16 +14113,21 @@ if (!window.React || !window.ReactDOM) {
       return ft(txt);
     }
     // Rapport : bandeau des pièces gagnées pendant la partie (avec le son de tirelire)
-    function RapPieces({ n }) {
+    function RapPieces({ n, det }) {
       (0, a.useEffect)(() => {
         let x = setTimeout(() => vt.tirelire(Math.min(7, 2 + Math.floor(n / 150))), 400);
         return () => clearTimeout(x);
       }, []);
       return a.default.createElement(
         "div",
-        { className: "flex items-center justify-center gap-1.5 border-b-4 bg-[#FEF3C7] px-3 py-1 text-[14px] font-bold sm:text-base", style: { borderColor: W, color: "#92400E", fontFamily: Yr } },
-        a.default.createElement(Piece, { taille: 18 }),
-        `+${et(n)} pi\xE8ce${n > 1 ? "s" : ""} gagn\xE9e${n > 1 ? "s" : ""} dans la partie`,
+        { className: "flex flex-col items-center border-b-4 bg-[#FEF3C7] px-3 py-1 text-center", style: { borderColor: W, color: "#92400E", fontFamily: Yr } },
+        a.default.createElement(
+          "span",
+          { className: "flex items-center justify-center gap-1.5 text-[14px] font-bold sm:text-base" },
+          a.default.createElement(Piece, { taille: 18 }),
+          `+${et(n)} pi\xE8ce${n > 1 ? "s" : ""} gagn\xE9e${n > 1 ? "s" : ""} dans la partie`,
+        ),
+        det.length > 1 && a.default.createElement("span", { className: "text-[12px]" }, det.map(([g, l]) => `${l} +${et(g)}`).join(" \xB7 ")),
       );
     }
     function o1({ r: t, onReplay: r }) {
@@ -14247,7 +14269,7 @@ if (!window.React || !window.ReactDOM) {
               "Divalife \xB7 confidentiel",
             ),
           ),
-          (t.pieces || 0) > 0 && a.default.createElement(RapPieces, { n: t.pieces }),
+          (t.pieces || 0) > 0 && a.default.createElement(RapPieces, { n: t.pieces, det: t.piecesDetail || [] }),
           a.default.createElement(
             "div",
             {
@@ -14876,7 +14898,9 @@ if (!window.React || !window.ReactDOM) {
                   qualite: f.qualite,
                   date: f.date,
                 },
-                nt = [...xr(le, []), Y].sort((m, V) => V.score - m.score).slice(0, 10);
+                avant = xr(le, []),
+                record = avant.length > 0 && H > Math.max(...avant.map((x) => x.score || 0)),
+                nt = [...avant, Y].sort((m, V) => V.score - m.score).slice(0, 10);
               (Tr(le, nt),
                 setTimeout(recSync, 4e3),
                 (Y.envoi = clEnvoyer({
@@ -14892,8 +14916,8 @@ if (!window.React || !window.ReactDOM) {
                   gonogo: f.gonogoChoix,
                 })));
               let kt = nt.indexOf(Y) + 1 || nt.length + 1,
-                sucNv = sucFin(f, H);
-              (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi, succes: sucNv.liste, pieces: sucNv.pieces }), r("report"));
+                sucNv = sucFin(f, H, record);
+              (F(nt), p({ ...f, score: H, rank: kt, nbRecords: nt.length, envoi: Y.envoi, succes: sucNv.liste, pieces: sucNv.pieces, piecesDetail: sucNv.detail }), r("report"));
             },
             onMenu: () => {
               (L(xr(fr, null)), r("select"));
