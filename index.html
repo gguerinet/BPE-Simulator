@@ -11971,6 +11971,15 @@ if (!window.React || !window.ReactDOM) {
       SUC_GAIN = { bronze: 50, argent: 150, or: 400, platine: 1e3 },
       SUC_PARTIE = (s) => (s >= 9e3 ? 60 : s >= 8e3 ? 40 : s >= 7e3 ? 30 : s >= 5e3 ? 20 : 10),
       sucPalId = (c, n) => `c-${c.id}-${n + 1}`,
+      SUC_CAR_ENCOURS = ["ateliers", "tickets", "nuits"],
+      // Retrouve la définition affichable d'un succès ou d'un palier à partir de son identifiant
+      sucDefId = (id) => {
+        let d = SUC.find((x) => x.id === id);
+        if (d) return d;
+        let m = /^c-(\w+)-(\d)$/.exec(id || ""),
+          c = m && SUC_CAR.find((x) => x.id === m[1]);
+        return c ? sucPalDef(c, +m[2] - 1) : null;
+      },
       // Définition affichable d'un palier (bandeau de fin de partie)
       sucPalDef = (c, n) => ({ id: sucPalId(c, n), ic: c.ic, t: SUC_TIERS[n], nom: `${c.nom} \xB7 ${et(c.p[n])}`, c: `${c.nom} : ${et(c.p[n])}.` }),
       sucCles = () => [...SUC.map((d) => d.id), ...SUC_CAR.flatMap((c) => c.p.map((x, n) => sucPalId(c, n)))],
@@ -12104,6 +12113,16 @@ if (!window.React || !window.ReactDOM) {
               try {
                 d.ok(e, 0, st.heros) && ((st.ok[d.id] = now), (e.sucPartie = [...(e.sucPartie || []), d.id]), nv.push(d));
               } catch {}
+          // Carrière (ateliers, tickets, nuits) : cumul des parties précédentes + compteur de la partie en cours.
+          // Le cumul lui-même n'est mis à jour qu'en fin de partie (sucFin), qui ne relistera pas ces paliers déjà acquis
+          for (let c of SUC_CAR)
+            if (SUC_CAR_ENCOURS.includes(c.id)) {
+              let v = (st.cumul[c.id] || 0) + (Number(c.val(e, 0)) || 0);
+              c.p.forEach((x, i) => {
+                let id = sucPalId(c, i);
+                v >= x && !st.ok[id] && ((st.ok[id] = now), (e.sucPartie = [...(e.sucPartie || []), id]), nv.push(sucPalDef(c, i)));
+              });
+            }
           return (nv.length && (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), sucSync()), nv);
         } catch {
           return [];
@@ -12504,7 +12523,6 @@ if (!window.React || !window.ReactDOM) {
         [vu, setVu] = (0, a.useState)(0),
         tri = [...liste].sort((x, y) => SUC_RANG[x.t] - SUC_RANG[y.t]);
       (0, a.useEffect)(() => {
-        pc > 0 && setTimeout(() => vt.tirelire(Math.min(7, 2 + Math.floor(pc / 150))), 400);
         let k = 0,
           x = setInterval(() => (k++, setVu(k), k > tri.length && clearInterval(x)), 280);
         let esc = (e) => e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), fermer());
@@ -12545,7 +12563,6 @@ if (!window.React || !window.ReactDOM) {
               ),
             ),
           ),
-          pc > 0 && h("div", { className: "mt-2 flex items-center justify-center gap-1 text-[14px] font-bold", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 16 }), `+${et(pc)} pi\xE8ces gagn\xE9es dans la partie`),
           h(
             "div",
             { className: "mt-3 flex flex-col gap-2" },
@@ -14078,6 +14095,19 @@ if (!window.React || !window.ReactDOM) {
                     : `Hors du top 10 en ligne (le 10\u1D49 a ${et(e.dernier)} pts).`;
       return ft(txt);
     }
+    // Rapport : bandeau des pièces gagnées pendant la partie (avec le son de tirelire)
+    function RapPieces({ n }) {
+      (0, a.useEffect)(() => {
+        let x = setTimeout(() => vt.tirelire(Math.min(7, 2 + Math.floor(n / 150))), 400);
+        return () => clearTimeout(x);
+      }, []);
+      return a.default.createElement(
+        "div",
+        { className: "flex items-center justify-center gap-1.5 border-b-4 bg-[#FEF3C7] px-3 py-1 text-[14px] font-bold sm:text-base", style: { borderColor: W, color: "#92400E", fontFamily: Yr } },
+        a.default.createElement(Piece, { taille: 18 }),
+        `+${et(n)} pi\xE8ce${n > 1 ? "s" : ""} gagn\xE9e${n > 1 ? "s" : ""} dans la partie`,
+      );
+    }
     function o1({ r: t, onReplay: r }) {
       let i = Si(t.score),
         o = i ? i.id : "echec",
@@ -14217,6 +14247,7 @@ if (!window.React || !window.ReactDOM) {
               "Divalife \xB7 confidentiel",
             ),
           ),
+          (t.pieces || 0) > 0 && a.default.createElement(RapPieces, { n: t.pieces }),
           a.default.createElement(
             "div",
             {
@@ -14871,16 +14902,16 @@ if (!window.React || !window.ReactDOM) {
         t === "report" &&
           u &&
           !u.sucVu &&
-          (u.succes || []).length + (u.sucPartie || []).length + (u.pieces || 0) > 0 &&
+          (u.succes || []).length + (u.sucPartie || []).length > 0 &&
           a.default.createElement(SucEcran, {
-            liste: [...(u.sucPartie || []).map((id) => SUC.find((d) => d.id === id)).filter(Boolean), ...(u.succes || [])],
+            liste: [...(u.sucPartie || []).map(sucDefId).filter(Boolean), ...(u.succes || [])],
             pieces: u.pieces || 0,
             seul: !0,
             onClose: () => p({ ...u, sucVu: !0 }),
           }),
         t === "report" &&
           u &&
-          (u.sucVu || !((u.succes || []).length + (u.sucPartie || []).length + (u.pieces || 0) > 0)) &&
+          (u.sucVu || !((u.succes || []).length + (u.sucPartie || []).length > 0)) &&
           a.default.createElement(o1, {
             r: u,
             onReplay: () => {
