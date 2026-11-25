@@ -6084,22 +6084,6 @@ if (!window.React || !window.ReactDOM) {
               _.stop(V + x + 0.05));
           },
           D = (m, V, x, S, N) => H(m, V, x, S, N, o),
-          Y = (m, V) => {
-            let x = t.createBufferSource(),
-              S = t.createGain(),
-              N = t.createBiquadFilter();
-            ((x.buffer = s),
-              (N.type = "highpass"),
-              (N.frequency.value = 7e3),
-              S.gain.setValueAtTime(1e-4, m),
-              S.gain.linearRampToValueAtTime(V, m + 0.003),
-              S.gain.exponentialRampToValueAtTime(1e-4, m + 0.05),
-              x.connect(N),
-              N.connect(S),
-              S.connect(i),
-              x.start(m),
-              x.stop(m + 0.06));
-          },
           mm = !1,
           mC = [
             [48, 52, 55],
@@ -12475,40 +12459,6 @@ if (!window.React || !window.ReactDOM) {
     }
     var nbSucces = (st) => Object.keys(st.ok).filter((k) => !(SUC.find((d) => d.id === k) || {}).cache).length,
       nbSuccesMax = () => SUC.filter((d) => !d.cache).length + SUC_CAR.length * 4;
-    // Fin de partie : bandeau des succès et paliers débloqués, et des pièces gagnées
-    function SucBandeau({ liste, pieces: pc }) {
-      let h = a.default.createElement;
-      (0, a.useEffect)(() => {
-        if (!(pc > 0)) return;
-        let x = setTimeout(() => vt.tirelire(Math.min(7, 2 + Math.floor(pc / 150))), 500);
-        return () => clearTimeout(x);
-      }, []);
-      // Titre, puis un succès par ligne, les pièces gagnées et, en dessous, le rappel des récompenses à réclamer
-      return h(
-        "div",
-        { className: "jde-pop flex flex-col items-center gap-1 border-b-4 bg-[#FEF3C7] px-3 py-2", style: { borderColor: W, color: W }, role: "status" },
-        liste.length > 0 && h("span", { className: "text-base font-bold sm:text-lg", style: { fontFamily: Lr } }, liste.length > 1 ? "Nouveaux succ\xE8s !" : "Nouveau succ\xE8s !"),
-        // Succès rangés par rareté (bronze, argent, or, platine), alignés à gauche dans un bloc centré
-        liste.length > 0 &&
-          h(
-            "div",
-            { className: "flex flex-col items-start gap-1" },
-            [...liste]
-              .sort((x, y) => SUC_RANG[x.t] - SUC_RANG[y.t])
-              .map((d) =>
-                h(
-                  "span",
-                  { key: d.id, className: "flex items-center gap-2 text-[14px] font-bold sm:text-base", title: `${d.c} (${SUC_T[d.t][0]})`, style: { fontFamily: Yr } },
-                  h(SucIcone, { t: d.t, id: d.ic || d.id, taille: 24 }),
-                  d.nom,
-                ),
-              ),
-          ),
-        pc > 0 && h("span", { className: "mt-1 flex items-center gap-1 text-[14px] font-bold sm:text-base", style: { fontFamily: Yr, color: "#92400E" } }, h(Piece, { taille: 18 }), `+${et(pc)} pi\xE8ces`),
-        liste.length > 0 && h("span", { className: "text-[13px] font-bold sm:text-sm", style: { fontFamily: Yr, color: "#92400E" } }, "→ r\xE9compenses \xE0 r\xE9clamer dans Succ\xE8s"),
-      );
-    }
-    // En partie : notification discrète d'un succès débloqué (coin haut droit, 2,6 s, ne gêne pas le jeu)
     function SucToast({ d, fin }) {
       let h = a.default.createElement;
       (0, a.useEffect)(() => {
@@ -12628,7 +12578,7 @@ if (!window.React || !window.ReactDOM) {
         h(
           "div",
           { className: "jde-pop my-auto w-full max-w-2xl border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
-          h("div", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, `Succ\xE8s ${n}/${nbSuccesMax()}`),
+          h("h2", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, `Succ\xE8s ${n}/${nbSuccesMax()}`),
           h(
             "p",
             { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } },
@@ -12662,7 +12612,7 @@ if (!window.React || !window.ReactDOM) {
                   h(
                     "span",
                     { className: "min-w-0 leading-tight", style: { flex: 1 } },
-                    h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: nAtt ? W : "#64748B", overflowWrap: "break-word", hyphens: "auto" } }, c.nom),
+                    h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: nAtt ? W : "#475569", overflowWrap: "break-word", hyphens: "auto" } }, c.nom),
                     h(
                       "span",
                       { className: "flex items-center gap-1.5 text-[13px]", style: { fontFamily: Yr, color: "#334155" } },
@@ -12723,8 +12673,8 @@ if (!window.React || !window.ReactDOM) {
                     h(
                       "span",
                       { className: "min-w-0 leading-tight", style: { flex: 1 } },
-                      h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: ok ? W : "#64748B", overflowWrap: "break-word", hyphens: "auto" } }, d.nom),
-                      h("span", { className: "block text-[13px]", style: { fontFamily: Yr, color: ok ? "#334155" : "#64748B", overflowWrap: "break-word", hyphens: "auto" } }, d.c),
+                      h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: ok ? W : "#475569", overflowWrap: "break-word", hyphens: "auto" } }, d.nom),
+                      h("span", { className: "block text-[13px]", style: { fontFamily: Yr, color: ok ? "#334155" : "#475569", overflowWrap: "break-word", hyphens: "auto" } }, d.c),
                     ),
                     ok && !st.recl[d.id] && h(
                       "button",
@@ -12930,7 +12880,7 @@ if (!window.React || !window.ReactDOM) {
         h(
           "div",
           { className: "jde-pop my-auto w-full max-w-4xl border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
-          h("div", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, "Boutique"),
+          h("h2", { className: "text-2xl font-bold sm:text-3xl", style: { fontFamily: Lr } }, "Boutique"),
           h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Les pi\xE8ces se gagnent avec les succ\xE8s et \xE0 chaque partie finie."),
           DECO.map((e) =>
             h(
