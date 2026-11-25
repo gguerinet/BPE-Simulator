@@ -3652,6 +3652,19 @@ if (!window.React || !window.ReactDOM) {
             }
           (decoPx(g, cx, cy, "#9CA3AF"), g.rect(Math.round(cx) - 1, Math.round(cy + R), 2, 1, l("#6B7280")));
         },
+        bonsai: (g, ci, cj, z) => {
+          // Bonsaï : pot plat bleu, tronc tordu, trois nuages de feuillage éclairés
+          (decoBox(g, ci - 0.15, ci + 0.15, cj - 0.11, cj + 0.11, z, z + 2.5, "#2563EB", { topF: 1.25 }), decoBox(g, ci - 0.13, ci + 0.13, cj - 0.09, cj + 0.09, z + 2.5, z + 2.8, "#5A3A22"));
+          let [cx, cy] = A(ci, cj, z + 2.8);
+          for (let [dx, dy] of [[0, 0], [0, -1], [1, -2], [1, -3], [2, -4], [1, -5], [0, -6], [-1, -6], [3, -5], [4, -6]]) g.rect(Math.round(cx + dx), Math.round(cy + dy), 1, 1, l(dx > 2 ? "#6F4726" : "#5A3A22"));
+          for (let [dx, dy, rx, ry] of [[-3, -8, 4.2, 2.4], [4.5, -7.5, 3.4, 2], [1, -11, 3.6, 2.2]])
+            g.ellipse(cx + dx, cy + dy, rx, ry, (p, u, h, s) => l(["#1F6B2C", "#2F8F3A", "#4CAF50", "#86D07B"][Math.max(0, Math.min(3, Math.floor(decoLum(h, -s) * 4)))]));
+        },
+        neige: (g, ci, cj, z) => {
+          // Boule à neige du dépôt : socle en bois, mini-bouteille verte et grise (la sphère de verre est posée ensuite)
+          (decoCyl(g, ci, cj, 0.12, z, z + 3, "#8A5A30", { top: "#6F4726", hi: 1.3 }), decoCyl(g, ci, cj, 0.121, z + 1, z + 1.8, "#F6C343", { top: !1 }));
+          (decoCyl(g, ci, cj, 0.035, z + 3, z + 8, "#B3BCC7", { top: !1, hi: 1.4 }), decoCyl(g, ci, cj, 0.03, z + 8, z + 9.5, "#22C55E", { top: "#4ADE80" }));
+        },
         maquette: (g, ci, cj, z) => {
           decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 2.5, "#8A5A30");
           decoFace(g, "L", ci + 0.17, cj - 0.08, cj + 0.08, z + 0.5, z + 2, () => "#F6C343");
@@ -3669,6 +3682,25 @@ if (!window.React || !window.ReactDOM) {
             decoCyl(g, ci, cj, 0.022, z + 12.5, z + 14.5, "#B7791F", { top: "#F6C343" }));
         },
         // --- Sous le bureau (centre 2.18, 4.74)
+        sac: (g, ci, cj, z) => {
+          // Sac de sport bleu : boudin allongé, bande blanche, deux anses sombres sur le dessus
+          decoBox(g, ci - 0.1, ci + 0.1, cj - 0.22, cj + 0.2, z, z + 6, "#1D4ED8", { topF: 1.3 });
+          decoFace(g, "L", ci + 0.1, cj - 0.22, cj + 0.2, z, z + 6, (x, y, w, H) => (y > H * 0.35 && y < H * 0.55 ? "#F8FAFC" : x > w * 0.45 && x < w * 0.55 && y < H * 0.35 ? "#93C5FD" : null));
+          for (let b of [cj - 0.1, cj + 0.08]) {
+            let [x0, y0] = A(ci - 0.03, b, z + 6),
+              [x1, y1] = A(ci + 0.03, b, z + 6);
+            (g.line(x0, y0, x0 + 1, y0 - 3, l("#111827")), g.line(x0 + 1, y0 - 3, x1 - 1, y1 - 3, l("#111827")), g.line(x1 - 1, y1 - 3, x1, y1, l("#111827")));
+          }
+        },
+        ramettes: (g, ci, cj, z) => {
+          // Pile de ramettes de papier : paquets blancs à bande bleue, légèrement décalés
+          [[0, 0], [0.015, -0.02], [-0.01, 0.015]].forEach(([di, dj], n) => {
+            let b = z + n * 3.2;
+            decoBox(g, ci - 0.15 + di, ci + 0.15 + di, cj - 0.11 + dj, cj + 0.11 + dj, b, b + 3.2, "#E5E7EB", { topF: 1.12 });
+            decoFace(g, "L", ci + 0.15 + di, cj - 0.11 + dj, cj + 0.11 + dj, b, b + 3.2, (x, y, w, H) => (x > w * 0.3 && x < w * 0.55 ? "#2563EB" : null));
+            decoFace(g, "R", cj + 0.11 + dj, ci - 0.15 + di, ci + 0.15 + di, b, b + 3.2, (x, y, w, H) => (x > w * 0.4 && x < w * 0.6 ? "#1D4ED8" : null));
+          });
+        },
         carton: (g, ci, cj, z) => {
           decoBox(g, ci - 0.19, ci + 0.19, cj - 0.15, cj + 0.15, z, z + 9, "#C08A52");
           decoBox(g, ci - 0.2, ci + 0.2, cj - 0.16, cj + 0.16, z + 8, z + 10, "#CF9A60");
@@ -3811,6 +3843,35 @@ if (!window.React || !window.ReactDOM) {
           decoFace(g, "R", jB + 0.01 * k, ci - w, ci + w, h1, h1 + 11 * k, (x, y, W2, H) => (y < 1.2 * k || y > H - 1.2 * k ? "#F472B6" : x > W2 * 0.2 && x < W2 * 0.8 && y > H * 0.25 && y < H * 0.7 ? (Math.floor(x + y) % 3 ? "#FACC15" : "#FB923C") : null));
           decoFace(g, "L", ci + w, jB - 0.06 * k, jB + 0.01 * k, h1, h1 + 11 * k, (x, y, W2, H) => (y < 1.2 * k ? "#F472B6" : null));
         },
+        robot: (g, ci, cj, z, k = 1) => {
+          // Aspirateur robot : galette noire, couvercle gris, voyant cyan, pare-chocs
+          (decoCyl(g, ci, cj, 0.16 * k, z, z + 1.6 * k, "#1F2937", { top: "#374151", hi: 1.3 }), decoCyl(g, ci, cj, 0.161 * k, z + 0.6 * k, z + 1 * k, "#6B7280", { top: !1 }));
+          (decoDisc(g, ci, cj, 0.09 * k, z + 1.6 * k, "#4B5563"), decoDisc(g, ci - 0.02 * k, cj - 0.02 * k, 0.025 * k, z + 1.6 * k, "#22D3EE"));
+        },
+        distributeur: (g, ci, cj, z, k = 1) => {
+          // Distributeur de boissons : grande caisse rouge, vitrine de canettes de couleur, monnayeur et trappe
+          let i0 = ci - 0.14 * k,
+            i1 = ci + 0.14 * k,
+            j0 = cj - 0.12 * k,
+            j1 = cj + 0.12 * k,
+            H = 26 * k;
+          decoBox(g, i0, i1, j0, j1, z, z + H, "#DC2626", { topF: 1.2 });
+          decoFace(g, "R", j1, i0, i1, z, z + H, (x, y, w, h2) => {
+            if (x > w * 0.08 && x < w * 0.7 && y > h2 * 0.08 && y < h2 * 0.72) {
+              let cx = Math.floor((x - w * 0.08) / (w * 0.155)),
+                cy = Math.floor((y - h2 * 0.08) / (h2 * 0.16)),
+                lx = (x - w * 0.08) % (w * 0.155),
+                ly = (y - h2 * 0.08) % (h2 * 0.16);
+              if (ly > h2 * 0.13) return "#94A3B8";
+              if (lx > w * 0.03 && lx < w * 0.11 && ly > h2 * 0.03) return ["#2563EB", "#16A34A", "#F59E0B", "#F8FAFC"][(cx + cy) % 4];
+              return "#0F2236";
+            }
+            if (x > w * 0.76 && x < w * 0.92 && y > h2 * 0.2 && y < h2 * 0.5) return y < h2 * 0.3 ? "#111827" : Math.floor(y) % 3 ? "#E5E7EB" : "#9CA3AF";
+            if (x > w * 0.15 && x < w * 0.6 && y > h2 * 0.8 && y < h2 * 0.9) return "#111827";
+            return null;
+          });
+          decoFace(g, "L", i1, j0, j1, z + H * 0.85, z + H, (x, y, w) => "#FDE68A");
+        },
         palette: (g, ci, cj, z, k = 1) => {
           // Palette en bois (3 planches sur 3 traverses), 4 bouteilles cerclées d'un feuillard, étiquette Divalife
           for (let b of [cj - 0.2, cj - 0.02, cj + 0.16]) decoBox(g, ci - 0.24 * k, ci + 0.24 * k, cj + (b - cj) * k, cj + (b - cj + 0.05) * k, z, z + 2 * k, "#A8743F");
@@ -3877,6 +3938,20 @@ if (!window.React || !window.ReactDOM) {
             decoBox(g, ci - 0.15 + di, ci + 0.15 + di, cj - 0.11 + dj, cj + 0.11 + dj, b, b + 1.4, c, { topF: 1.15 });
           });
           for (let [di, c] of [[-0.06, "#DC2626"], [0.06, "#FACC15"]]) decoBox(g, ci + di, ci + di + 0.04, cj + 0.11, cj + 0.15, z + 2, z + 3.2, c);
+        },
+        pizza: (g, ci, cj, z) => {
+          // Boîte de pizza : carton plat, rond rouge imprimé sur le couvercle, une tache de gras
+          decoBox(g, ci - 0.17, ci + 0.17, cj - 0.17, cj + 0.17, z, z + 1.8, "#D9B382", { topF: 1.12 });
+          let [cx, cy] = A(ci, cj, z + 1.8);
+          (g.ellipse(cx, cy, 4.2, 2.1, l("#DC2626")), g.ellipse(cx, cy, 2.6, 1.2, l("#F8FAFC")), decoPx(g, cx, cy, "#DC2626"), g.ellipse(cx + 5, cy + 1.5, 1.4, 0.8, l("#B98A55")));
+        },
+        lavalampe: (g, ci, cj, z) => {
+          // Lampe à lave : socle chromé, verre violet, bulles orange, chapeau chromé
+          (decoCyl(g, ci, cj, 0.06, z, z + 3, "#AEB8C4", { top: !1, hi: 1.4 }), decoCyl(g, ci, cj, 0.045, z + 3, z + 12, "#7C3AED", { top: !1, hi: 1.45 }), decoCyl(g, ci, cj, 0.035, z + 12, z + 14, "#AEB8C4", { top: "#E5E7EB", hi: 1.4 }));
+          for (let [dx, h, rr] of [[0, 5, 1.6], [-0.5, 8, 1.2], [0.6, 10, 0.9], [0, 4, 1.3]]) {
+            let [x, y] = A(ci, cj, z + h);
+            g.ellipse(x + dx, y, rr, rr, l(rr > 1.4 ? "#FB923C" : "#FDBA74"));
+          }
         },
         vin: (g, ci, cj, z) => {
           // Bouteille de bordeaux : verre sombre avec reflet, épaule arrondie, goulot, capsule rouge, grande étiquette crème
@@ -3968,6 +4043,18 @@ if (!window.React || !window.ReactDOM) {
               n <= 1 && (g.d[o + 3] = 0);
             }
         r.stamp(g, 0, 0, [0, 0, 0], !1, !0);
+        if (id === "neige") {
+          let [cx, cy] = A(ci, cj, z + 8.5),
+            R = 6.2;
+          for (let y = Math.floor(cy - R); y <= Math.ceil(cy + R); y++)
+            for (let x = Math.floor(cx - R); x <= Math.ceil(cx + R); x++) {
+              let d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
+              if (d > R || y > cy + R - 3) continue;
+              let flocon = (x * 7 + y * 13) % 11 === 0 && d < R - 1.5,
+                reflet = Math.hypot(x + 0.5 - (cx - 2.5), y + 0.5 - (cy - 2.5)) < 1.2;
+              r.set(x, y, flocon || reflet ? [255, 255, 255, 230] : d > R - 1 ? [200, 236, 248, 200] : [190, 230, 245, 55]);
+            }
+        }
         if (id === "cloche") {
           let [cx, cy] = A(ci, cj, 0),
             rx = 22 * Math.SQRT2 * 0.15,
@@ -3989,6 +4076,7 @@ if (!window.React || !window.ReactDOM) {
       // Objets muraux : fonctions (h depuis la gauche, s depuis le haut) -> couleur
       CARTE_FR = {"fr": [[18.5, 4.03], [20.01, 4.84], [21.91, 6.71], [23.23, 7.51], [25.31, 8.31], [27.2, 9.38], [29.47, 9.92], [28.34, 13.39], [27.2, 13.93], [25.5, 16.6], [26.82, 17.67], [27.2, 19.54], [26.64, 21.41], [28.15, 23.55], [26.45, 25.42], [24.18, 25.15], [22.66, 24.62], [21.34, 24.35], [19.82, 25.96], [19.82, 27.29], [17.18, 27.02], [14.91, 26.49], [12.64, 25.96], [10.55, 24.62], [11.31, 23.01], [11.69, 20.34], [12.07, 18.47], [11.5, 17.13], [9.99, 15.53], [9.23, 14.19], [7.72, 13.12], [5.64, 12.59], [5.07, 11.25], [6.2, 10.45], [8.28, 10.18], [10.18, 10.45], [11.12, 10.72], [10.93, 9.11], [10.36, 7.78], [11.69, 8.04], [14.15, 8.31], [14.34, 7.78], [16.8, 6.71], [16.99, 4.57]], "corse": [[31.55, 25.69], [32.03, 26.76], [31.84, 28.36], [31.36, 29.97], [30.42, 29.16], [30.23, 27.83], [30.61, 26.76]], "dep": [[18.41, 10.05], [19.75, 5.29], [23.14, 18.31], [24.18, 24.75], [12.86, 20.77], [11.03, 14.41], [28.62, 10.77]]},
       WRIKE_TXT = {"top": ["######..######..######", "######..######..######", "..##....##..##..##..##", "..##....##..##..##..##", "..##....##..##..######", "..##....##..##..######", "..##....##..##..##....", "..##....##..##..##....", "..##....######..##....", "..##....######..##...."], "wrike": ["#...#.##..#.#.#.###", "#...#.#.#.#.#.#.#..", "#.#.#.##..#.##..##.", "#.#.#.#.#.#.#.#.#..", ".#.#..#.#.#.#.#.###"], "an": ["###.###.###.###", "..#.#.#...#.#..", "###.#.#.###.###", "#...#.#.#...#.#", "###.###.###.###"]},
+      NEON_TXT = {"go": ["###.###", "#...#.#", "#.#.#.#", "#.#.#.#", "###.###"], "live": ["#...#.#.#.###", "#...#.#.#.#..", "#...#.#.#.##.", "#...#.#.#.#..", "###.#..#..###"]},
       DECO_MUR = {
         __vide: () => null,
         planning: (h, s) => {
@@ -4041,6 +4129,35 @@ if (!window.React || !window.ReactDOM) {
           if (cote) return "#A47B45";
           if (terre) return (Math.floor(h) * 3 + Math.floor(s)) % 11 === 0 ? "#E5D3A8" : "#F3E6C6";
           return Math.floor(h * 0.5 + s) % 6 === 0 ? "#7DD3FC" : "#BAE6FD";
+        },
+        liege: (h, s) => {
+          // Tableau de liège : cadre bois, liège moucheté, post-it, une photo, une liste, punaises rouges
+          if (h < 2 || h >= 34.3 || s < 2 || s >= 32) return h >= 34.3 && h < 35.3 && s > 3 && s < 33 ? [0, 0, 0, 55] : null;
+          if (h < 3.2 || h >= 33.1 || s < 3.2 || s >= 30.8) return h + s < 12 ? "#B07840" : "#8A5A30";
+          for (let [px, py] of [[8, 7], [20, 6], [28, 9], [11, 19], [25, 18]]) if (Math.hypot(h - px, s - py) < 0.9) return "#DC2626";
+          if (h > 6 && h < 12 && s > 7 && s < 13) return s < 8.2 ? "#FBBF24" : "#FDE68A";
+          if (h > 16 && h < 25 && s > 6 && s < 14) return h < 17 || h > 24 || s < 7 || s > 13 ? "#F8FAFC" : s < 10 ? "#7DD3FC" : "#4ADE80";
+          if (h > 26 && h < 31 && s > 9 && s < 15) return "#F9A8D4";
+          if (h > 8 && h < 17 && s > 19 && s < 28) return Math.floor(s) % 2 && s > 21 && h > 9 && h < 15 ? "#94A3B8" : "#FFFFFF";
+          if (h > 22 && h < 29 && s > 18 && s < 24) return "#93C5FD";
+          return (Math.floor(h * 3) + Math.floor(s * 5)) % 7 === 0 ? "#A9733F" : "#C8955C";
+        },
+        neon: (h, s) => {
+          // Néon « GO LIVE » : panneau sombre, lettres roses lumineuses avec halo, soulignement cyan
+          if (h < 3 || h >= 33.3 || s < 5 || s >= 29) return h >= 33.3 && h < 34.3 && s > 6 && s < 30 ? [0, 0, 0, 55] : null;
+          if (h < 4 || h >= 32.3 || s < 6 || s >= 28) return "#1F2937";
+          let lit = (lg, x0, y0, sc) => {
+              let x = Math.floor((h - x0) / sc),
+                y = Math.floor((s - y0) / sc);
+              return y >= 0 && y < lg.length && x >= 0 && x < lg[0].length && lg[y][x] === "#";
+            },
+            L = NEON_TXT,
+            on = lit(L.go, 18.15 - L.go[0].length, 8, 2) || lit(L.live, 18.15 - L.live[0].length / 2, 20, 1),
+            pres = !on && [[-1, 0], [1, 0], [0, -1], [0, 1]].some(([dx, dy]) => lit(L.go, 18.15 - L.go[0].length - dx, 8 - dy, 2) || lit(L.live, 18.15 - L.live[0].length / 2 - dx, 20 - dy, 1));
+          if (on) return s >= 20 ? "#A5F3FC" : "#FBCFE8";
+          if (pres) return s >= 20 ? [34, 211, 238, 140] : [244, 114, 182, 150];
+          if (Math.floor(s) === 26 && h > 9 && h < 27.3) return "#22D3EE";
+          return "#111827";
         },
         securite: (h, s) => {
           if (h < 7.5 || h >= 29 || s < 1 || s >= 32) return h >= 29 && h < 30 && s > 2 && s < 33 ? [0, 0, 0, 60] : s >= 32 && s < 33 && h > 8.5 && h < 30 ? [0, 0, 0, 60] : null;
@@ -4134,6 +4251,30 @@ if (!window.React || !window.ReactDOM) {
           if ((dx > 1.6 && dx < 2.4) && Math.floor(s) % 2 === 0 && s > 3 && s < 15) return "#5A3A22";
           return "#C99A62";
         },
+        etagere: (h, s) => {
+          // Petite étagère murale : planche en bois sur équerres, trois mini-bouteilles (bleue, grise, verte)
+          if (s >= 14 && s < 15.5 && h >= 0.5 && h < 11.8) return s < 14.7 ? "#B07840" : "#6F4726";
+          if (s >= 15.5 && s < 18 && (Math.abs(h - 2) < 0.6 || Math.abs(h - 10.3) < 0.6)) return "#4B5563";
+          for (let [x0, c, ht] of [[1.5, "#3B82F6", 7], [5, "#9CA3AF", 8], [8.5, "#22C55E", 6.5]]) {
+            if (h >= x0 && h < x0 + 2.4 && s < 14 && s >= 14 - ht) {
+              let top = 14 - ht;
+              if (s < top + 1) return h > x0 + 0.7 && h < x0 + 1.7 ? "#374151" : null;
+              return h < x0 + 0.8 ? "#FFFFFF" : c;
+            }
+          }
+          return null;
+        },
+        photo: (h, s) => {
+          // Photo de l'équipe encadrée : cadre bois, ciel, quatre têtes souriantes
+          if (h < 0.5 || h >= 11.8 || s < 4 || s >= 17) return h >= 11.8 && h < 12.4 && s > 4.6 && s < 17.6 ? [0, 0, 0, 55] : null;
+          if (h < 1.4 || h >= 10.9 || s < 4.9 || s >= 16.1) return h + s < 10 ? "#B07840" : "#6F4726";
+          for (let [cx, c] of [[3.2, "#F5C9A0"], [5.4, "#C68B59"], [7.6, "#F1C27D"], [9.4, "#8D5524"]]) {
+            if (Math.hypot(h - cx, s - 10.5) < 1.1) return c;
+            if (Math.hypot(h - cx, s - 9.4) < 1.1 && s < 10) return "#3F2A1D";
+            if (Math.abs(h - cx) < 1.3 && s > 11.6 && s < 15.5) return ["#2563EB", "#DC2626", "#16A34A", "#F59E0B"][Math.round(cx) % 4];
+          }
+          return s < 12 ? "#BAE6FD" : "#86EFAC";
+        },
         fanion: (h, s) => {
           // Fanion triangulaire accroché à une hampe : large contre la hampe, pointe vers la droite
           if (h >= 1 && h < 1.9 && s >= 1 && s < 20) return h < 1.45 ? "#CBD5E1" : "#6B7280";
@@ -4178,6 +4319,8 @@ if (!window.React || !window.ReactDOM) {
       DECO = [
         { id: "classeur", nom: "Haut du classeur", defaut: "Peluche de Yoda", items: [
           { id: "plante", t: "bronze", prix: 100, nom: "Plante verte", d: "Elle survit \xE0 tous les go-live." },
+          { id: "bonsai", t: "argent", prix: 600, nom: "Bonsa\xEF", d: "Taill\xE9 \xE0 chaque comit\xE9 de pilotage." },
+          { id: "neige", t: "or", prix: 2500, nom: "Boule \xE0 neige du d\xE9p\xF4t", d: "On la secoue avant chaque go-live." },
           { id: "ventilateur", t: "bronze", prix: 300, nom: "Ventilateur", d: "Pour les nuits de recette en plein \xE9t\xE9." },
           { id: "frigorigene", t: "argent", prix: 400, nom: "Bouteille SMD hors \xE9preuve", d: "Ogive verte, robinet bleu : le c\u0153ur du m\xE9tier." },
           { id: "maquette", t: "or", prix: 1500, nom: "Maquette de bouteille chrom\xE9e", d: "Sur socle en bois, comme au si\xE8ge." },
@@ -4185,12 +4328,16 @@ if (!window.React || !window.ReactDOM) {
         ] },
         { id: "mur", nom: "Grand mur", defaut: "Affiche Divalife", items: [
           { id: "planning", t: "bronze", prix: 150, nom: "Planning des tourn\xE9es", d: "Les livraisons de la semaine, au feutre." },
+          { id: "liege", t: "bronze", prix: 200, nom: "Tableau de li\xE8ge", d: "Post-it, photos et vieilles listes de courses." },
           { id: "carte", t: "bronze", prix: 300, nom: "Carte des livraisons", d: "Les d\xE9p\xF4ts reli\xE9s au fil rouge." },
           { id: "securite", t: "argent", prix: 500, nom: "Affiche s\xE9curit\xE9", d: "\xAB Gaz sous pression : on ne rigole pas. \xBB" },
           { id: "wrike", t: "or", prix: 2e3, nom: "Affiche TOP WRIKE 2026", d: "Tous les projets au vert. Enfin, sur l'affiche." },
+          { id: "neon", t: "platine", prix: 3500, nom: "N\xE9on GO LIVE", d: "Il s'allume tout seul le jour J." },
           { id: "depot", t: "platine", prix: 5e3, nom: "Le d\xE9p\xF4t, cadre dor\xE9", d: "Vue en coupe d'un d\xE9p\xF4t de bouteilles." },
         ] },
         { id: "murPetit", nom: "Petit mur", defaut: "Cible de fl\xE9chettes", items: [
+          { id: "etagere", t: "bronze", prix: 300, nom: "\xC9tag\xE8re \xE0 mini-bouteilles", d: "La collection compl\xE8te des gaz du catalogue." },
+          { id: "photo", t: "argent", prix: 600, nom: "Photo de l'\xE9quipe", d: "Prise au s\xE9minaire, avant le go-live." },
           { id: "thermometre", t: "bronze", prix: 100, nom: "Thermom\xE8tre g\xE9ant", d: "Il ne descend jamais sous le go-live." },
           { id: "horloge", t: "bronze", prix: 100, nom: "Horloge", d: "Elle avance de cinq minutes, expr\xE8s." },
           { id: "fanion", t: "argent", prix: 400, nom: "Fanion Divalife", d: "Souvenir du s\xE9minaire d'\xE9quipe." },
@@ -4198,6 +4345,8 @@ if (!window.React || !window.ReactDOM) {
           { id: "disque", t: "platine", prix: 4e3, nom: "Disque de platine encadr\xE9", d: "Un million de bouteilles livr\xE9es." },
         ] },
         { id: "sous", nom: "Sous le bureau", defaut: "Poubelle", items: [
+          { id: "ramettes", t: "bronze", prix: 100, nom: "Ramettes de papier", d: "Pour imprimer les sp\xE9cifications. Toutes." },
+          { id: "sac", t: "bronze", prix: 300, nom: "Sac de sport", d: "Pour le footing du midi. En th\xE9orie." },
           { id: "carton", t: "bronze", prix: 100, nom: "Carton d'archives", d: "\xAB JDE ancienne version \xBB, ne pas jeter." },
           { id: "foot", t: "bronze", prix: 300, nom: "Ballon de foot", d: "Pour le match du vendredi contre l'IT." },
           { id: "poubelle", t: "argent", prix: 400, nom: "Bouteille recycl\xE9e en poubelle", d: "Le recyclage maison." },
@@ -4205,6 +4354,8 @@ if (!window.React || !window.ReactDOM) {
           { id: "frigo", t: "platine", prix: 4e3, nom: "Mini-frigo r\xE9tro", d: "Toujours une boisson fra\xEEche pour la nuit." },
         ] },
         { id: "bureau", nom: "Sur le bureau", defaut: "Raquette", items: [
+          { id: "pizza", t: "bronze", prix: 200, nom: "Bo\xEEte de pizza", d: "Vestige de la derni\xE8re nuit de recette." },
+          { id: "lavalampe", t: "or", prix: 1500, nom: "Lampe \xE0 lave", d: "Hypnotique pendant les longs traitements." },
           { id: "dossiers", t: "bronze", prix: 100, nom: "Pile de proc\xE9dures", d: "\xC0 traiter. Un jour." },
           { id: "vin", t: "bronze", prix: 100, nom: "Bouteille de vin rouge", d: "Pour f\xEAter le go-live. Pas avant." },
           { id: "milka", t: "argent", prix: 400, nom: "Tablette de chocolat Milka", d: "Le carburant des nuits de recette." },
@@ -4213,9 +4364,11 @@ if (!window.React || !window.ReactDOM) {
         ] },
         { id: "devant", nom: "Sol, devant le bureau", defaut: "Ballon", items: [
           { id: "cones", t: "bronze", prix: 150, nom: "C\xF4nes de chantier", d: "Zone en travaux : go-live en cours." },
+          { id: "robot", t: "or", prix: 1200, nom: "Aspirateur robot", d: "Il fait le m\xE9nage pendant que tu fais le go-live." },
           { id: "palette", t: "argent", prix: 600, nom: "Palette de bouteilles", d: "Livraison du jour, cercl\xE9e et pr\xEAte \xE0 partir." },
           { id: "flipper", t: "argent", prix: 800, nom: "Flipper", d: "Tourn\xE9 vers la porte, pour finir la partie avant le Comex." },
           { id: "transpalette", t: "or", prix: 2e3, nom: "Transpalette miniature", d: "T\xE9l\xE9command\xE9, pour les livraisons urgentes." },
+          { id: "distributeur", t: "platine", prix: 4e3, nom: "Distributeur de boissons", d: "Toutes les canettes sont gratuites. Enfin, presque." },
           { id: "elevateur", t: "platine", prix: 5e3, nom: "Chariot \xE9l\xE9vateur dor\xE9", d: "Employ\xE9 du mois, pour toujours." },
         ] },
       ],
@@ -12699,7 +12852,7 @@ if (!window.React || !window.ReactDOM) {
               "section",
               { key: e.id, className: "mt-3" },
               h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, e.nom),
-              h("ul", { className: "mt-1.5 grid gap-1.5", style: { gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" } }, carte(e, null), e.items.map((it) => carte(e, it))),
+              h("ul", { className: "mt-1.5 grid gap-1.5", style: { gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" } }, carte(e, null), [...e.items].sort((x, y) => x.prix - y.prix).map((it) => carte(e, it))),
             ),
           ),
           // Bande fixée en bas pendant le défilement : solde et « Fermer » toujours à portée de main
