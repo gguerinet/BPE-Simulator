@@ -2107,6 +2107,18 @@ if (!window.React || !window.ReactDOM) {
         ],
       })(t);
     }
+    // Icône « billet » (dessin Lucide Banknote)
+    function BilletSvg(t) {
+      return at({
+        tag: "svg",
+        attr: { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+        child: [
+          { tag: "rect", attr: { width: "20", height: "12", x: "2", y: "6", rx: "2" }, child: [] },
+          { tag: "circle", attr: { cx: "12", cy: "12", r: "2" }, child: [] },
+          { tag: "path", attr: { d: "M6 12h.01M18 12h.01" }, child: [] },
+        ],
+      })(t);
+    }
     var it =
         (t) =>
         ({ size: r = 24, strokeWidth: i = 2, color: o = "currentColor", className: n, style: d }) =>
@@ -2135,7 +2147,8 @@ if (!window.React || !window.ReactDOM) {
       Ko = it(jo),
       Ra = it(fo),
       Qo = it(Ao),
-      y1 = it(wo);
+      y1 = it(wo),
+      Billet = it(BilletSvg);
     var eMx = (t) => Math.max(20, 100 - 20 * ((t && t.weBureau) || 0));
     // Durée de partie : avancement par clic x1,5 et journée de 28 clics (au lieu de 40)
     var Ma = 0.06375,
@@ -9901,7 +9914,8 @@ if (!window.React || !window.ReactDOM) {
           a.default.createElement(
             _r,
             { bg: "#4ADE80", tuto: "cout", title: "Co\xFBt des consultants b.workchoc" },
-            a.default.createElement(Ua, { size: 18, strokeWidth: 2.5 }),
+            // icône billet (et non €) : la valeur porte déjà l'unité « € »
+            a.default.createElement(Billet, { size: 18, strokeWidth: 2.5 }),
             a.default.createElement("span", { className: "jde-libelle hidden sm:inline" }, "Co\xFBt"),
             a.default.createElement(
               "span",
