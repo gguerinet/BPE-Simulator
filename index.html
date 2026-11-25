@@ -12616,7 +12616,7 @@ if (!window.React || !window.ReactDOM) {
             h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, "Carri\xE8re"),
             h(
               "ul",
-              { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
+              { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2", style: { gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 230px), 1fr))" } },
               SUC_CAR.map((c) => {
                 let v = st.cumul[c.id] || 0,
                   nAtt = c.p.filter((x, i) => st.ok[sucPalId(c, i)]).length,
@@ -12629,22 +12629,20 @@ if (!window.React || !window.ReactDOM) {
                   {
                     key: c.id,
                     className: "flex items-center gap-2 border-2 px-2 py-1",
-                    style: { borderColor: nAtt ? W : "#94A3B8", background: nAtt ? "#FFFFFF" : "#F1F5F9" },
+                    style: { borderColor: nAtt ? W : "#94A3B8", background: nAtt ? "#FFFFFF" : "#F1F5F9", minWidth: 0 },
                     "aria-label": `${c.nom} : ${et(v)}${suiv ? `, prochain palier ${et(suiv)} (${SUC_T[SUC_TIERS[nAtt]][0]})` : ", tous les paliers atteints"}`,
                   },
                   h(SucIcone, { t: SUC_TIERS[Math.max(0, nAtt - 1)], id: c.ic, ok: nAtt > 0, taille: 36 }),
                   h(
                     "span",
                     { className: "min-w-0 leading-tight", style: { flex: 1 } },
-                    h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: nAtt ? W : "#64748B" } }, c.nom),
+                    h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: nAtt ? W : "#64748B", overflowWrap: "break-word", hyphens: "auto" } }, c.nom),
                     h(
                       "span",
                       { className: "flex items-center gap-1.5 text-[13px]", style: { fontFamily: Yr, color: "#334155" } },
                       suiv
                         ? [
                             h("span", { key: "s", className: "tabular-nums" }, `${et(v)}/${et(suiv)}`),
-                            h("span", { key: "i", className: "inline-flex" }, h(SucIcone, { t: SUC_TIERS[nAtt], taille: 12 })),
-                            h("span", { key: "g", className: "inline-flex items-center", style: { gap: 2 } }, "+", et(SUC_GAIN[SUC_TIERS[nAtt]]), h(Piece, { taille: 11 })),
                           ]
                         : `${et(v)} \xB7 tous les paliers atteints`,
                     ),
@@ -12682,7 +12680,7 @@ if (!window.React || !window.ReactDOM) {
               h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, vol),
               h(
                 "ul",
-                { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2" },
+                { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2", style: { gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 230px), 1fr))" } },
                 SUC.filter((d) => d.v === vi)
                   .sort((x, y) => SUC_RANG[x.t] - SUC_RANG[y.t])
                   .map((d) => {
@@ -12692,15 +12690,15 @@ if (!window.React || !window.ReactDOM) {
                     {
                       key: d.id,
                       className: "flex items-center gap-2 border-2 px-2 py-1",
-                      style: { borderColor: ok ? W : "#94A3B8", background: ok ? "#FFFFFF" : "#F1F5F9" },
+                      style: { borderColor: ok ? W : "#94A3B8", background: ok ? "#FFFFFF" : "#F1F5F9", minWidth: 0 },
                       "aria-label": `${d.nom}, ${SUC_T[d.t][0]}, ${ok ? "obtenu" : "pas encore obtenu"} : ${d.c}`,
                     },
                     h(SucIcone, { t: d.t, id: d.id, ok: !!ok, taille: 36 }),
                     h(
                       "span",
                       { className: "min-w-0 leading-tight", style: { flex: 1 } },
-                      h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: ok ? W : "#64748B" } }, d.nom),
-                      h("span", { className: "block text-[13px]", style: { fontFamily: Yr, color: ok ? "#334155" : "#64748B" } }, d.c),
+                      h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: ok ? W : "#64748B", overflowWrap: "break-word", hyphens: "auto" } }, d.nom),
+                      h("span", { className: "block text-[13px]", style: { fontFamily: Yr, color: ok ? "#334155" : "#64748B", overflowWrap: "break-word", hyphens: "auto" } }, d.c),
                     ),
                     ok && !st.recl[d.id] && h(
                       "button",
