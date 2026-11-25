@@ -7897,7 +7897,10 @@ if (!window.React || !window.ReactDOM) {
         let bloc = el.parentNode,
           mesure = () => {
             bloc.style.display = "";
-            bloc.style.display = el.scrollWidth > el.clientWidth + 1 ? "none" : "";
+            let cache = el.scrollWidth > el.clientWidth + 1;
+            bloc.style.display = cache ? "none" : "";
+            // pseudo trop long : seule la photo du héros reste, centrée dans l'encart (pas de moitié vide)
+            bloc.parentNode && (bloc.parentNode.style.justifyContent = cache ? "center" : "");
           };
         mesure();
         let ro = typeof ResizeObserver < "u" && bloc.parentNode ? new ResizeObserver(mesure) : null;
