@@ -26,7 +26,7 @@ grant execute on function public.succes_du_joueur(uuid) to anon;
 create or replace function public.enregistrer_succes(j uuid, s jsonb)
 returns text language plpgsql volatile security definer set search_path = public as $$
 begin
-  if j is null or s is null or jsonb_typeof(s) <> 'object' or pg_column_size(s) > 4000
+  if j is null or s is null or jsonb_typeof(s) <> 'object' or pg_column_size(s) > 32000
      or jsonb_typeof(coalesce(s->'ok', '{}'::jsonb)) <> 'object'
      or jsonb_typeof(coalesce(s->'heros', '{}'::jsonb)) <> 'object'
      or jsonb_typeof(coalesce(s->'cumul', '{}'::jsonb)) <> 'object' then
