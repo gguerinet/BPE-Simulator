@@ -11980,8 +11980,7 @@ if (!window.React || !window.ReactDOM) {
       // Pièces de fin de partie : de quoi remplir la boutique (64 500 pièces) en une centaine de parties régulières
       SUC_PARTIE = (s) => (s >= 9e3 ? 400 : s >= 8e3 ? 300 : s >= 7e3 ? 200 : s >= 5e3 ? 100 : 50),
       SUC_RECORD = 100,
-      SUC_JOUR = 100,
-      SUC_JOUR_K = "bpe-simulator-bonus-jour",
+
       sucPalId = (c, n) => `c-${c.id}-${n + 1}`,
       SUC_CAR_ENCOURS = ["ateliers", "tickets", "nuits"],
       // Retrouve la définition affichable d'un succès ou d'un palier à partir de son identifiant
@@ -12107,11 +12106,9 @@ if (!window.React || !window.ReactDOM) {
             st.cumul[c.id] = Math.floor(v);
             c.p.forEach((x, i) => v >= x && !st.ok[sucPalId(c, i)] && ((st.ok[sucPalId(c, i)] = now), nv.push(sucPalDef(c, i))));
           }
-          // Détail des pièces de la partie : médaille, record personnel battu, première partie du jour
-          let jour = new Date().toLocaleDateString("sv"),
-            det = [[SUC_PARTIE(sc), (Si(sc) || { nom: "Partie termin\xE9e" }).nom]];
+          // Détail des pièces de la partie : médaille, puis record personnel battu
+          let det = [[SUC_PARTIE(sc), (Si(sc) || { nom: "Partie termin\xE9e" }).nom]];
           record && det.push([SUC_RECORD, "Record personnel"]);
-          xr(SUC_JOUR_K, "") !== jour && (det.push([SUC_JOUR, "Premi\xE8re partie du jour"]), Tr(SUC_JOUR_K, jour));
           st.cumul.pieces = (st.cumul.pieces || 0) + det.reduce((n, x) => n + x[0], 0);
           let gain = sucPieces(st) - av;
           return (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), { liste: nv, pieces: gain, detail: det });
@@ -12624,7 +12621,7 @@ if (!window.React || !window.ReactDOM) {
             "p",
             { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } },
             h("span", { style: { display: "inline-block", verticalAlign: "-2px", marginRight: 4 } }, h(Piece, { taille: 13 })),
-            `Chaque succ\xE8s rapporte des pi\xE8ces \xE0 r\xE9clamer ici : ${Object.values(SUC_GAIN).map((g) => et(g)).join(", ")} selon sa raret\xE9. Chaque partie finie rapporte aussi 50 \xE0 400 pi\xE8ces selon la m\xE9daille, plus 100 pour un record personnel battu et 100 pour la premi\xE8re partie du jour.`,
+            `Chaque succ\xE8s rapporte des pi\xE8ces \xE0 r\xE9clamer ici : ${Object.values(SUC_GAIN).map((g) => et(g)).join(", ")} selon sa raret\xE9. Chaque partie finie rapporte aussi 50 \xE0 400 pi\xE8ces selon la m\xE9daille, plus 100 pour un record personnel battu.`,
           ),
           // Carrière : paliers cumulés de partie en partie
           h(
