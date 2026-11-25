@@ -11940,7 +11940,7 @@ if (!window.React || !window.ReactDOM) {
         { id: "corps", v: 1, t: "argent", nom: "Corps et \xE2me", c: "Ne jamais rentrer chez toi le week-end.", ok: (f) => !f.weekendsMaison },
         { id: "zen", v: 1, t: "argent", nom: "Zen", c: "Ne jamais descendre sous 30 % d'\xE9nergie.", ok: (f) => (f.eMin ?? 0) >= 30 },
         { id: "mercenaire", enCours: !0, v: 1, t: "or", nom: "Mercenaire", c: "Accepter 2 week-ends d'urgence pour une autre soci\xE9t\xE9.", ok: (f) => (f.nUrg || 0) >= 2 },
-        { id: "noctambule", v: 1, t: "or", nom: "Noctambule", c: "Travailler au moins 50 nuits.", ok: (f) => (f.nightsWorked || 0) >= 50 },
+        { id: "noctambule", enCours: !0, v: 1, t: "or", nom: "Noctambule", c: "Travailler au moins 50 nuits.", ok: (f) => (f.nightsWorked || 0) >= 50 },
         { id: "pastemps", v: 1, t: "or", nom: "Pas le temps", c: "Envoyer tous les besoins en arbitrage.", ok: (f) => (f.nArbitrages || 0) > 0 && !f.nGapDirect },
         { id: "sanscafe", v: 1, t: "platine", nom: "Sans caf\xE9", c: "Ne boire aucun caf\xE9.", ok: (f) => !f.nCafes },
         { id: "surlefil", v: 1, t: "platine", nom: "Sur le fil", c: "Finir une partie avec moins de 5 % d'\xE9nergie.", ok: (f) => f.eFin != null && f.eFin < 5 },
@@ -12103,15 +12103,17 @@ if (!window.React || !window.ReactDOM) {
         }
       },
       // En cours de partie : succès déjà acquis pour de bon (compteurs qui ne redescendent pas), débloqués tout de suite
-      sucEnCours = (e) => {
+      sucEnCours = (e0) => {
         try {
+          // une nuit en cours peut encore être annulée (retour à la maison) : on ne la compte qu'une fois finie
+          let e = e0.inNight && e0.nightsWorked > 0 ? { ...e0, nightsWorked: e0.nightsWorked - 1 } : e0;
           let st = sucLit(),
             nv = [],
             now = new Date().toISOString();
           for (let d of SUC)
             if (d.enCours && !st.ok[d.id])
               try {
-                d.ok(e, 0, st.heros) && ((st.ok[d.id] = now), (e.sucPartie = [...(e.sucPartie || []), d.id]), nv.push(d));
+                d.ok(e, 0, st.heros) && ((st.ok[d.id] = now), (e0.sucPartie = [...(e0.sucPartie || []), d.id]), nv.push(d));
               } catch {}
           // Carrière (ateliers, tickets, nuits) : cumul des parties précédentes + compteur de la partie en cours.
           // Le cumul lui-même n'est mis à jour qu'en fin de partie (sucFin), qui ne relistera pas ces paliers déjà acquis
@@ -12120,7 +12122,7 @@ if (!window.React || !window.ReactDOM) {
               let v = (st.cumul[c.id] || 0) + (Number(c.val(e, 0)) || 0);
               c.p.forEach((x, i) => {
                 let id = sucPalId(c, i);
-                v >= x && !st.ok[id] && ((st.ok[id] = now), (e.sucPartie = [...(e.sucPartie || []), id]), nv.push(sucPalDef(c, i)));
+                v >= x && !st.ok[id] && ((st.ok[id] = now), (e0.sucPartie = [...(e0.sucPartie || []), id]), nv.push(sucPalDef(c, i)));
               });
             }
           return (nv.length && (Tr(SUK, st), window.dispatchEvent(new Event("bpe-succes")), sucSync()), nv);
@@ -14734,8 +14736,8 @@ if (!window.React || !window.ReactDOM) {
                 onClick: r,
                 className: "flex flex-1 items-center justify-center gap-2 px-4 py-2 text-xl",
               },
-              a.default.createElement(_a, { size: 20, strokeWidth: 3 }),
-              " Rejouer",
+              a.default.createElement(xa, { size: 20, strokeWidth: 2.5 }),
+              " Menu",
             ),
           ),
           u &&
