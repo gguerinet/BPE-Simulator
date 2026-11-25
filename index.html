@@ -12315,7 +12315,7 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Fin de partie : écran dédié aux succès de la partie (débloqués en cours de route et à la fin), pièces, tout réclamer
-    function SucEcran({ liste, pieces: pc, onClose: fermer }) {
+    function SucEcran({ liste, pieces: pc, onClose: fermer, seul }) {
       let h = a.default.createElement,
         st = useSucces(),
         att = sucAttente(st),
@@ -12333,7 +12333,7 @@ if (!window.React || !window.ReactDOM) {
       }, []);
       return h(
         "div",
-        { className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0B1B2B]/85 p-3", role: "dialog", "aria-modal": "true", "aria-label": "Succ\xE8s de la partie" },
+        { className: "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-3", style: { background: seul ? "var(--fond, #163a56)" : "rgba(11,27,43,.85)" }, role: "dialog", "aria-modal": "true", "aria-label": "Succ\xE8s de la partie" },
         h(
           "div",
           { className: "jde-pop my-auto flex w-full max-w-md flex-col border-4 bg-[#FFFBEB] p-3 sm:p-4", style: { borderColor: W, boxShadow: `6px 6px 0 ${W}`, color: W } },
@@ -12377,7 +12377,7 @@ if (!window.React || !window.ReactDOM) {
                 h(Piece, { taille: 18 }),
               ),
             fait && !totAtt && h("div", { className: "text-center text-[14px] font-bold", style: { fontFamily: Yr, color: "#15803D" } }, "Pi\xE8ces r\xE9clam\xE9es ✓"),
-            h(mt, { bg: "#F97316", fg: W, onClick: fermer, className: "flex items-center justify-center gap-2 px-3 py-2 text-lg" }, "Voir le rapport"),
+            h(mt, { bg: "#F97316", fg: W, onClick: fermer, className: "flex items-center justify-center gap-2 px-3 py-2 text-lg" }, "Voir le rapport Comex"),
           ),
         ),
       );
@@ -13882,8 +13882,7 @@ if (!window.React || !window.ReactDOM) {
       return ft(txt);
     }
     function o1({ r: t, onReplay: r }) {
-      let [sucOuv, setSucOuv] = (0, a.useState)(!0),
-        i = Si(t.score),
+      let i = Si(t.score),
         o = i ? i.id : "echec",
         [rev, setRev] = (0, a.useState)(!1),
         _rv = (0, a.useEffect)(() => {
@@ -14021,14 +14020,6 @@ if (!window.React || !window.ReactDOM) {
               "Divalife \xB7 confidentiel",
             ),
           ),
-          rev &&
-            sucOuv &&
-            (t.succes || []).length + (t.sucPartie || []).length + (t.pieces || 0) > 0 &&
-            a.default.createElement(SucEcran, {
-              liste: [...(t.sucPartie || []).map((id) => SUC.find((d) => d.id === id)).filter(Boolean), ...(t.succes || [])],
-              pieces: t.pieces || 0,
-              onClose: () => setSucOuv(!1),
-            }),
           a.default.createElement(
             "div",
             {
@@ -14682,6 +14673,17 @@ if (!window.React || !window.ReactDOM) {
           }),
         t === "report" &&
           u &&
+          !u.sucVu &&
+          (u.succes || []).length + (u.sucPartie || []).length + (u.pieces || 0) > 0 &&
+          a.default.createElement(SucEcran, {
+            liste: [...(u.sucPartie || []).map((id) => SUC.find((d) => d.id === id)).filter(Boolean), ...(u.succes || [])],
+            pieces: u.pieces || 0,
+            seul: !0,
+            onClose: () => p({ ...u, sucVu: !0 }),
+          }),
+        t === "report" &&
+          u &&
+          (u.sucVu || !((u.succes || []).length + (u.sucPartie || []).length + (u.pieces || 0) > 0)) &&
           a.default.createElement(o1, {
             r: u,
             onReplay: () => {
