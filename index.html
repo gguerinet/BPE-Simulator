@@ -11818,7 +11818,14 @@ if (!window.React || !window.ReactDOM) {
         // Récompenses réclamées : un état d'avant cette fonction (sans liste) a déjà touché toutes ses pièces
         if (x && typeof x == "object" && x.recl && typeof x.recl == "object") for (let k in ok) x.recl[k] && (recl[k] = 1);
         else for (let k in ok) recl[k] = 1;
-        return { ok, heros, cumul, deco, recl };
+        let st = { ok, heros, cumul, deco, recl };
+        // Solde jamais négatif : si les achats dépassent ce que valent aujourd'hui les succès (raretés revues, succès retirés),
+        // la différence est offerte une fois pour toutes, pour que chaque récompense réclamée fasse bien monter le compteur
+        try {
+          let brut = sucPieces(st) - Object.keys(deco.achats).reduce((n, id) => n + ((decoItem(id) || {}).prix || 0), 0);
+          brut < 0 && (cumul.pieces = (cumul.pieces || 0) - brut);
+        } catch {}
+        return st;
       },
       sucLit = () => sucNet(xr(SUK, null)),
       // Pièces disponibles : succès et paliers obtenus + gains des parties (les achats de décor viendront en déduction)
