@@ -11323,6 +11323,11 @@ if (!window.React || !window.ReactDOM) {
             {
               role: "dialog",
               "aria-label": "Comment choisir",
+              ref: (el) => {
+                if (!el) return;
+                let bas = window.innerHeight - el.getBoundingClientRect().top - 6;
+                bas > 120 && el.scrollHeight > bas && ((el.style.maxHeight = bas + "px"), (el.style.overflowY = "auto"));
+              },
               className: "absolute flex flex-col p-3 text-left",
               style: { top: 0, left: "50%", transform: "translateX(-50%)", width: "max(100%, min(340px, 92vw))", minHeight: "100%", zIndex: 21, background: fond, color: encre, fontFamily: Yr, border: `3px solid ${encre}` },
               onPointerDown: (e) => e.stopPropagation(),
