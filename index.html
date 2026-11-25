@@ -7330,12 +7330,12 @@ if (!window.React || !window.ReactDOM) {
           (me(t, H[0], H[1], f.look, D),
             f.react &&
               i < f.react.until &&
-              // Cœur et cœur brisé à droite de la tête, pour ne pas être cachés par la bulle de dialogue
+              // Symboles de réaction (cœur, cœur brisé, alerte…) à droite de la tête, pour ne pas être cachés par la bulle de dialogue
               H2(
                 t,
                 f.react.sym,
-                Math.round(H[0]) + (f.react.sym === "happy" || f.react.sym === "brise" ? 10 : 0),
-                Math.round(H[1]) - (f.react.sym === "happy" || f.react.sym === "brise" ? 44 : 57) - (Math.floor(i / 160) % 2),
+                Math.round(H[0]) + 10,
+                Math.round(H[1]) - 44 - (Math.floor(i / 160) % 2),
                 f.react.dur ? 1 - (f.react.until - i) / f.react.dur : 0,
               ));
         },
