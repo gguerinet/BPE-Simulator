@@ -12722,6 +12722,22 @@ if (!window.React || !window.ReactDOM) {
         ),
       );
     }
+    // Accueil : solde de pièces, affiché en haut à côté du pseudo (c'est un avoir du joueur, pas du bouton Succès)
+    function SoldeBadge() {
+      let st = useSucces(),
+        n = sucSolde(st);
+      return a.default.createElement(
+        "span",
+        {
+          className: "flex shrink-0 items-center gap-1 border-[3px] bg-white px-2 py-1 font-bold",
+          style: { borderColor: W, color: "#92400E", boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr },
+          title: "Pi\xE8ces gagn\xE9es",
+          "aria-label": `${n} pi\xE8ce${n > 1 ? "s" : ""}`,
+        },
+        a.default.createElement(Piece, { taille: 18 }),
+        et(n),
+      );
+    }
     // Accueil : bouton « Succès n/20 » qui ouvre la grille
     function SucBtn() {
       let h = a.default.createElement,
@@ -12743,7 +12759,6 @@ if (!window.React || !window.ReactDOM) {
           },
           h(SucIcone, { t: "or", id: "comex", taille: 24 }),
           "Succ\xE8s",
-          h("span", { className: "flex items-center gap-1", style: { borderLeft: `2px solid ${W}`, paddingLeft: 8 } }, h(Piece, { taille: 18 }), et(sucSolde(st))),
         ),
         ouv && h(SucGrille, { onClose: () => setOuv(!1) }),
       );
@@ -13563,6 +13578,8 @@ if (!window.React || !window.ReactDOM) {
               a.default.createElement("span", { className: "truncate" }, psv || "—"),
               a.default.createElement("span", { className: "shrink-0", "aria-hidden": "true" }, "\u270E"),
             ),
+            a.default.createElement(SoldeBadge, null),
+            a.default.createElement("div", { className: "flex-1" }),
             a.default.createElement(
               "div",
               { className: "flex shrink-0 items-center gap-2" },
