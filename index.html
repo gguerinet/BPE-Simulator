@@ -5676,6 +5676,9 @@ if (!window.React || !window.ReactDOM) {
 @media (hover: none) and (pointer: coarse){.jde-kbd{display:none!important}}
 .jde-root p,.jde-root span,.jde-root div,.jde-root button{text-wrap:pretty;}
 .jde-pop,.jde-pop *{text-wrap:balance;}
+/* Fiche du héros : coupure de lignes ordinaire. Safari (iPhone) raccourcit fortement les lignes avec « pretty »,
+   ce qui laissait de larges bandes vides sur les côtés */
+.jde-fiche,.jde-fiche *{text-wrap:wrap!important;}
 .jde-volet>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 6px 4px 0;}
 .jde-volet>summary::-webkit-details-marker{display:none;}
 .jde-volet>summary::after{content:"+";font-weight:700;font-size:18px;line-height:1;border:2px solid currentColor;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -13727,7 +13730,7 @@ if (!window.React || !window.ReactDOM) {
             a.default.createElement(
               "div",
               {
-                className: "mx-auto border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-center text-white sm:border-4 sm:px-3 sm:py-2",
+                className: "jde-fiche mx-auto border-[3px] bg-[#0F2236] px-2.5 py-1.5 text-center text-white sm:border-4 sm:px-3 sm:py-2",
                 ref: cFiche,
                 // Même largeur que la rangée du carrousel, bord à bord avec les flèches jaunes
                 style: { borderColor: W, boxShadow: `5px 5px 0 ${W}`, width: `calc(${cLarg} - ${2 * cMarge}px)` },
