@@ -38,7 +38,7 @@ const scen = {
       await adv(p, 20);
       r.fige = (await p.evaluate(() => { const g = window.__api.n.current; return [g.clicks, g.energy, g.pu, g.journal.length].join('|'); })) === avant && !(await p.evaluate(() => window.__api.n.current.paused && document.querySelector('[aria-label="Pause"]')));
       await p.keyboard.press('Escape'); await adv(p, 2);
-      r.ferme = (await p.locator('text=Compris').count()) === 0;
+      r.ferme = (await p.getByRole('button', { name: 'Compris', exact: true }).count()) === 0;
       r.fenetreToujours = (await bouton.count()) === 1;
       r.plusClignote = r.fenetreToujours && !(await bouton.evaluate((x) => x.classList.contains('jde-info-new')));
     }

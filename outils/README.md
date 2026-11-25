@@ -26,6 +26,7 @@ de la base. Ils ne font pas partie du jeu publié et pourront être supprimés.
 | `node e2e.js` | partie complète contre la base locale |
 | `node shots.js [tailles]` | captures de tous les écrans, détection des textes coupés |
 | `node mem.js`, `node perf.js` | mémoire sur une longue partie, fluidité |
+| `node succesync.js` | succès, pièces et objets de la boutique retrouvés sur un autre appareil avec le code joueur (base locale) |
 
 `harness.js` ouvre le jeu dans Chromium avec React et les polices servis en local ; `fakeclock.js` accélère
 le temps ; `bot.js` est le robot ; `sim.js` joue une partie complète.
