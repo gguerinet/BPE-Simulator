@@ -12028,12 +12028,14 @@ if (!window.React || !window.ReactDOM) {
       ],
       // Carrière : compteurs cumulés de partie en partie, avec 4 paliers (bronze, argent, or, platine)
       SUC_TIERS = ["bronze", "argent", "or", "platine"],
+      CAR_COUL = { bronze: "#C2410C", argent: "#64748B", or: "#D97706", platine: "#0891B2" },
+      CAR_FOND = { bronze: "#FFF1E6", argent: "#F8FAFC", or: "#FEF3C7", platine: "#ECFEFF" },
       SUC_CAR = [
         { id: "golive", desc: "Finir des parties, quel que soit le r\xE9sultat.", ic: "golive", nom: "Go-live r\xE9alis\xE9s", p: [10, 25, 50, 100], val: () => 1 },
         { id: "ateliers", desc: "Accepter les ateliers PMO propos\xE9s en partie.", ic: "formateur", nom: "Ateliers PMO suivis", p: [10, 50, 100, 250], val: (f) => f.nAteliers || 0 },
         { id: "tickets", desc: "Traiter les tickets toi-m\xEAme au lieu de les passer \xE0 la TMA.", ic: "cambouis", nom: "Tickets trait\xE9s toi-m\xEAme", p: [25, 100, 250, 500], val: (f) => Math.max(0, (f.nTickets || 0) - (f.nTicketsTMA || 0)) },
         { id: "nuits", desc: "Travailler la nuit au lieu de dormir.", ic: "noctambule", nom: "Nuits travaill\xE9es", p: [50, 250, 1e3, 2500], val: (f) => Math.max(0, f.nightsWorked || 0) },
-        { id: "ors", desc: "Finir une partie avec au moins 8 000 points.", ic: "comex", nom: "M\xE9dailles d'or", p: [1, 5, 10, 25], val: (f, s) => (s >= 8e3 ? 1 : 0) },
+        { id: "ors", desc: "Finir une partie avec au moins 8\u00A0000 points.", ic: "comex", nom: "M\xE9dailles d'or", p: [1, 5, 10, 25], val: (f, s) => (s >= 8e3 ? 1 : 0) },
         { id: "points", desc: "Cumuler des points de partie en partie.", ic: "legende", nom: "Points cumul\xE9s", p: [5e4, 25e4, 1e6, 25e5], val: (f, s) => Math.max(0, s || 0) },
       ],
       // Pièces : gagnées une fois par succès ou palier (selon sa rareté), et à chaque partie finie (selon la médaille)
@@ -12668,13 +12670,20 @@ if (!window.React || !window.ReactDOM) {
                   att = sucAttente(st).filter(([k]) => k.startsWith(`c-${c.id}-`)),
                   suiv = nAtt < 4 ? c.p[nAtt] : null,
                   prec = nAtt > 0 ? c.p[nAtt - 1] : 0,
-                  pct = suiv ? Math.max(0, Math.min(1, (v - prec) / (suiv - prec))) : 1;
+                  pct = suiv ? Math.max(0, Math.min(1, (v - prec) / (suiv - prec))) : 1,
+                  // couleur du dernier palier atteint : cadre et fond de la carte prennent la teinte (bronze → platine)
+                  tAtt = nAtt ? SUC_TIERS[nAtt - 1] : null;
                 return h(
                   "li",
                   {
                     key: c.id,
-                    className: "flex items-center gap-2 border-2 px-2 py-1",
-                    style: { borderColor: nAtt ? W : "#94A3B8", background: nAtt ? "#FFFFFF" : "#F1F5F9", minWidth: 0 },
+                    className: "flex items-center gap-2 px-2 py-1",
+                    style: {
+                      border: tAtt ? `3px solid ${CAR_COUL[tAtt]}` : "2px solid #94A3B8",
+                      background: tAtt ? CAR_FOND[tAtt] : "#F1F5F9",
+                      boxShadow: tAtt === "platine" ? `0 0 0 2px #A5F3FC` : "none",
+                      minWidth: 0,
+                    },
                     "aria-label": `${c.nom} : ${et(v)}${suiv ? `, prochain palier ${et(suiv)} (${SUC_T[SUC_TIERS[nAtt]][0]})` : ", tous les paliers atteints"}`,
                   },
                   h(SucIcone, { t: SUC_TIERS[Math.max(0, nAtt - 1)], id: c.ic, ok: nAtt > 0, taille: 36 }),
@@ -12687,10 +12696,16 @@ if (!window.React || !window.ReactDOM) {
                       "span",
                       { className: "flex items-center gap-1.5 text-[13px]", style: { fontFamily: Yr, color: "#334155" } },
                       suiv
-                        ? [
-                            h("span", { key: "s", className: "tabular-nums" }, `${et(v)}/${et(suiv)}`),
-                          ]
-                        : `${et(v)} \xB7 tous les paliers atteints`,
+                        ? [h("span", { key: "s", className: "tabular-nums" }, `${et(v)}/${et(suiv)}`)]
+                        : [h("span", { key: "s" }, `${et(v)} \xB7 termin\xE9`)],
+                      // 4 pastilles : une par palier, pleine dans sa couleur une fois atteinte
+                      h(
+                        "span",
+                        { key: "p", className: "flex shrink-0 items-center", style: { gap: 3, marginLeft: "auto" }, "aria-hidden": "true" },
+                        SUC_TIERS.map((t, i) =>
+                          h("span", { key: t, style: { width: 9, height: 9, border: `1.5px solid ${i < nAtt ? W : "#94A3B8"}`, background: i < nAtt ? CAR_COUL[t] : "transparent" } }),
+                        ),
+                      ),
                     ),
                     h(
                       "span",
