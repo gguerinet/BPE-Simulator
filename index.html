@@ -7867,18 +7867,18 @@ if (!window.React || !window.ReactDOM) {
                 style: { fontFamily: Yr, whiteSpace: "nowrap" },
               },
               "Passer",
-              h(Touche, { k: "\xC9chap" }),
+              h(Touche, { k: "Esc" }),
             ),
             h(
               "div",
               { className: "flex gap-2" },
               t > 0 &&
-                h(mt, { bg: "#E0F2FE", fg: W, onClick: () => r(t - 1), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } }, "Pr\xE9c\xE9dent", h(Touche, { k: "\u2190" })),
+                h(mt, { bg: "#E0F2FE", fg: W, onClick: () => r(t - 1), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } }, "Pr\xE9c\xE9dent", h(Touche, { k: "B" })),
               h(
                 mt,
                 { bg: "#F97316", fg: W, onClick: () => (b ? i() : r(t + 1)), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } },
                 b ? "Commencer" : "Suivant",
-                h(Touche, { k: "\u21B5" }),
+                h(Touche, { k: "A" }),
               ),
             ),
           ),
@@ -7897,11 +7897,12 @@ if (!window.React || !window.ReactDOM) {
     function TutoOffre({ onOui: t, onNon: r }) {
       let h = a.default.createElement,
         [i, o] = (0, a.useState)(!1);
-      // Entrée : suivre le tutoriel ; Échap : le passer
+      // A (ou Entrée) : suivre le tutoriel ; B (ou Échap) : le passer
       (0, a.useEffect)(() => {
         let k = (e) => {
-          if (e.repeat) return;
-          e.key === "Enter" ? (e.preventDefault(), e.stopPropagation(), t(i)) : e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), r(i));
+          if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+          let j = (e.key || "").toLowerCase();
+          j === "a" || j === "enter" ? (e.preventDefault(), e.stopPropagation(), t(i)) : (j === "b" || j === "escape") && (e.preventDefault(), e.stopPropagation(), r(i));
         };
         return (window.addEventListener("keydown", k, !0), () => window.removeEventListener("keydown", k, !0));
       }, [i]);
@@ -7929,8 +7930,8 @@ if (!window.React || !window.ReactDOM) {
           h(
             "div",
             { className: "mt-3 grid grid-cols-2 gap-2.5" },
-            h(mt, { bg: "#86EFAC", fg: W, onClick: () => t(i), className: "px-2 py-2 text-lg" }, "Suivre le tutoriel", h(Touche, { k: "\u21B5" })),
-            h(mt, { bg: "#FDE68A", fg: W, onClick: () => r(i), className: "px-2 py-2 text-lg" }, "Passer", h(Touche, { k: "\xC9chap" })),
+            h(mt, { bg: "#86EFAC", fg: W, onClick: () => t(i), className: "px-2 py-2 text-lg" }, "Suivre le tutoriel", h(Touche, { k: "A" })),
+            h(mt, { bg: "#FDE68A", fg: W, onClick: () => r(i), className: "px-2 py-2 text-lg" }, "Passer", h(Touche, { k: "B" })),
           ),
           h(
             "label",
@@ -9615,9 +9616,9 @@ if (!window.React || !window.ReactDOM) {
                 return;
               }
               if (n.current.tuto) {
-                j === "arrowright" || j === "enter"
+                j === "arrowright" || j === "enter" || j === "a"
                   ? (M.preventDefault(), M.repeat || Gt.current.tuPas(1))
-                  : j === "arrowleft"
+                  : j === "arrowleft" || j === "b"
                     ? (M.preventDefault(), M.repeat || Gt.current.tuPas(-1))
                     : j === "escape" && (M.preventDefault(), Gt.current.tuFin());
                 return;
