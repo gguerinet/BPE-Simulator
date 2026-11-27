@@ -12023,12 +12023,12 @@ if (!window.React || !window.ReactDOM) {
       // Carrière : compteurs cumulés de partie en partie, avec 4 paliers (bronze, argent, or, platine)
       SUC_TIERS = ["bronze", "argent", "or", "platine"],
       SUC_CAR = [
-        { id: "golive", ic: "golive", nom: "Go-live r\xE9alis\xE9s", p: [10, 25, 50, 100], val: () => 1 },
-        { id: "ateliers", ic: "formateur", nom: "Ateliers PMO suivis", p: [10, 50, 100, 250], val: (f) => f.nAteliers || 0 },
-        { id: "tickets", ic: "cambouis", nom: "Tickets trait\xE9s toi-m\xEAme", p: [25, 100, 250, 500], val: (f) => Math.max(0, (f.nTickets || 0) - (f.nTicketsTMA || 0)) },
-        { id: "nuits", ic: "noctambule", nom: "Nuits travaill\xE9es", p: [50, 250, 1e3, 2500], val: (f) => Math.max(0, f.nightsWorked || 0) },
-        { id: "ors", ic: "comex", nom: "M\xE9dailles d'or", p: [1, 5, 10, 25], val: (f, s) => (s >= 8e3 ? 1 : 0) },
-        { id: "points", ic: "legende", nom: "Points cumul\xE9s", p: [5e4, 25e4, 1e6, 25e5], val: (f, s) => Math.max(0, s || 0) },
+        { id: "golive", desc: "Finir des parties, quel que soit le r\xE9sultat.", ic: "golive", nom: "Go-live r\xE9alis\xE9s", p: [10, 25, 50, 100], val: () => 1 },
+        { id: "ateliers", desc: "Accepter les ateliers PMO propos\xE9s en partie.", ic: "formateur", nom: "Ateliers PMO suivis", p: [10, 50, 100, 250], val: (f) => f.nAteliers || 0 },
+        { id: "tickets", desc: "Traiter les tickets toi-m\xEAme au lieu de les passer \xE0 la TMA.", ic: "cambouis", nom: "Tickets trait\xE9s toi-m\xEAme", p: [25, 100, 250, 500], val: (f) => Math.max(0, (f.nTickets || 0) - (f.nTicketsTMA || 0)) },
+        { id: "nuits", desc: "Travailler la nuit au lieu de dormir.", ic: "noctambule", nom: "Nuits travaill\xE9es", p: [50, 250, 1e3, 2500], val: (f) => Math.max(0, f.nightsWorked || 0) },
+        { id: "ors", desc: "Finir une partie avec au moins 8 000 points.", ic: "comex", nom: "M\xE9dailles d'or", p: [1, 5, 10, 25], val: (f, s) => (s >= 8e3 ? 1 : 0) },
+        { id: "points", desc: "Cumuler des points de partie en partie.", ic: "legende", nom: "Points cumul\xE9s", p: [5e4, 25e4, 1e6, 25e5], val: (f, s) => Math.max(0, s || 0) },
       ],
       // Pièces : gagnées une fois par succès ou palier (selon sa rareté), et à chaque partie finie (selon la médaille)
       SUC_GAIN = { bronze: 50, argent: 150, or: 400, platine: 1e3 },
@@ -12653,7 +12653,6 @@ if (!window.React || !window.ReactDOM) {
             "section",
             { className: "mt-3" },
             h("h3", { className: "border-b-2 text-lg font-bold", style: { borderColor: W, fontFamily: Lr } }, "Carri\xE8re"),
-            h("p", { className: "mt-1 text-[13px] text-[#334155]", style: { fontFamily: Yr } }, "Compteurs cumul\xE9s de partie en partie. Chaque palier atteint rapporte des pi\xE8ces."),
             h(
               "ul",
               { className: "mt-1.5 grid gap-1.5 sm:grid-cols-2", style: { gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 230px), 1fr))" } },
@@ -12677,6 +12676,7 @@ if (!window.React || !window.ReactDOM) {
                     "span",
                     { className: "min-w-0 leading-tight", style: { flex: 1 } },
                     h("span", { className: "block text-[15px] font-bold", style: { fontFamily: Yr, color: nAtt ? W : "#475569", overflowWrap: "break-word", hyphens: "auto" } }, c.nom),
+                    h("span", { className: "block text-[13px]", style: { fontFamily: Yr, color: nAtt ? "#334155" : "#475569", overflowWrap: "break-word", hyphens: "auto" } }, c.desc),
                     h(
                       "span",
                       { className: "flex items-center gap-1.5 text-[13px]", style: { fontFamily: Yr, color: "#334155" } },
