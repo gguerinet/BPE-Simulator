@@ -9610,7 +9610,7 @@ if (!window.React || !window.ReactDOM) {
               if (n.current.tutoOffre) return;
               // Explication « i » ouverte : Échap la ferme, Entrée et Espace agissent sur le bouton « Compris »
               if (infoOuv.v) {
-                (j === "escape" || j === "enter" || j === " ") && !M.repeat && (M.preventDefault(), infoOuv.fermer && infoOuv.fermer());
+                (j === "escape" || j === "enter") && !M.repeat && (M.preventDefault(), infoOuv.fermer && infoOuv.fermer());
                 return;
               }
               // Bulle « Première fois » ouverte : Entrée, Espace ou O la valident
