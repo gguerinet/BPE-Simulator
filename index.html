@@ -9587,12 +9587,12 @@ if (!window.React || !window.ReactDOM) {
               if (n.current.tutoOffre) return;
               // Explication « i » ouverte : Échap la ferme, Entrée et Espace agissent sur le bouton « Compris »
               if (infoOuv.v) {
-                j === "escape" && (M.preventDefault(), infoOuv.fermer && infoOuv.fermer());
+                (j === "escape" || j === "enter" || j === " ") && !M.repeat && (M.preventDefault(), infoOuv.fermer && infoOuv.fermer());
                 return;
               }
               // Bulle « Première fois » ouverte : Entrée, Espace ou O la valident
               if (n.current.astuce) {
-                (j === "enter" || j === " " || j === "o") && !M.repeat && (M.preventDefault(), Gt.current.astuceFin());
+                (j === "enter" || j === " " || j === "o" || j === "escape") && !M.repeat && (M.preventDefault(), Gt.current.astuceFin());
                 return;
               }
               if (n.current.tuto) {
@@ -9601,6 +9601,11 @@ if (!window.React || !window.ReactDOM) {
                   : j === "arrowleft"
                     ? (M.preventDefault(), M.repeat || Gt.current.tuPas(-1))
                     : j === "escape" && (M.preventDefault(), Gt.current.tuFin());
+                return;
+              }
+              // Message à un seul bouton (régression, imprévu, bonne nouvelle…) : Échap le ferme aussi, au lieu d'ouvrir la pause
+              if (j === "escape" && !M.repeat && !n.current.paused && n.current.attenteOK && Gt.current.nbChoix() <= 1) {
+                (M.preventDefault(), Gt.current.fermerMessage());
                 return;
               }
               if ((j === "escape" || j === "p") && !M.repeat && !n.current.golive) {
@@ -9923,7 +9928,7 @@ if (!window.React || !window.ReactDOM) {
             },
             a.default.createElement("span", { className: "border-2 bg-[#FACC15] px-2 text-[12px] font-bold leading-tight", style: { borderColor: W } }, "Premi\xE8re fois"),
             a.default.createElement("span", null, ft(astuceV.txt)),
-            a.default.createElement(mt, { bg: "#F97316", fg: W, onClick: astuceFin, className: "text-lg", style: { padding: "4px 36px" } }, "OK"),
+            a.default.createElement(mt, { bg: "#F97316", fg: W, onClick: astuceFin, title: "OK (Entr\xE9e ou \xC9chap)", className: "relative text-lg", style: { padding: "4px 36px" } }, "OK"),
           ),
         a.default.createElement(
           "div",
@@ -10435,17 +10440,16 @@ if (!window.React || !window.ReactDOM) {
                               { className: "mt-0.5 flex justify-center gap-2" },
                               U.fx.map((V, x) => a.default.createElement(fa, { key: x, ...V, sombre: !0, couleur: J === 0 ? g : void 0, sansFleches: !0 })),
                             ),
-                          ch.length > 1 &&
-                            a.default.createElement(
-                              "span",
-                              {
-                                "aria-hidden": "true",
-                                className:
-                                  "jde-kbd pointer-events-none absolute right-1 top-1 hidden border px-[3px] text-[10px] font-bold leading-tight opacity-60 sm:block",
-                                style: { borderColor: "currentColor" },
-                              },
-                              U.id,
-                            ),
+                          a.default.createElement(
+                            "span",
+                            {
+                              "aria-hidden": "true",
+                              className:
+                                "jde-kbd pointer-events-none absolute right-1 top-1 hidden border px-[3px] text-[10px] font-bold leading-tight opacity-60 sm:block",
+                              style: { borderColor: "currentColor" },
+                            },
+                            ch.length > 1 ? U.id : "Entr\xE9e",
+                          ),
                         ),
                       ),
                     ),
@@ -11673,7 +11677,8 @@ if (!window.React || !window.ReactDOM) {
                   autoFocus: !0,
                   onPointerDown: (e) => e.stopPropagation(),
                   onClick: (e) => (e.stopPropagation(), setOuv(!1)),
-                  className: "border-[3px] px-5 py-1 text-[15px] font-bold text-white",
+                  title: "Compris (Entr\xE9e ou \xC9chap)",
+                  className: "relative border-[3px] px-5 py-1 text-[15px] font-bold text-white",
                   style: { background: "#0E7490", borderColor: W, boxShadow: `3px 3px 0 ${W}`, fontFamily: Yr },
                 },
                 "Compris",
