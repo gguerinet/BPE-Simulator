@@ -63,6 +63,11 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
   await D.p.getByLabel("Code d'un autre appareil").fill(codeA);
   await D.p.getByRole('button', { name: 'Utiliser' }).click(); await D.p.waitForTimeout(800);
   ok((await pseudo(D.p)) === 'Baby Yoda' && (await code(D.p)) === codeA && (await D.p.locator('[role=dialog]').count()) === 0, 'D saisit le code : pseudo « Baby Yoda », code de A, plus aucune fenêtre');
+  // D connaît déjà le jeu : pas de tutoriel proposé, ni bulles « Première fois », ni explications (i) à découvrir
+  const pref = await D.p.evaluate(() => ({ tuto: JSON.parse(localStorage.getItem('bpe-simulator-tuto-off') || 'false'), astuces: JSON.parse(localStorage.getItem('bpe-simulator-astuces') || '[]'), infos: JSON.parse(localStorage.getItem('bpe-simulator-infos') || '[]') }));
+  ok(pref.tuto === true && pref.astuces.includes('nuit') && pref.infos.length >= 5, 'D : tutoriel, bulles et explications marqués comme déjà vus (' + JSON.stringify(pref).slice(0, 80) + ')');
+  await D.p.getByRole('button', { name: /Commencer le projet/ }).click(); await D.p.waitForTimeout(1500);
+  ok((await D.p.getByText('Un petit tutoriel ?').count()) === 0, 'D : la partie démarre sans proposer le tutoriel');
   // E : nouvel appareil, « Nouveau joueur » → fenêtre du pseudo seule, nouveau code attribué
   const E = await appareil();
   await E.p.getByRole('button', { name: 'Nouveau joueur' }).click(); await E.p.waitForTimeout(300);

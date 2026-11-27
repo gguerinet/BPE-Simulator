@@ -11866,6 +11866,16 @@ if (!window.React || !window.ReactDOM) {
         let k = Cfg.supabaseKey.trim();
         return /^eyJ/.test(k) ? { apikey: k, Authorization: "Bearer " + k } : { apikey: k };
       },
+      // Joueur qui se reconnecte avec son code (« J'ai déjà joué » ou Paramètres) : il connaît déjà le jeu,
+      // donc ni tutoriel proposé, ni bulles « Première fois », ni explications (i) qui clignotent
+      joueurConnu = () => {
+        try {
+          (Tr("bpe-simulator-tuto-off", !0),
+            Tr("bpe-simulator-regles-vues", !0),
+            Tr("bpe-simulator-astuces", ["nuit", "visiteur", "gonogo", "weekend", "reunion", "evenement"]),
+            Tr("bpe-simulator-infos", Object.keys(INFOS)));
+        } catch {}
+      },
       jid = () => {
         let v = xr("bpe-simulator-joueur", null);
         if (typeof v == "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(v)) return v;
@@ -13272,7 +13282,7 @@ if (!window.React || !window.ReactDOM) {
           let srv = await psDuJoueur(v);
           if (srv === void 0) return setMsg({ ko: !0, t: "Serveur injoignable : r\xE9essaie dans un instant." });
           if (!srv) return setMsg({ ko: !0, t: "Code inconnu : aucun pseudo n'y est rattach\xE9." });
-          (Tr("bpe-simulator-joueur", v), Tr(Pk, srv), Tr(PsAtt, !1), window.dispatchEvent(new Event("bpe-pseudo")));
+          (Tr("bpe-simulator-joueur", v), Tr(Pk, srv), Tr(PsAtt, !1), joueurConnu(), window.dispatchEvent(new Event("bpe-pseudo")));
           setMsg({ ko: !1, t: `Code reconnu : tu joues maintenant en \xAB ${srv} \xBB sur cet appareil.` });
         };
       return h(
