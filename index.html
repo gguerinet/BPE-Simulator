@@ -6322,7 +6322,20 @@ if (!window.React || !window.ReactDOM) {
           clic() {
             if (!t) return;
             let V = t.currentTime + av();
-            (D(F(81), V, 0.04, "square", 0.03), this.bruit(V, 0.02, "highpass", 3e3, 0.03));
+            // « Pop 8 bits feutré » : deux petites notes triangle qui montent, attaque douce (plus de souffle qui crépitait)
+            [[F(76), 0, 0.045, 0.09], [F(83), 0.035, 0.06, 0.08]].forEach(([f, d, dur, g]) => {
+              let x = t.createOscillator(),
+                q = t.createGain();
+              ((x.type = "triangle"),
+                (x.frequency.value = f),
+                q.gain.setValueAtTime(1e-4, V + d),
+                q.gain.linearRampToValueAtTime(g, V + d + 0.004),
+                q.gain.exponentialRampToValueAtTime(1e-4, V + d + dur),
+                x.connect(q),
+                q.connect(o),
+                x.start(V + d),
+                x.stop(V + d + dur + 0.05));
+            });
           },
           buzzer() {
             if (!t) return;
