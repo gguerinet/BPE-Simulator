@@ -2889,7 +2889,7 @@ if (!window.React || !window.ReactDOM) {
           ? t
           : xr(y2, !0) === !1
             ? { musique: 0, effets: 0 }
-            : { musique: 0.7, effets: 0.8 };
+            : { musique: 1, effets: 1 };
       },
       Tr = (t, r) => {
         try {
@@ -8072,7 +8072,7 @@ if (!window.React || !window.ReactDOM) {
           let e = vt.volumes;
           e.musique + e.effets > 0
             ? ((be.current = e), Va({ musique: 0, effets: 0 }))
-            : Va(be.current || { musique: 0.7, effets: 0.8 });
+            : Va(be.current || { musique: 1, effets: 1 });
         },
         ea = (0, a.useRef)(null),
         Fe = (0, a.useRef)(null),
@@ -13292,7 +13292,7 @@ if (!window.React || !window.ReactDOM) {
           let v = vt.volumes;
           v.musique + v.effets > 0
             ? ((sonAvantCoupe = { ...v }), regler({ musique: 0, effets: 0 }))
-            : regler(sonAvantCoupe || { musique: 0.7, effets: 0.8 });
+            : regler(sonAvantCoupe || { musique: 1, effets: 1 });
         };
         return (window.addEventListener("keydown", k), () => window.removeEventListener("keydown", k));
       }, []);
