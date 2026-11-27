@@ -5679,6 +5679,7 @@ if (!window.React || !window.ReactDOM) {
 /* Fiche du héros : coupure de lignes ordinaire. Safari (iPhone) raccourcit fortement les lignes avec « pretty »,
    ce qui laissait de larges bandes vides sur les côtés */
 .jde-fiche,.jde-fiche *{text-wrap:wrap!important;}
+.jde-touche{display:none;}@media (min-width:640px){.jde-touche{display:inline-block;}}
 /* Encarts héros, date, coût et qualité (téléphone) : pseudo et valeurs centrés entre l'icône et le bord droit */
 @media (max-width:639px){[data-tuto=date]>span.font-bold,[data-tuto=cout]>span.font-bold,[data-tuto=qualite]>span.font-bold{flex:1 1 auto;text-align:center;}[data-tuto=hero]>span{flex:1 1 auto;align-items:center;text-align:center;}}
 .jde-volet>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 6px 4px 0;}
@@ -7863,19 +7864,21 @@ if (!window.React || !window.ReactDOM) {
                 type: "button",
                 onClick: i,
                 className: "text-[14px] underline underline-offset-2 opacity-70",
-                style: { fontFamily: Yr },
+                style: { fontFamily: Yr, whiteSpace: "nowrap" },
               },
               "Passer",
+              h(Touche, { k: "\xC9chap" }),
             ),
             h(
               "div",
               { className: "flex gap-2" },
               t > 0 &&
-                h(mt, { bg: "#E0F2FE", fg: W, onClick: () => r(t - 1), className: "px-3 py-1 text-base" }, "Pr\xE9c\xE9dent"),
+                h(mt, { bg: "#E0F2FE", fg: W, onClick: () => r(t - 1), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } }, "Pr\xE9c\xE9dent", h(Touche, { k: "\u2190" })),
               h(
                 mt,
-                { bg: "#F97316", fg: W, onClick: () => (b ? i() : r(t + 1)), className: "px-3 py-1 text-base" },
+                { bg: "#F97316", fg: W, onClick: () => (b ? i() : r(t + 1)), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } },
                 b ? "Commencer" : "Suivant",
+                h(Touche, { k: "\u21B5" }),
               ),
             ),
           ),
@@ -7883,9 +7886,25 @@ if (!window.React || !window.ReactDOM) {
         ),
       );
     }
+    // Étiquette de touche clavier placée à côté du libellé d'un bouton (ordinateur seulement)
+    function Touche({ k }) {
+      return a.default.createElement(
+        "span",
+        { "aria-hidden": "true", className: "jde-kbd jde-touche border px-[3px] text-[10px] font-bold leading-tight opacity-60", style: { borderColor: "currentColor", marginLeft: 6, verticalAlign: "middle" } },
+        k,
+      );
+    }
     function TutoOffre({ onOui: t, onNon: r }) {
       let h = a.default.createElement,
         [i, o] = (0, a.useState)(!1);
+      // Entrée : suivre le tutoriel ; Échap : le passer
+      (0, a.useEffect)(() => {
+        let k = (e) => {
+          if (e.repeat) return;
+          e.key === "Enter" ? (e.preventDefault(), e.stopPropagation(), t(i)) : e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), r(i));
+        };
+        return (window.addEventListener("keydown", k, !0), () => window.removeEventListener("keydown", k, !0));
+      }, [i]);
       return h(
         "div",
         {
@@ -7910,8 +7929,8 @@ if (!window.React || !window.ReactDOM) {
           h(
             "div",
             { className: "mt-3 grid grid-cols-2 gap-2.5" },
-            h(mt, { bg: "#86EFAC", fg: W, onClick: () => t(i), className: "px-2 py-2 text-lg" }, "Suivre le tutoriel"),
-            h(mt, { bg: "#FDE68A", fg: W, onClick: () => r(i), className: "px-2 py-2 text-lg" }, "Passer"),
+            h(mt, { bg: "#86EFAC", fg: W, onClick: () => t(i), className: "px-2 py-2 text-lg" }, "Suivre le tutoriel", h(Touche, { k: "\u21B5" })),
+            h(mt, { bg: "#FDE68A", fg: W, onClick: () => r(i), className: "px-2 py-2 text-lg" }, "Passer", h(Touche, { k: "\xC9chap" })),
           ),
           h(
             "label",
@@ -10448,7 +10467,7 @@ if (!window.React || !window.ReactDOM) {
                                 "jde-kbd pointer-events-none absolute right-1 top-1 hidden border px-[3px] text-[10px] font-bold leading-tight opacity-60 sm:block",
                               style: { borderColor: "currentColor" },
                             },
-                            ch.length > 1 ? U.id : "Entr\xE9e",
+                            ch.length > 1 ? U.id : "\u21B5",
                           ),
                         ),
                       ),
