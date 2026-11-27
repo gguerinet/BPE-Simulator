@@ -12045,7 +12045,7 @@ if (!window.React || !window.ReactDOM) {
         { id: "photo", v: 0, t: "or", nom: "Photo finish", c: "Go-live le jour m\xEAme d'un week-end.", ok: (f) => f.jourGoLive === 0 || f.jourGoLive === 6 },
         { id: "delai", v: 0, t: "platine", nom: "Dans les temps", c: "Go-live au plus tard \xE0 J+80.", ok: (f) => Math.floor(f.total) <= 80 },
         { id: "qualite", v: 0, t: "platine", nom: "Travail soign\xE9", c: "Finir avec au moins 90 % de qualit\xE9.", ok: (f) => f.qualite >= 90 },
-        { id: "zerodefaut", v: 0, t: "platine", nom: "Z\xE9ro d\xE9faut", c: "Finir avec 100 % de qualit\xE9.", ok: (f) => f.qualite >= 100 },
+        { id: "grandchelem", v: 0, t: "platine", nom: "Grand chelem", c: "D\xE9crocher la m\xE9daille de platine sans aucune mission b.workchoc.", ok: (f, s) => s >= 9e3 && !f.cout },
         { id: "kamikaze", v: 0, t: "platine", nom: "Kamikaze", c: "R\xE9ussir un GO avec moins de 50 % de qualit\xE9.", ok: (f) => f.gonogoChoix === "go-ok" && f.qualite < 50 },
         { id: "sprint", v: 0, t: "platine", nom: "Sprint final", c: "Faire les 15 derniers pourcents en moins de 10 jours.", ok: (f) => f.j85 != null && f.total - f.j85 < 10 },
         { id: "imprevu", v: 0, t: "platine", nom: "Sans impr\xE9vu", c: "Finir sans aucun impr\xE9vu.", ok: (f) => !(f.nImprevus || 0) },
@@ -12070,7 +12070,7 @@ if (!window.React || !window.ReactDOM) {
         { id: "equipe", v: 2, t: "or", nom: "L'\xE9quipe au complet", c: "Gagner l'or avec chacun des 4 membres de l'\xE9quipe.", ok: (f, s, h) => ["francois", "gabriel", "hugues", "samuel"].every((k) => h[k] && h[k].o) },
         { id: "boomerang", enCours: !0, v: 2, t: "platine", nom: "Ticket boomerang", c: "Voir revenir 3 tickets pass\xE9s \xE0 la TMA.", ok: (f) => (f.nTicketsRevenus || 0) >= 3 },
         // Anciens succès retirés : cachés, plus obtenables, mais ceux déjà obtenus gardent leurs pièces
-        ...[["comex", "bronze"], ["legende", "or"], ["heure", "platine"], ["sage", "or"], ["orpartout", "platine"], ["goreussi", "or"]].map(([id, t]) => ({ id, v: -1, t, cache: !0, nom: id, c: "", ok: () => !1 })),
+        ...[["comex", "bronze"], ["legende", "or"], ["heure", "platine"], ["sage", "or"], ["orpartout", "platine"], ["goreussi", "or"], ["zerodefaut", "platine"]].map(([id, t]) => ({ id, v: -1, t, cache: !0, nom: id, c: "", ok: () => !1 })),
       ],
       // Carrière : compteurs cumulés de partie en partie, avec 4 paliers (bronze, argent, or, platine)
       SUC_TIERS = ["bronze", "argent", "or", "platine"],
@@ -12517,6 +12517,8 @@ if (!window.React || !window.ReactDOM) {
     // Icônes des succès ajoutés ensuite (Infatigable remplace Rescapé)
     SUC_IC.delai = SUC_IC.heure;
     SUC_IC.qualite = SUC_IC.legende;
+    // Grand chelem : une couronne
+    SUC_IC.grandchelem = "#..#..##..#..###.#.################.......#######";
     SUC_IC.goreussi = SUC_IC.kamikaze;
     SUC_IC.gorate = "#.....#.#...#...#.#.....#.....#.#...#...#.#.....#";
     SUC_IC.photo = ".........##...########..#..##.###.##..#..########";
