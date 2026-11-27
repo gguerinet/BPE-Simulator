@@ -7867,7 +7867,7 @@ if (!window.React || !window.ReactDOM) {
                 style: { fontFamily: Yr, whiteSpace: "nowrap" },
               },
               "Passer",
-              h(Touche, { k: "Esc" }),
+              h(Touche, { k: "Esc", ecart: 10 }),
             ),
             h(
               "div",
@@ -7887,10 +7887,10 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Étiquette de touche clavier placée à côté du libellé d'un bouton (ordinateur seulement)
-    function Touche({ k }) {
+    function Touche({ k, ecart: ec = 6 }) {
       return a.default.createElement(
         "span",
-        { "aria-hidden": "true", className: "jde-kbd jde-touche border px-[3px] text-[10px] font-bold leading-tight opacity-60", style: { borderColor: "currentColor", marginLeft: 6, verticalAlign: "middle" } },
+        { "aria-hidden": "true", className: "jde-kbd jde-touche border px-[3px] text-[10px] font-bold leading-tight opacity-60", style: { borderColor: "currentColor", marginLeft: ec, verticalAlign: "middle" } },
         k,
       );
     }
