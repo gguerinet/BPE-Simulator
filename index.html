@@ -7873,12 +7873,12 @@ if (!window.React || !window.ReactDOM) {
               "div",
               { className: "flex gap-2" },
               t > 0 &&
-                h(mt, { bg: "#E0F2FE", fg: W, onClick: () => r(t - 1), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } }, "Pr\xE9c\xE9dent", h(Touche, { k: "B" })),
+                h(mt, { bg: "#E0F2FE", fg: W, onClick: () => r(t - 1), className: "relative px-3 py-1 text-base", style: { whiteSpace: "nowrap", paddingRight: 24 } }, "Pr\xE9c\xE9dent", h(Touche, { k: "B", coin: !0 })),
               h(
                 mt,
-                { bg: "#F97316", fg: W, onClick: () => (b ? i() : r(t + 1)), className: "px-3 py-1 text-base", style: { whiteSpace: "nowrap" } },
+                { bg: "#F97316", fg: W, onClick: () => (b ? i() : r(t + 1)), className: "relative px-3 py-1 text-base", style: { whiteSpace: "nowrap", paddingRight: 24 } },
                 b ? "Commencer" : "Suivant",
-                h(Touche, { k: "A" }),
+                h(Touche, { k: "A", coin: !0 }),
               ),
             ),
           ),
@@ -7887,10 +7887,13 @@ if (!window.React || !window.ReactDOM) {
       );
     }
     // Étiquette de touche clavier placée à côté du libellé d'un bouton (ordinateur seulement)
-    function Touche({ k, ecart: ec = 6 }) {
+    // coin : étiquette placée en haut à droite du bouton (le bouton doit être en position relative)
+    function Touche({ k, ecart: ec = 6, coin: co }) {
       return a.default.createElement(
         "span",
-        { "aria-hidden": "true", className: "jde-kbd jde-touche border px-[3px] text-[10px] font-bold leading-tight opacity-60", style: { borderColor: "currentColor", marginLeft: ec, verticalAlign: "middle" } },
+        co
+          ? { "aria-hidden": "true", className: "jde-kbd jde-touche pointer-events-none absolute border px-[3px] text-[10px] font-bold leading-tight opacity-60", style: { borderColor: "currentColor", top: 3, right: 3 } }
+          : { "aria-hidden": "true", className: "jde-kbd jde-touche border px-[3px] text-[10px] font-bold leading-tight opacity-60", style: { borderColor: "currentColor", marginLeft: ec, verticalAlign: "middle" } },
         k,
       );
     }
