@@ -13521,7 +13521,8 @@ if (!window.React || !window.ReactDOM) {
             !f && !psDemande && !Ps() && ((psDemande = !0), setPsOuvert(!0)));
         },
         psSave = (f, st) => {
-          (Tr(Pk, f), Tr(PsAtt, st !== "ok"), setPsv(f), (psDemande = !0), setPsOuvert(!1), setPsAlerte(null), st === "ok" && recSync());
+          // pseudo enregistré : la fenêtre ne revient plus jamais à « Bienvenue » (Retour = simple fermeture)
+          (Tr(Pk, f), Tr(PsAtt, st !== "ok"), setPsv(f), (psDemande = !0), setPsOuvert(!1), setPsAlerte(null), setViaBienvenue(!1), st === "ok" && recSync());
         },
         [psAlerte, setPsAlerte] = (0, a.useState)(null),
         [bienvenue, setBienvenue] = (0, a.useState)(() => !Ps() && sbOk()),
