@@ -6057,6 +6057,8 @@ if (!window.React || !window.ReactDOM) {
         ),
       );
     }
+    // Volume général (avant le limiteur de sortie) : relevé, le son était trop bas sur téléphone même à 100 %
+    var VOL_MAITRE = 1.5;
     var vt = (() => {
         let t = null,
           r = null,
@@ -6191,6 +6193,10 @@ if (!window.React || !window.ReactDOM) {
             try {
               if (!t) {
                 let m = window.AudioContext || window.webkitAudioContext;
+                // iPhone : jouer sur le canal « média » (volume multimédia, plus fort) et non sur celui de la sonnerie
+                try {
+                  navigator.audioSession && (navigator.audioSession.type = "playback");
+                } catch {}
                 if (!m) return;
                 // « balanced » : tampon audio un peu plus grand que le mode interactif par défaut,
                 // ce qui évite les trous (grésillements) quand l'écran d'accueil anime et calcule en même temps
@@ -6202,7 +6208,7 @@ if (!window.React || !window.ReactDOM) {
                   }
                 })()),
                   (r = t.createGain()),
-                  (r.gain.value = 0.55),
+                  (r.gain.value = VOL_MAITRE),
                   // Limiteur en sortie : évite la saturation (crépitements) quand musique et bruitages s'additionnent
                   (() => {
                     let lim = t.createDynamicsCompressor();
@@ -6234,7 +6240,7 @@ if (!window.React || !window.ReactDOM) {
                 (u = t.currentTime + 0.08),
                 r.gain.cancelScheduledValues(t.currentTime),
                 r.gain.setValueAtTime(Math.max(1e-4, r.gain.value), t.currentTime),
-                r.gain.linearRampToValueAtTime(0.55, t.currentTime + 0.05),
+                r.gain.linearRampToValueAtTime(VOL_MAITRE, t.currentTime + 0.05),
                 (n = setInterval(kt, 60)));
             } catch {
               h = !1;
