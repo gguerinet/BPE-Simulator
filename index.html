@@ -12677,13 +12677,9 @@ if (!window.React || !window.ReactDOM) {
                   "li",
                   {
                     key: c.id,
-                    className: "flex items-center gap-2 px-2 py-1",
-                    style: {
-                      border: tAtt ? `3px solid ${CAR_COUL[tAtt]}` : "2px solid #94A3B8",
-                      background: tAtt ? CAR_FOND[tAtt] : "#F1F5F9",
-                      boxShadow: tAtt === "platine" ? `0 0 0 2px #A5F3FC` : "none",
-                      minWidth: 0,
-                    },
+                    className: "flex items-center gap-2 border-2 px-2 py-1",
+                    // fond teinté du dernier palier atteint ; cadre inchangé
+                    style: { borderColor: nAtt ? W : "#94A3B8", background: tAtt ? CAR_FOND[tAtt] : "#F1F5F9", minWidth: 0 },
                     "aria-label": `${c.nom} : ${et(v)}${suiv ? `, prochain palier ${et(suiv)} (${SUC_T[SUC_TIERS[nAtt]][0]})` : ", tous les paliers atteints"}`,
                   },
                   h(SucIcone, { t: SUC_TIERS[Math.max(0, nAtt - 1)], id: c.ic, ok: nAtt > 0, taille: 36 }),
@@ -12707,7 +12703,8 @@ if (!window.React || !window.ReactDOM) {
                         ),
                       ),
                     ),
-                    h(
+                    // barre d'avancement vers le prochain palier (retirée une fois le dernier atteint)
+                    suiv && h(
                       "span",
                       { style: { display: "block", marginTop: 3, height: 7, width: "100%", border: `1px solid ${W}`, background: "#E2E8F0" } },
                       h("span", { style: { display: "block", height: "100%", width: `${Math.round(pct * 100)}%`, background: { bronze: "#C2410C", argent: "#64748B", or: "#D97706", platine: "#0891B2" }[SUC_TIERS[Math.min(3, nAtt)]] } }),
@@ -12751,7 +12748,7 @@ if (!window.React || !window.ReactDOM) {
                     {
                       key: d.id,
                       className: "flex items-center gap-2 border-2 px-2 py-1",
-                      style: { borderColor: ok ? W : "#94A3B8", background: ok ? "#FFFFFF" : "#F1F5F9", minWidth: 0 },
+                      style: { borderColor: ok ? W : "#94A3B8", background: ok ? CAR_FOND[d.t] : "#F1F5F9", minWidth: 0 },
                       "aria-label": `${d.nom}, ${SUC_T[d.t][0]}, ${ok ? "obtenu" : "pas encore obtenu"} : ${d.c}`,
                     },
                     h(SucIcone, { t: d.t, id: d.id, ok: !!ok, taille: 36 }),
