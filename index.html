@@ -2861,7 +2861,8 @@ if (!window.React || !window.ReactDOM) {
           qualite: r(((t.qualite - 40) / 50) * 100),
           // Note de coût par mission b.workchoc payée : 100, 95, 85, 65, 25, puis 0 dès 5 missions
           budget: [100, 95, 85, 65, 25][Math.round((t.cout || 0) / In)] ?? 0,
-          delai: r(((170 - Math.max(90, t.total)) / 80) * 100),
+          // Note de délai : comptée en jours entiers, comme ils sont affichés (J+90,5 s'affiche J+90 : note parfaite)
+          delai: r(((170 - Math.max(90, Math.floor(t.total))) / 80) * 100),
         };
       },
       w2 = (t) => {
