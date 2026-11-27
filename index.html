@@ -5880,6 +5880,19 @@ if (!window.React || !window.ReactDOM) {
         r,
       );
     }
+    // Tactile : le bouton agit dès que le doigt se lève, puis le navigateur envoie un « clic » au même endroit.
+    // Si le bouton a fait disparaître sa fenêtre, ce clic tombait sur ce qu'il y avait dessous (ex. « Fermer » des
+    // paramètres qui lançait la partie). On avale ce clic fantôme, et lui seul.
+    var avaleClicFantome = (p) => {
+      let x = p.clientX,
+        y = p.clientY,
+        fin = performance.now() + 800,
+        k = (e) => {
+          performance.now() < fin && Math.abs(e.clientX - x) < 40 && Math.abs(e.clientY - y) < 40 && (e.stopPropagation(), e.preventDefault());
+          window.removeEventListener("click", k, !0);
+        };
+      (window.addEventListener("click", k, !0), setTimeout(() => window.removeEventListener("click", k, !0), 850));
+    };
     function mt({
       onClick: t,
       disabled: r,
@@ -5910,7 +5923,7 @@ if (!window.React || !window.ReactDOM) {
             let q = tq.current;
             p.pointerType === "touch" &&
               q.id === p.pointerId &&
-              ((q.id = null), r || ((q.ignore = performance.now() + 800), t && t(p)));
+              ((q.id = null), r || ((q.ignore = performance.now() + 800), avaleClicFantome(p), t && t(p)));
           },
           onClick: (p) => {
             (p.stopPropagation(), performance.now() < tq.current.ignore || (t && t(p)));
