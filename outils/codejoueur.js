@@ -57,15 +57,20 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
   await C.p.getByRole('button', { name: 'Utiliser' }).click(); await C.p.waitForTimeout(600);
   ok(/Code inconnu/.test(await C.p.innerText('body')) && (await pseudo(C.p)) === 'Mando', 'Code inconnu refusé, pseudo inchangé');
   // D : nouvel appareil, « J'ai déjà joué » puis code de A → récupère le pseudo actuel sans passer par la fenêtre du pseudo
+  // A a coché « ne plus proposer » le tutoriel et vu la bulle de nuit : au relancement, ces préférences partent avec ses succès
+  await A.p.evaluate(() => { localStorage.setItem('bpe-simulator-tuto-off', 'true'); localStorage.setItem('bpe-simulator-astuces', '["nuit"]'); localStorage.setItem('bpe-simulator-infos', '["gap","ticket"]'); });
+  await A.p.reload(); await A.p.waitForTimeout(2500);
+  ok(/"tuto": ?1/.test(db("select succes->'prefs' from succes_joueurs where joueur_id = '" + codeA + "'")), 'A : préférences d\'aide enregistrées avec son code (' + db("select succes->'prefs' from succes_joueurs where joueur_id = '" + codeA + "'") + ')');
   const D = await appareil();
   ok((await D.p.getByRole('button', { name: 'Nouveau joueur' }).count()) === 1 && (await D.p.getByRole('button', { name: "J'ai déjà joué" }).count()) === 1, 'D (nouvel appareil) : choix « Nouveau joueur » / « J\'ai déjà joué »');
   await D.p.getByRole('button', { name: "J'ai déjà joué" }).click();
   await D.p.getByLabel("Code d'un autre appareil").fill(codeA);
   await D.p.getByRole('button', { name: 'Utiliser' }).click(); await D.p.waitForTimeout(800);
   ok((await pseudo(D.p)) === 'Baby Yoda' && (await code(D.p)) === codeA && (await D.p.locator('[role=dialog]').count()) === 0, 'D saisit le code : pseudo « Baby Yoda », code de A, plus aucune fenêtre');
-  // D connaît déjà le jeu : pas de tutoriel proposé, ni bulles « Première fois », ni explications (i) à découvrir
+  // D récupère les préférences de A : pas de tutoriel proposé, bulle de nuit et explications déjà vues
+  await D.p.waitForTimeout(1500);
   const pref = await D.p.evaluate(() => ({ tuto: JSON.parse(localStorage.getItem('bpe-simulator-tuto-off') || 'false'), astuces: JSON.parse(localStorage.getItem('bpe-simulator-astuces') || '[]'), infos: JSON.parse(localStorage.getItem('bpe-simulator-infos') || '[]') }));
-  ok(pref.tuto === true && pref.astuces.includes('nuit') && pref.infos.length >= 5, 'D : tutoriel, bulles et explications marqués comme déjà vus (' + JSON.stringify(pref).slice(0, 80) + ')');
+  ok(pref.tuto === true && pref.astuces.includes('nuit') && pref.infos.includes('gap'), 'D : retrouve « ne plus proposer » et les aides déjà vues de A (' + JSON.stringify(pref) + ')');
   await D.p.getByRole('button', { name: /Commencer le projet/ }).click(); await D.p.waitForTimeout(1500);
   ok((await D.p.getByText('Un petit tutoriel ?').count()) === 0, 'D : la partie démarre sans proposer le tutoriel');
   // E : nouvel appareil, « Nouveau joueur » → fenêtre du pseudo seule, nouveau code attribué
@@ -74,6 +79,14 @@ const ok = (c, t) => console.log((c ? 'OK  ' : 'ÉCHEC') + ' ' + t);
   ok((await E.p.getByLabel('Pseudo', { exact: true }).count()) === 1 && !/code joueur/i.test(await E.p.locator('[aria-label="Ton pseudo"]').innerText()), 'E « Nouveau joueur » : fenêtre du pseudo seule, sans mention du code');
   await choisir(E.p, 'Din');
   ok((await code(E.p)) !== codeA && db("select pseudo from joueurs where joueur_id = '" + (await code(E.p)) + "'") === 'Din', 'E reçoit son propre code joueur, rattaché à « Din »');
+  // G se connecte avec le code de E (qui n'a jamais refusé le tutoriel) → le tutoriel est proposé
+  const codeF = await code(E.p); await E.p.reload(); await E.p.waitForTimeout(2000);
+  const G = await appareil();
+  await G.p.getByRole('button', { name: "J'ai déjà joué" }).click();
+  await G.p.getByLabel("Code d'un autre appareil").fill(codeF);
+  await G.p.getByRole('button', { name: 'Utiliser' }).click(); await G.p.waitForTimeout(2000);
+  await G.p.getByRole('button', { name: /Commencer le projet/ }).click(); await G.p.waitForTimeout(1500);
+  ok((await G.p.getByText('Un petit tutoriel ?').count()) === 1, 'G (code de E, qui n\'a jamais refusé le tutoriel) : le tutoriel est bien proposé');
   console.log('erreurs :', [...A.errs, ...B.errs, ...C.errs, ...D.errs, ...E.errs]);
   await b.close();
 })();

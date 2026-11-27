@@ -11866,15 +11866,22 @@ if (!window.React || !window.ReactDOM) {
         let k = Cfg.supabaseKey.trim();
         return /^eyJ/.test(k) ? { apikey: k, Authorization: "Bearer " + k } : { apikey: k };
       },
-      // Joueur qui se reconnecte avec son code (« J'ai déjà joué » ou Paramètres) : il connaît déjà le jeu,
-      // donc ni tutoriel proposé, ni bulles « Première fois », ni explications (i) qui clignotent
-      joueurConnu = () => {
-        try {
-          (Tr("bpe-simulator-tuto-off", !0),
-            Tr("bpe-simulator-regles-vues", !0),
-            Tr("bpe-simulator-astuces", ["nuit", "visiteur", "gonogo", "weekend", "reunion", "evenement"]),
-            Tr("bpe-simulator-infos", Object.keys(INFOS)));
-        } catch {}
+      // Préférences d'aide (tutoriel « ne plus proposer », bulles « Première fois » vues, explications (i) vues) :
+      // gardées avec les succès du code joueur, pour être retrouvées sur un autre appareil
+      PREF_K = { tuto: "bpe-simulator-tuto-off", astuces: "bpe-simulator-astuces", infos: "bpe-simulator-infos" },
+      prefNet = (x) => {
+        let l = (v, n) => (Array.isArray(v) ? [...new Set(v.filter((k) => typeof k == "string" && k.length <= 30))].slice(0, n) : []);
+        return x && typeof x == "object" ? { tuto: x.tuto ? 1 : 0, astuces: l(x.astuces, 20), infos: l(x.infos, 40) } : { tuto: 0, astuces: [], infos: [] };
+      },
+      prefUnion = (...l) => {
+        let r = { tuto: 0, astuces: [], infos: [] };
+        for (let x of l.map(prefNet)) ((r.tuto = r.tuto || x.tuto), (r.astuces = [...new Set([...r.astuces, ...x.astuces])]), (r.infos = [...new Set([...r.infos, ...x.infos])]));
+        return prefNet(r);
+      },
+      prefLocales = () => prefNet({ tuto: xr(PREF_K.tuto, !1), astuces: xr(PREF_K.astuces, []), infos: xr(PREF_K.infos, []) }),
+      prefAppliquer = (x) => {
+        let p = prefNet(x);
+        (p.tuto && Tr(PREF_K.tuto, !0), Tr(PREF_K.astuces, p.astuces), Tr(PREF_K.infos, p.infos));
       },
       jid = () => {
         let v = xr("bpe-simulator-joueur", null);
@@ -12130,7 +12137,7 @@ if (!window.React || !window.ReactDOM) {
         // Récompenses réclamées : un état d'avant cette fonction (sans liste) a déjà touché toutes ses pièces
         if (x && typeof x == "object" && x.recl && typeof x.recl == "object") for (let k in ok) x.recl[k] && (recl[k] = 1);
         else for (let k in ok) recl[k] = 1;
-        let st = { ok, heros, cumul, deco, recl };
+        let st = { ok, heros, cumul, deco, recl, prefs: prefNet(x && x.prefs) };
         // Solde jamais négatif : si les achats dépassent ce que valent aujourd'hui les succès (raretés revues, succès retirés),
         // la différence est offerte une fois pour toutes, pour que chaque récompense réclamée fasse bien monter le compteur
         try {
@@ -12162,7 +12169,7 @@ if (!window.React || !window.ReactDOM) {
       sucSolde = (st) => Math.max(0, sucPieces(st) - decoDepense(st.deco.achats)),
       // Fusion de deux états : chaque succès garde sa date la plus ancienne, chaque compteur sa plus grande valeur
       sucFus = (...l) => {
-        let r = { ok: {}, heros: {}, cumul: {}, deco: { achats: {}, pose: {} }, recl: {} };
+        let r = { ok: {}, heros: {}, cumul: {}, deco: { achats: {}, pose: {} }, recl: {}, prefs: prefUnion(...l.map((x) => x && x.prefs)) };
         for (let x of l.map(sucNet)) {
           // Objets achetés : jamais perdus ; objet posé : celui du dernier état qui en indique un
           // prix payé connu sur un appareil (> 1) : il l'emporte sur un achat ancien sans prix (1) ; deux prix : le plus bas
@@ -12190,6 +12197,7 @@ if (!window.React || !window.ReactDOM) {
           Object.keys(y.deco.achats).sort(),
           DECO.map((e) => y.deco.pose[e.id] || ""),
           Object.keys(y.recl).sort(),
+          y.prefs,
         ]);
       },
       // Fin de partie : succès et paliers débloqués par cette partie, et pièces gagnées
@@ -12255,9 +12263,11 @@ if (!window.React || !window.ReactDOM) {
           let j = jid(),
             srv = await sbRpc("succes_du_joueur", { j });
           if (srv === void 0) return;
-          let loc = xr(SUK, null),
+          let loc0 = xr(SUK, null),
+            loc = { ...(loc0 && typeof loc0 == "object" ? loc0 : {}), prefs: prefUnion(loc0 && loc0.prefs, prefLocales()) },
             fus = sucFus(srv, loc);
-          sucCle(loc) !== sucCle(fus) && (Tr(SUK, fus), window.dispatchEvent(new Event("bpe-succes")));
+          prefAppliquer(fus.prefs);
+          sucCle(loc0) !== sucCle(fus) && (Tr(SUK, fus), window.dispatchEvent(new Event("bpe-succes")));
           sucCle(srv) !== sucCle(fus) && (await sbRpc("enregistrer_succes", { j, s: fus }));
         } catch {}
       },
@@ -13282,7 +13292,7 @@ if (!window.React || !window.ReactDOM) {
           let srv = await psDuJoueur(v);
           if (srv === void 0) return setMsg({ ko: !0, t: "Serveur injoignable : r\xE9essaie dans un instant." });
           if (!srv) return setMsg({ ko: !0, t: "Code inconnu : aucun pseudo n'y est rattach\xE9." });
-          (Tr("bpe-simulator-joueur", v), Tr(Pk, srv), Tr(PsAtt, !1), joueurConnu(), window.dispatchEvent(new Event("bpe-pseudo")));
+          (Tr("bpe-simulator-joueur", v), Tr(Pk, srv), Tr(PsAtt, !1), window.dispatchEvent(new Event("bpe-pseudo")));
           setMsg({ ko: !1, t: `Code reconnu : tu joues maintenant en \xAB ${srv} \xBB sur cet appareil.` });
         };
       return h(
